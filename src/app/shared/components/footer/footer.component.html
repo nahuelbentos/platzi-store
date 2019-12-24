@@ -1,7 +1,7 @@
 <footer>
     <mat-toolbar color="primary">
         <mat-toolbar-row>
-            <div class="row bottom-xs end-xs  footer-row">
+            <div class="row bottom-xs end-xs footer-row">
                 <div class="col-xs-6">
                     <div class="box">
                         <span>PlatziStore!</span>
@@ -45,7 +45,6 @@
                 <div class="box">
                     <h3>Contacto</h3>
                     <mat-form-field>
-                        <input type="text">
                         <input matInput placeholder="Digite su correo" [formControl]="emailField" type="email">
                     </mat-form-field>
                     <button mat-raised-button [disabled]="emailField.invalid" (click)="sendMail()">enviar</button>

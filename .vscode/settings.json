@@ -1,0 +1,23 @@
+{
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "editor.renderWhitespace": "all",
+  "editor.formatOnSave": true,
+  "prettier.singleQuote": true,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[vue]": {
+    "editor.defaultFormatter": "octref.vetur"
+  },
+  "prettier.vueIndentScriptAndStyle": true,
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "explorer.confirmDragAndDrop": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  }
+}
