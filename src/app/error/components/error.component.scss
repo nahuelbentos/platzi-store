@@ -1,0 +1,21 @@
+main {
+  background: #1b0034;
+  background-image: linear-gradient(135deg, #1b0034 10%, #33265c 100%);
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+button.go-back {
+  font-size: 30px;
+  font-family: "Combo", cursive;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: 0.3s linear;
+  z-index: 9;
+  border-radius: 10px;
+  background: #c0d7dd;
+  color: #33265c;
+  box-shadow: 0 0 10px 0 #c0d7dd;
+  margin-top: 20px;
+}
