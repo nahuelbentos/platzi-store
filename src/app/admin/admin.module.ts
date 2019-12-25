@@ -12,6 +12,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { TreeComponent } from './components/tree/tree.component';
 import { DragDropComponent } from './components/drag-drop/drag-drop.component';
 import { ProductsListComponent } from './components/products-list/products-list.component';
+import { FormProductComponent } from './components/form-product/form-product.component';
 
 
 
@@ -23,7 +24,8 @@ import { ProductsListComponent } from './components/products-list/products-list.
     DashboardComponent,
     TreeComponent,
     DragDropComponent,
-    ProductsListComponent
+    ProductsListComponent,
+    FormProductComponent
   ],
   imports: [
     CommonModule,

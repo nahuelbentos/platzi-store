@@ -18,10 +18,10 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 import { LayoutModule } from '@angular/cdk/layout';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-
 
 
 @NgModule({
@@ -46,7 +46,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     MatTreeModule,
     LayoutModule,
     DragDropModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatButtonToggleModule
 
 
   ],
@@ -69,7 +70,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     MatTreeModule,
     LayoutModule,
     DragDropModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatButtonToggleModule
   ]
 })
 export class MaterialModule { }
