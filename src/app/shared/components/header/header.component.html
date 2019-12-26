@@ -7,7 +7,7 @@
                 <a mat-button routerLink="/contact" routerLinkActive="active">Contact</a>
             </nav>
             <div class="row">
-                <a mat-raised-button matBadge="4" matBadgeColor="warn" class="a-margin">
+                <a mat-raised-button [matBadge]="total" matBadgeColor="warn" class="a-margin">
                     <mat-icon>shopping_cart
                     </mat-icon>
                     Carrito
