@@ -6,11 +6,23 @@
                 <a mat-button routerLink="/products" routerLinkActive="active">Products</a>
                 <a mat-button routerLink="/contact" routerLinkActive="active">Contact</a>
             </nav>
-            <a mat-raised-button matBadge="4" matBadgeColor="warn">
-                <mat-icon>shopping_cart
-                </mat-icon>
-                Carrito
-            </a>
+            <div class="row">
+                <a mat-raised-button matBadge="4" matBadgeColor="warn" class="a-margin">
+                    <mat-icon>shopping_cart
+                    </mat-icon>
+                    Carrito
+                </a>
+                <a mat-raised-button routerLink="/register" color="primary" class="a-margin">
+                    Register
+                    <mat-icon>add_circle_outline
+                    </mat-icon>
+                </a>
+                <a mat-raised-button routerLink="/login" color="primary" class="a-margin">
+                    Log in
+                    <mat-icon>arrow_forward_ios
+                    </mat-icon>
+                </a>
+            </div>
         </div>
 
     </mat-toolbar-row>
