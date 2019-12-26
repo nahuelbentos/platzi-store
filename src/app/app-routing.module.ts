@@ -31,9 +31,21 @@ const routes: Routes = [
         loadChildren: () => import('./contact/contact.module').then(m => m.ContactModule)
       },
       {
+        path: 'order',
+        loadChildren: () => import('./order/order.module').then(m => m.OrderModule)
+      },
+      {
         path: 'demo',
         canActivate: [AdminGuard],
         loadChildren: () => import('./demo/demo.module').then(m => m.DemoModule)
+      },
+      {
+        path: 'login',
+        loadChildren: () => import('./login/login.module').then(m => m.LoginModule),
+      },
+      {
+        path: 'register',
+        loadChildren: () => import('./register/register.module').then(m => m.RegisterModule),
       },
     ]
   },
@@ -42,12 +54,8 @@ const routes: Routes = [
     loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
   },
   {
-    path: 'login',
-    loadChildren: () => import('./login/login.module').then(m => m.LoginModule),
-  },
-  {
-    path: 'register',
-    loadChildren: () => import('./register/register.module').then(m => m.RegisterModule),
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
   },
   {
     path: '**',
