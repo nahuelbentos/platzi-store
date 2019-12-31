@@ -13,7 +13,7 @@ import { FooterComponent } from './components/footer/footer.component';
 import { CartComponent } from './components/cart/cart.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 
-import { MaterialModule } from '../material/material.module';
+import { MaterialModule } from '@material/material.module';
 
 @NgModule({
   declarations: [

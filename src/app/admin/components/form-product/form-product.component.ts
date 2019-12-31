@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { MyValidators } from './../../../utils/validators';
+import { MyValidators } from '@utils/validators';
 import { AngularFireStorage } from '@angular/fire/storage';
 
 import { finalize } from 'rxjs/operators';
-import { ProductsService } from './../../../core/services/products/products.service';
+import { ProductsService } from '@core/services/products/products.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -13,7 +13,7 @@ import { Observable } from 'rxjs';
   templateUrl: './form-product.component.html',
   styleUrls: ['./form-product.component.scss']
 })
-export class FormProductComponent implements OnInit {
+export class FormProductComponent {
 
   form: FormGroup;
   image$: Observable<any>;
@@ -24,9 +24,6 @@ export class FormProductComponent implements OnInit {
     private storage: AngularFireStorage
   ) {
     this.buildForm();
-  }
-
-  ngOnInit() {
   }
 
   saveProduct(event: Event) {
