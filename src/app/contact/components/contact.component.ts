@@ -6,8 +6,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./contact.component.scss']
 })
 export class ContactComponent implements OnInit {
+  test;
+  constructor() {
 
-  constructor() { }
+    this.test = 1;
+    this.test = 'hola';
+  }
 
   ngOnInit() {
   }
