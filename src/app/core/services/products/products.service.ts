@@ -3,7 +3,7 @@ import { Product } from '../../model/product.model';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '@environments/environment';
 import { Observable, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, retry } from 'rxjs/operators';
 
 import * as Sentry from '@sentry/browser';
 
@@ -57,11 +57,16 @@ export class ProductsService {
   }
 
   getRandomUsers(): Observable<Users[]> {
-    return this.http.get('https://randomuser.measdsdasd/api/?results=2')
+    return this.http.get('https://randomuser.me/api/?results=2')
       .pipe(
+        retry(3),
         catchError(this.handleError),
         map((response: any) => response.results as Users[])
       );
+  }
+
+  getFile() {
+    return this.http.get('assets/files/test.txt', { responseType: 'text' });
   }
 
   private handleError(error: HttpErrorResponse) {
