@@ -90,6 +90,9 @@ export class ProductDetailComponent implements OnInit {
   }
 
   getFile() {
+
+    // window.open('http://192.1.0.71/ACU_Web.NetEnvironment_Prototipo/atestpdf.aspx', '_blank');
+
     this.productsService.getFile()
       .subscribe(content => {
         const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
