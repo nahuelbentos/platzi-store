@@ -52,6 +52,10 @@ const routes: Routes = [
     loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
   },
   {
+    path: 'acu',
+    loadChildren: () => import('./acu/acu.module').then(m => m.AcuModule),
+  },
+  {
     path: 'auth',
     loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
   },
@@ -68,4 +72,3 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
-
