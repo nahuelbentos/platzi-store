@@ -1,4 +1,5 @@
-<h2 mat-dialog-title>Agendar Cita</h2>
+<h2 mat-dialog-title>Agenda de Clase</h2>
+
 <mat-dialog-content class="mat-typography">
     <h3>Aca va a ir la info de la agenda, y veremos podemos poner otros datos, como inputs y eso</h3>
     <p>Learn one way to build applications with Angular and reuse your code and abilities to build
@@ -9,10 +10,19 @@
         Workers and server-side rendering. Angular puts you in control over scalability. Meet huge
         data requirements by building data models on RxJS, Immutable.js or another push-model.</p>
 
+    <h1 mat-dialog-title>Hi {{data.name}}</h1>
+
+    <p>What's your favorite animal?</p>
+    <mat-form-field>
+        <input matInput [(ngModel)]="data.animal">
+    </mat-form-field>
+
 </mat-dialog-content>
+
 <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close>Cancelar</button>
-    <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Reservar</button>
+    <button mat-button mat-dialog-close (click)="onNoClick()">Cancelar</button>
+    <button mat-button [mat-dialog-close]="data.animal" cdkFocusInitial>Reservar</button>
+    <button mat-button [mat-dialog-close]="data.animal" cdkFocusInitial>Ok</button>
 </mat-dialog-actions>
 
 

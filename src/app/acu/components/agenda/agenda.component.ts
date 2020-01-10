@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { AcuService } from '../../services/acu.service';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 
 export interface AgendaElement {
@@ -38,6 +38,9 @@ export interface AgendaElement {
   styleUrls: ['./agenda.component.scss']
 })
 export class AgendaComponent implements OnInit {
+
+  animal: string;
+  name: string;
 
   agendaDisplayedColumns: string[] = ['Movil'];
   columns: string[] = [];
@@ -128,12 +131,15 @@ export class AgendaComponent implements OnInit {
 
   }
 
-  showAlert() {
+  showAlert(): void {
 
-    const dialogRef = this.dialog.open(DialogContentExampleDialog);
+    const dialogRef = this.dialog.open(DialogContentExampleDialog, {
+      data: { name: this.name, animal: this.animal }
+    });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
+      console.log('The dialog was closed: ', result);
+      this.animal = result;
     });
 
   }
@@ -141,10 +147,25 @@ export class AgendaComponent implements OnInit {
 
 
 
+export interface DialogData {
+  animal: string;
+  name: string;
+}
+
 @Component({
   // tslint:disable-next-line: component-selector
   selector: 'dialog-content-example-dialog',
   templateUrl: 'dialog-content-example-dialog.html',
 })
 // tslint:disable-next-line: component-class-suffix
-export class DialogContentExampleDialog { }
+export class DialogContentExampleDialog {
+
+  constructor(
+    public dialogRef: MatDialogRef<AgendaComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData) { }
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+}

@@ -46,6 +46,9 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 @NgModule({
   declarations: [],
   imports: [
@@ -180,6 +183,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MatTreeModule,
     PortalModule,
     ScrollingModule,
+
+    MatTabsModule,
+    MatTooltipModule,
   ]
 })
 export class MaterialModule { }
