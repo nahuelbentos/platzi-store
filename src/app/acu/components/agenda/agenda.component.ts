@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AcuService } from '../../services/acu.service';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogContentComponent } from '../dialog-content/dialog-content.component';
 
 export interface PeriodicElement {
   name: string;
@@ -77,7 +79,10 @@ export class AgendaComponent implements OnInit {
   moviles: any[] = [];
   horas: Horas[] = [];
   horaMovilPlano: [] = [];
-  constructor(private acuService: AcuService) { }
+  constructor(
+    private acuService: AcuService,
+    public dialog: MatDialog
+  ) { }
 
   ngOnInit() {
     this.acuService.getAgenda()
@@ -91,9 +96,9 @@ export class AgendaComponent implements OnInit {
         this.columns = this.horas.map(item => item.Hora.toString()); // this.moviles.map(item => item.MovCod.toString());
         this.rows = this.horas.map(item => item.Hora.toString());
 
-        this.agendaDataSource = this.makeDataSource(this.columns, this.horas, this.moviles, res.TablaAgenda.HoraMovilPlano);
+        // this.agendaDataSource = this.makeDataSource(this.columns, this.horas, this.moviles, res.TablaAgenda.HoraMovilPlano);
 
-        this.agendaDisplayedColumns = this.agendaDisplayedColumns.concat(this.columns);
+        // this.agendaDisplayedColumns = this.agendaDisplayedColumns.concat(this.columns);
         console.log('agendaDisplayedColumns: ', this.agendaDisplayedColumns);
 
       });
@@ -183,6 +188,13 @@ export class AgendaComponent implements OnInit {
   }
 
   showAlert() {
+    // const dialogRef = this.dialog.open(DialogContentComponent);
+
+    // dialogRef.afterClosed().subscribe(result => {
+    //   console.log(`Dialog result: ${result}`);
+    // });
     alert('Hola');
   }
 }
+
+

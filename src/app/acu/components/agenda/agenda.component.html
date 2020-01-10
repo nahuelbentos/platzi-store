@@ -88,7 +88,10 @@
 
     <ng-container matColumnDef="10">
         <th mat-header-cell *matHeaderCellDef> 10 </th>
-        <td mat-cell class="cell" *matCellDef="let element" (click)="showAlert()"> {{element.Hora10}} </td>
+        <td mat-cell class="cell" *matCellDef="let element" (click)="showAlert()">
+            {{element.Hora10}}
+            <!-- <button mat-button (click)="showAlert()"> </button> -->
+        </td>
     </ng-container>
 
     <ng-container matColumnDef="11">

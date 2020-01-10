@@ -9,12 +9,14 @@ import { MaterialModule } from '@material/material.module';
 import { AgendaComponent } from './components/agenda/agenda.component';
 import { NavComponent } from './components/nav/nav.component';
 import { SharedModule } from '@shared/shared.module';
+import { DialogContentComponent } from './components/dialog-content/dialog-content.component';
 
 
 @NgModule({
   declarations: [
     AgendaComponent,
-    NavComponent
+    NavComponent,
+    DialogContentComponent
   ],
   imports: [
     CommonModule,
