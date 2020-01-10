@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AcuService } from '../../services/acu.service';
+import { MatDialog } from '@angular/material/dialog';
 
 
 export interface AgendaElement {
@@ -51,7 +52,8 @@ export class AgendaComponent implements OnInit {
   }] = null;
 
   constructor(
-    private acuService: AcuService
+    private acuService: AcuService,
+    public dialog: MatDialog
   ) { }
 
   ngOnInit() {
@@ -65,7 +67,7 @@ export class AgendaComponent implements OnInit {
         this.horas = res.TablaAgenda.Horas;
         console.log('2)horas: ', this.horas);
         this.columns = this.horas.map(item => item.Hora.toString()); // this.moviles.map(item => item.MovCod.toString());
-
+        this.horaMovilPlano = res.TablaAgenda.HoraMovilPlano;
         this.agendaDataSource = this.makeDataSource(this.horas, this.moviles);
 
         this.agendaDisplayedColumns = this.agendaDisplayedColumns.concat(this.columns);
@@ -127,13 +129,22 @@ export class AgendaComponent implements OnInit {
   }
 
   showAlert() {
-    // const dialogRef = this.dialog.open(DialogContentComponent);
 
-    // dialogRef.afterClosed().subscribe(result => {
-    //   console.log(`Dialog result: ${result}`);
-    // });
-    alert('Hola');
+    const dialogRef = this.dialog.open(DialogContentExampleDialog);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
+
   }
 }
 
 
+
+@Component({
+  // tslint:disable-next-line: component-selector
+  selector: 'dialog-content-example-dialog',
+  templateUrl: 'dialog-content-example-dialog.html',
+})
+// tslint:disable-next-line: component-class-suffix
+export class DialogContentExampleDialog { }

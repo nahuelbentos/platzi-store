@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpClientModule } from '@angular/common/http';
@@ -25,6 +25,12 @@ import { CookieService } from 'ngx-cookie-service';
 
 import * as Sentry from '@sentry/browser';
 
+import { MaterialModule } from '@material/material.module';
+import { MatNativeDateModule } from '@angular/material/core';
+import { AgendaComponent, DialogContentExampleDialog } from './acu/components/agenda/agenda.component';
+import { AcuService } from './acu/services/acu.service';
+import { AcuModule } from './acu/acu.module';
+
 // if (environment.production === true) {
 Sentry.init({
   dsn: 'https://7d756537d9ae48a49195bdef6a69b908@sentry.io/1869535'
@@ -46,7 +52,11 @@ Sentry.init({
     HttpClientModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
-    AngularFireStorageModule
+    AngularFireStorageModule,
+    AcuModule,
+    MaterialModule,
+    MatNativeDateModule,
+    ReactiveFormsModule,
 
   ],
   providers: [
@@ -55,8 +65,9 @@ Sentry.init({
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
-    }
+    },
   ],
+  entryComponents: [AgendaComponent, DialogContentExampleDialog],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
