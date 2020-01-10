@@ -20,8 +20,8 @@ import { MatTreeModule } from '@angular/material/tree';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatStepperModule } from '@angular/material/stepper';
+import { MatDialogModule } from '@angular/material/dialog';
 
-import { MatDialog } from '@angular/material/dialog';
 
 import { LayoutModule } from '@angular/cdk/layout';
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -52,7 +52,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     MatFormFieldModule,
     MatButtonToggleModule,
     MatStepperModule,
-    MatDialog
+    MatDialogModule
 
 
   ],
@@ -78,7 +78,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     MatFormFieldModule,
     MatButtonToggleModule,
     MatStepperModule,
-    MatDialog
+    MatDialogModule
   ]
 })
 export class MaterialModule { }

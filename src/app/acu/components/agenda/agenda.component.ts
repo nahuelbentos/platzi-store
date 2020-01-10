@@ -1,28 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AcuService } from '../../services/acu.service';
-import { MatDialog } from '@angular/material/dialog';
-import { DialogContentComponent } from '../dialog-content/dialog-content.component';
 
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
-export interface Horas {
-  Hora: number;
-  Moviles: [{
-    MovCod: number;
-    Valor: string;
-    Disponible: boolean;
-    AluId: number;
-    EsAguCuInsId: string;
-    TipCurId: number;
-  }];
-}
+
 export interface AgendaElement {
   Movil: string;
-  // Hora0: string;
+  Hora0: string;
   Hora1: string;
   Hora2: string;
   Hora3: string;
@@ -49,42 +31,31 @@ export interface AgendaElement {
   Hora24: string;
 }
 
-const ELEMENT_DATA: PeriodicElement[] = [
-  { position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H' },
-  { position: 2, name: 'Helium', weight: 4.0026, symbol: 'He' },
-  { position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li' },
-  { position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be' },
-  { position: 5, name: 'Boron', weight: 10.811, symbol: 'B' },
-  { position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C' },
-  { position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N' },
-  { position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O' },
-  { position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F' },
-  { position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne' },
-];
-
-
 @Component({
   selector: 'app-agenda',
   templateUrl: './agenda.component.html',
   styleUrls: ['./agenda.component.scss']
 })
 export class AgendaComponent implements OnInit {
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
+
   agendaDisplayedColumns: string[] = ['Movil'];
   columns: string[] = [];
-  rows: string[] = [];
-  dataSource = ELEMENT_DATA;
   agendaDataSource: AgendaElement[] = [];
   agenda: any[] = [];
   moviles: any[] = [];
-  horas: Horas[] = [];
-  horaMovilPlano: [] = [];
+  horas: any[] = [];
+  horaMovilPlano: [{
+    Hora: string;
+    MovCod: number;
+    AluId: number;
+  }] = null;
+
   constructor(
-    private acuService: AcuService,
-    public dialog: MatDialog
+    private acuService: AcuService
   ) { }
 
   ngOnInit() {
+    console.log('Fuciona?');
     this.acuService.getAgenda()
       .subscribe((res: any) => {
         console.log('Agenda: ', res);
@@ -94,55 +65,23 @@ export class AgendaComponent implements OnInit {
         this.horas = res.TablaAgenda.Horas;
         console.log('2)horas: ', this.horas);
         this.columns = this.horas.map(item => item.Hora.toString()); // this.moviles.map(item => item.MovCod.toString());
-        this.rows = this.horas.map(item => item.Hora.toString());
 
-        // this.agendaDataSource = this.makeDataSource(this.columns, this.horas, this.moviles, res.TablaAgenda.HoraMovilPlano);
+        this.agendaDataSource = this.makeDataSource(this.horas, this.moviles);
 
-        // this.agendaDisplayedColumns = this.agendaDisplayedColumns.concat(this.columns);
+        this.agendaDisplayedColumns = this.agendaDisplayedColumns.concat(this.columns);
         console.log('agendaDisplayedColumns: ', this.agendaDisplayedColumns);
 
       });
   }
 
   makeDataSource(
-    columns: string[],
-    horas: Horas[],
-    moviles: any[],
-    horasMoviles: any[]) {
+    horas: any[],
+    moviles: any[]) {
 
     const col: any[] = [];
-    console.log('columns: ', columns);
     console.log('horas: ', horas);
     console.log('moviles: ', moviles);
-    console.log('horasMoviles: ', moviles);
 
-
-    // let i = 0;
-    // let j = 0;
-    // for (const h of horas) {
-
-    //   const o = {};
-    //   // tslint:disable-next-line: no-string-literal
-    //   o['Movil'] = h.Hora;
-    //   let valueI = 0
-    //   for (const m of moviles) {
-    //     let val = '';
-
-    //     if (this.existeEnHorasMoviles(h, m, horasMoviles)) {
-    //       i++;
-    //       val = i.toString() + ' ' + m.Valor;
-    //     } else {
-    //       j--;
-    //       val = j.toString() + ' ';
-    //     }
-    //     o['value' + valueI] = val;
-    //     valueI++;
-    //     //o[m.MovCod] = val;
-    //   }
-    //   console.log('object: ', o);
-    //   col.push(o);
-
-    // }
 
     let i = 0;
     let j = 0;
@@ -153,7 +92,7 @@ export class AgendaComponent implements OnInit {
       o['Movil'] = m.MovCod;
 
       for (const h of horas) {
-        let val = this.existeEnHorasMoviles(h, m, horasMoviles);
+        let val = this.existeEnHorasMoviles(h, m);
         if (val === '') {
           j--;
           val = 'L'; // j.toString() + ' ';
@@ -175,9 +114,9 @@ export class AgendaComponent implements OnInit {
 
   }
 
-  existeEnHorasMoviles(hora: any, movil: any, horaMovilPlano: any) {
+  existeEnHorasMoviles(hora: any, movil: any) {
 
-    for (const h of horaMovilPlano) {
+    for (const h of this.horaMovilPlano) {
       if (h.Hora === hora.Hora && h.MovCod === movil.MovCod) {
         return h.AluId;
       }
