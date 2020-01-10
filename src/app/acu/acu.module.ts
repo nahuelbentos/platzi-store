@@ -8,6 +8,7 @@ import { MaterialModule } from '@material/material.module';
 
 import { AgendaComponent } from './components/agenda/agenda.component';
 import { NavComponent } from './components/nav/nav.component';
+import { SharedModule } from '@shared/shared.module';
 
 
 @NgModule({
@@ -20,6 +21,7 @@ import { NavComponent } from './components/nav/nav.component';
     AcuRoutingModule,
     MaterialModule,
     ReactiveFormsModule,
+    SharedModule,
   ]
 })
 export class AcuModule { }

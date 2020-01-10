@@ -48,7 +48,7 @@ export class AgendaComponent implements OnInit {
   columns: string[] = [];
   rows: string[] = [];
   dataSource = ELEMENT_DATA;
-  agendaDataSource: AgendaElement[] = [];
+  agendaDataSource: any = null;
   agenda: any[] = [];
   moviles: any[] = [];
   horas: Horas[] = [];
@@ -60,30 +60,17 @@ export class AgendaComponent implements OnInit {
       .subscribe((res: any) => {
         console.log('Agenda: ', res);
 
-        // console.log('res: ', res);
-        // console.log('res.TablaAgenda', res.TablaAgenda);
-        // console.log('res.TablaAgenda.Moviles', res.TablaAgenda.Moviles);
-        // console.log('res.TablaAgenda.Horas', res.TablaAgenda.Horas);
         this.agenda = res.TablaAgenda;
         this.moviles = res.TablaAgenda.Moviles;
         this.horas = res.TablaAgenda.Horas;
         console.log('2)horas: ', this.horas);
         this.columns = this.moviles.map(item => item.MovCod.toString());
         this.rows = this.horas.map(item => item.Hora.toString());
-        this.makeDataSource(this.columns, this.horas, this.moviles, res.TablaAgenda.HoraMovilPlano);
-        // this.agendaDataSource = res.TablaAgenda.HoraMovilPlano;
-        // this.agendaDisplayedColumns = this.agendaDisplayedColumns.concat(this.columns);
-        // console.log('1)agendaDisplayedColumns: ', this.agendaDisplayedColumns);
-        // this.columns.push(' ');
-        // console.log('2)columns: ', this.columns);
-        // this.columns.sort();
-        // console.log('3)columns: ', this.columns);
-        // console.log('rows: ', this.rows);
-        // this.dataSource = res.TablaAgenda.Horas.filter((row) => {
-        //   if(row.)
 
+        this.agendaDataSource = this.makeDataSource(this.columns, this.horas, this.moviles, res.TablaAgenda.HoraMovilPlano);
 
-        // })
+        this.agendaDisplayedColumns = this.agendaDisplayedColumns.concat(this.columns);
+
       });
   }
 
@@ -92,34 +79,24 @@ export class AgendaComponent implements OnInit {
     horas: Horas[],
     moviles: any[],
     horasMoviles: any[]) {
-    const csv = `foo,bar,baz\na,b,c\nd,e,f\ng,h,i`;
-    console.log('makeDataSource: ');
-    const header = columns;
-    let col: any[] = [];
+
+    const col: any[] = [];
     console.log('columns: ', columns);
     console.log('horas: ', horas);
     console.log('moviles: ', moviles);
     console.log('horasMoviles: ', moviles);
-    let agendaDataSource: AgendaElement[];
-    // for (let i = 0; i < horas.length; i++) {
 
-    //   let hMoviles = horas[i].Moviles;
 
-    //   for (let j = 0; j < hMoviles.length; j++) {
-
-    //     console.log('Hora: ', horas[i].Hora, ' Movil: ', hMoviles[j]);
-
-    //   }
-
-    // }
     let i = 0;
     let j = 0;
     for (const h of horas) {
+
+      const o = {};
+      // tslint:disable-next-line: no-string-literal
+      o['Hora'] = h.Hora;
+      let valueI = 0
       for (const m of moviles) {
         let val = '';
-        let o = {};
-        // console.log('Hora: ', h.Hora, ' Movil: ', m.MovCod);
-        // let existe: boolean = this.existeEnHorasMoviles(h, m, horasMoviles);
 
         if (this.existeEnHorasMoviles(h, m, horasMoviles)) {
           i++;
@@ -128,16 +105,17 @@ export class AgendaComponent implements OnInit {
           j--;
           val = j.toString() + ' ';
         }
-
-
-        o[m.MovCod] = val;
-        col.push(o);
+        o['value' + valueI] = val;
+        valueI++;
+        //o[m.MovCod] = val;
       }
+      console.log('object: ', o);
+      col.push(o);
 
     }
     console.log('col: ', col);
 
-
+    return col;
 
 
   }

@@ -14,6 +14,7 @@ import { CartComponent } from './components/cart/cart.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 
 import { MaterialModule } from '@material/material.module';
+import { ValueIPipe } from './pipes/value-i.pipe';
 
 @NgModule({
   declarations: [
@@ -22,13 +23,15 @@ import { MaterialModule } from '@material/material.module';
     HeaderComponent,
     FooterComponent,
     CartComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    ValueIPipe
   ],
   exports: [
     ExponentialPipe,
     HighlightDirective,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    ValueIPipe
   ],
   imports: [
     CommonModule,
