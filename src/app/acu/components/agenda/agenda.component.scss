@@ -1,9 +1,41 @@
 table {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.cell {
+  width: 6%;
+  height: 20px;
+}
+
+.contenedor {
   width: 96%;
   margin: 2%;
 }
 
-.cell {
-  width: 5%;
-  height: 20px;
+.th-agenda {
+  text-align: center !important;
+}
+
+.black {
+  background-color: rgba(0, 0, 0, 0.685);
+  color: white;
+  border-radius: 1px;
+  border: 1px solid rgba(126, 121, 121, 0.801);
+}
+td,
+th {
+  text-align: center !important;
+}
+td:hover {
+  color: #212529;
+  background-color: rgba(0, 0, 0, 0.075);
+}
+td:active {
+  color: #212529;
+  background-color: rgba(52, 10, 99, 0.2);
+}
+td:focus {
+  color: #212529;
+  background-color: rgba(240, 0, 0, 0.562);
 }

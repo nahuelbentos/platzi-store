@@ -27,8 +27,8 @@ import * as Sentry from '@sentry/browser';
 
 import { MaterialModule } from '@material/material.module';
 import { MatNativeDateModule } from '@angular/material/core';
-import { AgendaComponent, DialogContentExampleDialog } from './acu/components/agenda/agenda.component';
-import { AcuService } from './acu/services/acu.service';
+import { AgendaComponent } from './acu/components/agenda/agenda.component';
+import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { AcuModule } from './acu/acu.module';
 
 // if (environment.production === true) {
@@ -45,6 +45,7 @@ Sentry.init({
   imports: [
     BrowserModule,
     AppRoutingModule,
+    SweetAlert2Module.forRoot(),
     FormsModule,
     SharedModule,
     CoreModule,
@@ -67,7 +68,7 @@ Sentry.init({
       multi: true
     },
   ],
-  entryComponents: [AgendaComponent, DialogContentExampleDialog],
+  entryComponents: [AgendaComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { AcuService } from '../../services/acu.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { AgendarClaseComponent } from './modals/agendar-clase/agendar-clase.component';
 
 
 export interface AgendaElement {
@@ -31,6 +32,19 @@ export interface AgendaElement {
   Hora23: string;
   Hora24: string;
 }
+export interface DataAgenda {
+  Hora: number;
+  MovCod: number;
+  Valor: string;
+  Disponible: boolean;
+  AluId: string;
+  AluApe1: string;
+  EsAgCuInsId: string;
+  EsAgCuInsNom: string;
+  EsAgCuInsNomCorto: string;
+  TipCurId: number;
+}
+
 
 @Component({
   selector: 'app-agenda',
@@ -48,11 +62,15 @@ export class AgendaComponent implements OnInit {
   agenda: any[] = [];
   moviles: any[] = [];
   horas: any[] = [];
-  horaMovilPlano: [{
-    Hora: string;
-    MovCod: number;
-    AluId: number;
-  }] = null;
+
+  horaMovilPlano: DataAgenda[] = null;
+  // horaMovilPlano: [{
+  //   Hora: string;
+  //   MovCod: number;
+  //   AluId: number;
+  //   EsAgCuInsId: string;
+
+  // }] = null;
 
   constructor(
     private acuService: AcuService,
@@ -98,13 +116,13 @@ export class AgendaComponent implements OnInit {
 
       for (const h of horas) {
         let val = this.existeEnHorasMoviles(h, m);
-        if (val === '') {
-          j--;
-          val = 'L'; // j.toString() + ' ';
-        } else {
-          i++;
-          val = 'O'; // i.toString() + ' ' + val;
-        }
+        // if (val === '') {
+        //   j--;
+        //   val = 'L'; // j.toString() + ' ';
+        // } else {
+        //   i++;
+        //   val = 'O' + ' ' + val;
+        // }
         o['Hora' + h.Hora] = val;
       }
 
@@ -123,7 +141,8 @@ export class AgendaComponent implements OnInit {
 
     for (const h of this.horaMovilPlano) {
       if (h.Hora === hora.Hora && h.MovCod === movil.MovCod) {
-        return h.AluId;
+        console.log(`Hora movil: ${h}`);
+        return `${h.EsAgCuInsId} ${h.AluApe1.substring(1, 10)}`;
       }
     }
 
@@ -131,9 +150,12 @@ export class AgendaComponent implements OnInit {
 
   }
 
-  showAlert(): void {
 
-    const dialogRef = this.dialog.open(DialogContentExampleDialog, {
+  showAlert(movil: number, hora: number): void {
+    console.log(`Movil: ${movil}, Hora: ${hora}`);
+
+    let data: DataAgenda = this.getDataAgenda(movil, hora);
+    const dialogRef = this.dialog.open(AgendarClaseComponent, {
       data: { name: this.name, animal: this.animal }
     });
 
@@ -142,6 +164,25 @@ export class AgendaComponent implements OnInit {
       this.animal = result;
     });
 
+  }
+
+
+  getDataAgenda(movil: number, hora: number): DataAgenda {
+    return null;
+  }
+
+
+  public saveEmail(email: string): void {
+    // ... save user email
+  }
+
+  public handleRefusalToSetEmail(dismissMethod: string): void {
+    // dismissMethod can be 'cancel', 'overlay', 'close', and 'timer'
+    // ... do something
+  }
+
+  testAlert() {
+    alert('ok');
   }
 }
 
@@ -152,10 +193,12 @@ export interface DialogData {
   name: string;
 }
 
+/*
 @Component({
   // tslint:disable-next-line: component-selector
   selector: 'dialog-content-example-dialog',
-  templateUrl: 'dialog-content-example-dialog.html',
+  templateUrl: './modals/agendar-clase/agendar-clase.component.html',
+  // templateUrl: 'dialog-content-example-dialog.html',
 })
 // tslint:disable-next-line: component-class-suffix
 export class DialogContentExampleDialog {
@@ -169,3 +212,4 @@ export class DialogContentExampleDialog {
   }
 
 }
+*/

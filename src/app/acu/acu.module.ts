@@ -6,10 +6,12 @@ import { AcuRoutingModule } from './acu-routing.module';
 import { MaterialModule } from '@material/material.module';
 
 
-import { AgendaComponent, DialogContentExampleDialog } from './components/agenda/agenda.component';
+import { AgendaComponent } from './components/agenda/agenda.component';
 import { NavComponent } from './components/nav/nav.component';
 import { SharedModule } from '@shared/shared.module';
 import { FormsModule } from '@angular/forms';
+import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
+import { AgendarClaseComponent } from './components/agenda/modals/agendar-clase/agendar-clase.component';
 
 
 
@@ -17,7 +19,7 @@ import { FormsModule } from '@angular/forms';
   declarations: [
     AgendaComponent,
     NavComponent,
-    DialogContentExampleDialog
+    AgendarClaseComponent
   ],
   imports: [
     CommonModule,
@@ -26,6 +28,7 @@ import { FormsModule } from '@angular/forms';
     ReactiveFormsModule,
     SharedModule,
     FormsModule,
+    SweetAlert2Module
   ]
 })
 export class AcuModule { }
