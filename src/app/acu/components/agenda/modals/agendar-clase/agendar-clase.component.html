@@ -9,7 +9,7 @@
         <div class="row">
             <div class="col">
                 <mat-form-field class="full-width">
-                    <input matInput [matDatepicker]="picker" placeholder="Fecha" value="13/01/2020">
+                    <input matInput [matDatepicker]="picker" placeholder="Fecha" [value]="agendaClase.FechaClase">
                     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
@@ -20,19 +20,19 @@
             </div>
             <div class="col">
                 <mat-form-field class="full-width">
-                    <input matInput type="time" placeholder="Hora" value="08:00">
+                    <input matInput type="time" placeholder="Hora" [value]="agendaClase.Hora">
                 </mat-form-field>
             </div>
             <div class="col">
                 <mat-form-field class="full-width">
-                    <input matInput type="number" placeholder="Número de Movil" value="240">
+                    <input matInput type="number" placeholder="Número de Movil" [value]="agendaClase.EscMovCod">
                 </mat-form-field>
             </div>
         </div>
         <div class="row">
             <div class="col">
                 <mat-form-field class="full-width">
-                    <input matInput placeholder="Alumno">
+                    <input matInput placeholder="Alumno" [value]="agendaClase.AluNomApe">
                 </mat-form-field>
             </div>
         </div>
@@ -46,12 +46,12 @@
         <div class="row">
             <div class="col">
                 <mat-form-field class="full-width">
-                    <input matInput placeholder="Tipo Clase">
+                    <input matInput placeholder="Tipo Clase" [value]="agendaClase.EsAgCuTipCla">
                 </mat-form-field>
             </div>
             <div class="col">
                 <mat-form-field class="full-width">
-                    <input matInput placeholder="Nº de Clase Práctica">
+                    <input matInput placeholder="Nº de Clase Práctica" [value]="agendaClase.EsAgCuNroCla">
                 </mat-form-field>
             </div>
             <div class="col">
@@ -66,21 +66,21 @@
         <div class="row">
             <div class="col">
                 <mat-form-field class="full-width">
-                    <input matInput placeholder="Instructor asignado al curso">
+                    <input matInput placeholder="Instructor asignado al curso" [value]="agendaClase.EscInsId">
                 </mat-form-field>
             </div>
         </div>
         <div class="row">
             <div class="col">
                 <mat-form-field class="full-width">
-                    <input matInput placeholder="Instructor">
+                    <input matInput placeholder="Instructor" [value]="agendaClase.EscInsNom">
                 </mat-form-field>
             </div>
         </div>
         <div class="row">
             <div class="col">
                 <mat-form-field class="full-width">
-                    <input matInput placeholder="Detalle">
+                    <input matInput placeholder="Detalle" [value]="agendaClase.EsAgCuDet">
                 </mat-form-field>
             </div>
             <div class="col">
@@ -99,7 +99,7 @@
                 <mat-form-field class="full-width">
 
                     <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1"
-                        cdkAutosizeMaxRows="5" placeholder="Observaciones"></textarea>
+                        cdkAutosizeMaxRows="5" placeholder="Observaciones" [value]="agendaClase.EsAgCuObs"></textarea>
                 </mat-form-field>
             </div>
         </div>

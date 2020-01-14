@@ -17,13 +17,28 @@ export class AcuService {
   constructor(private http: HttpClient) { }
 
   getTablaAgenda() {
-    return this.http.post('http://192.1.0.71/ACU_Web.NetEnvironment_Prototipo/rest/wsObtenerTablaAgenda', {}, this.httpOptions)
+    return this.http.post(`${environment.url_ws}/wsObtenerTablaAgenda`, {}, this.httpOptions)
       .subscribe((res: any) => {
         console.log('res: ', res);
         console.log('res.TablaAgenda', res.TablaAgenda);
 
         // return response.json();
       });
+  }
+
+  getClaseAgenda(fechaClase: string, horaClase: number, movCod: number) {
+    return this.http.post(`${environment.url_ws}/wsObtenerAgendaClase`, {
+      FechaClase: fechaClase,
+      HoraClase: horaClase,
+      MovCod: movCod
+    }, this.httpOptions);
+    // .subscribe((res: any) => {
+    //   console.log('res: ', res);
+    //   console.log('res.AgendaClase', res.AgendaClase);
+
+    //   // return response.json();
+    // });
+
   }
 
 

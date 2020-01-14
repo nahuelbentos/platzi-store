@@ -62,6 +62,7 @@ export class AgendaComponent implements OnInit {
   agenda: any[] = [];
   moviles: any[] = [];
   horas: any[] = [];
+  fechaClase = '';
 
   horaMovilPlano: DataAgenda[] = null;
   // horaMovilPlano: [{
@@ -86,6 +87,7 @@ export class AgendaComponent implements OnInit {
         this.agenda = res.TablaAgenda;
         this.moviles = res.TablaAgenda.Moviles;
         this.horas = res.TablaAgenda.Horas;
+        this.fechaClase = res.TablaAgenda.FechaClase;
         console.log('2)horas: ', this.horas);
         this.columns = this.horas.map(item => item.Hora.toString()); // this.moviles.map(item => item.MovCod.toString());
         this.horaMovilPlano = res.TablaAgenda.HoraMovilPlano;
@@ -142,7 +144,7 @@ export class AgendaComponent implements OnInit {
     for (const h of this.horaMovilPlano) {
       if (h.Hora === hora.Hora && h.MovCod === movil.MovCod) {
         console.log(`Hora movil: ${h}`);
-        return `${h.EsAgCuInsId} ${h.AluApe1.substring(1, 10)}`;
+        return `${h.EsAgCuInsId} ${h.AluApe1.substring(0, 10)}`;
       }
     }
 
@@ -153,22 +155,25 @@ export class AgendaComponent implements OnInit {
 
   showAlert(movil: number, hora: number): void {
     console.log(`Movil: ${movil}, Hora: ${hora}`);
+    this.acuService.getClaseAgenda(this.fechaClase, hora, movil)
+      .subscribe((res: any) => {
+        console.log('Agenda: ', res);
 
-    let data: DataAgenda = this.getDataAgenda(movil, hora);
-    const dialogRef = this.dialog.open(AgendarClaseComponent, {
-      data: { name: this.name, animal: this.animal }
-    });
+        const dialogRef = this.dialog.open(AgendarClaseComponent, {
+          data: {
+            agendaClase: res.AgendaClase,
+          }
+        });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed: ', result);
-      this.animal = result;
-    });
+        dialogRef.afterClosed().subscribe(result => {
+          console.log('The dialog was closed: ', result);
+          this.animal = result;
+        });
 
-  }
+      });
 
 
-  getDataAgenda(movil: number, hora: number): DataAgenda {
-    return null;
+
   }
 
 
@@ -189,8 +194,31 @@ export class AgendaComponent implements OnInit {
 
 
 export interface DialogData {
-  animal: string;
-  name: string;
+  FechaClase: string;
+  Hora: number;
+  EscMovCod: number;
+  AluId: string;
+  AluNro: string;
+  AluNomApe: string;
+  Cursos: string[];
+  CantidadClasesPracticas: number;
+  EsAgCuTipCla: string;
+  EsAgCuClaAdiSN: string;
+  EscInsId: string;
+  EscInsNom: string;
+  EsAgCuInsId: string;
+  EsAgCuInsNom: string;
+  EsAgCuDet: string;
+  EsAgCuEst: string;
+  EsAgCuObs: string;
+  EsAgCuDetAviso: string;
+  EscCurEmp: string;
+  EsAgCuInNoCorto: string;
+  EsAgCuNroCla: number;
+  EsAgCuEstOld: string;
+  EsAgCuAvisoOld: number;
+  EsAgCuAviso: number;
+  EsAgCuDetAvisoOld: string;
 }
 
 /*
