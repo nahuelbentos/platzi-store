@@ -12,6 +12,7 @@ import { SharedModule } from '@shared/shared.module';
 import { FormsModule } from '@angular/forms';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { AgendarClaseComponent } from './components/agenda/modals/agendar-clase/agendar-clase.component';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 
 
@@ -29,6 +30,9 @@ import { AgendarClaseComponent } from './components/agenda/modals/agendar-clase/
     SharedModule,
     FormsModule,
     SweetAlert2Module
-  ]
+  ],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'es-UY' },
+  ],
 })
 export class AcuModule { }
