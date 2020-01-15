@@ -1,27 +1,59 @@
 <div class="contenedor">
 
-    <mat-button-toggle-group #group="matButtonToggleGroup">
-        <mat-button-toggle value="left" aria-label="Text align left">
-            Duplicar Día
-        </mat-button-toggle>
-        <mat-button-toggle value="center" aria-label="Text align center">
-            Liberar Día
-        </mat-button-toggle>
-        <mat-button-toggle value="right" aria-label="Text align right">
-            Mover Día
-        </mat-button-toggle>
-        <mat-button-toggle value="justify" aria-label="Text align justify">
-            Imprimir Planilla
-        </mat-button-toggle>
-        <mat-button-toggle value="justify" aria-label="Text align justify">
-            Agenda Alumno
-        </mat-button-toggle>
-        <mat-button-toggle value="justify" aria-label="Text align justify">
-            Agenda Instructor
-        </mat-button-toggle>
-    </mat-button-toggle-group>
+    <div class="row">
+        <div class="col">
+            <mat-button-toggle-group #group="matButtonToggleGroup">
+                <mat-button-toggle value="left" aria-label="Text align left">
+                    Duplicar Día
+                </mat-button-toggle>
+                <mat-button-toggle value="center" aria-label="Text align center">
+                    Liberar Día
+                </mat-button-toggle>
+                <mat-button-toggle value="right" aria-label="Text align right">
+                    Mover Día
+                </mat-button-toggle>
+                <mat-button-toggle value="justify" aria-label="Text align justify">
+                    Imprimir Planilla
+                </mat-button-toggle>
+                <mat-button-toggle value="justify" aria-label="Text align justify">
+                    Agenda Alumno
+                </mat-button-toggle>
+                <mat-button-toggle value="justify" aria-label="Text align justify">
+                    Agenda Instructor
+                </mat-button-toggle>
+            </mat-button-toggle-group>
+        </div>
+        <div class="col ">
 
-    <table mat-table [dataSource]="agendaDataSource" class="mat-elevation-z8">
+            <mat-toolbar>
+                <mat-toolbar-row>
+
+                    <mat-form-field style="margin-left: auto;" class="width-fixed">
+                        <!-- <input type="date" matInput [(value)]="fecha"> -->
+                        <input matInput [matDatepicker]="picker" [(value)]="fecha">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </mat-toolbar-row>
+                <mat-toolbar-row>
+                    <div style="margin-left: auto;" class="width-fixed" align="center">
+                        <span> {{fecha | date:'EEEE' | daySpanish}} </span>
+                        <div class="example-button-row" align="center">
+                            <button mat-stroked-button (click)="diaAnterior()" color="warn"
+                                aria-label="Example icon-button with a heart icon">
+                                <mat-icon>arrow_back</mat-icon>
+                            </button>
+                            <button mat-stroked-button (click)="diaSiguiente()" color="warn"
+                                aria-label="Example icon-button with a heart icon">
+                                <mat-icon>arrow_forward</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </mat-toolbar-row>
+            </mat-toolbar>
+        </div>
+    </div>
+    <table mat-table [(dataSource)]="agendaDataSource" class="mat-elevation-z8">
 
 
         <ng-container matColumnDef="Movil">

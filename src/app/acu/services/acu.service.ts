@@ -45,4 +45,10 @@ export class AcuService {
   getAgenda() {
     return this.http.post(`${environment.url_ws}/wsObtenerTablaAgenda`, {});
   }
+
+  getAgendaPorFecha(fecha: any) {
+    return this.http.post(`${environment.url_ws}/wsObtenerAgendaPorFecha`, {
+      fecha
+    });
+  }
 }

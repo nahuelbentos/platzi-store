@@ -17,6 +17,8 @@ export class AgendarClaseComponent implements OnInit {
   hora: Date = new Date();
   fechaClase: Date = new Date();
   instructorAsignado = '';
+  curso = '';
+
   constructor(
     public dialogRef: MatDialogRef<AgendaComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any) { }

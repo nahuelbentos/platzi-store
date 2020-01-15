@@ -35,7 +35,26 @@ td:active {
   color: #212529;
   background-color: rgba(52, 10, 99, 0.2);
 }
+
 td:focus {
   color: #212529;
   background-color: rgba(240, 0, 0, 0.562);
+}
+
+.example-button-row button,
+.example-button-row a {
+  margin-right: 8px;
+}
+
+mat-toolbar {
+  background-color: transparent;
+}
+
+.width-fixed {
+  max-width: 130px;
+  min-width: 130px;
+}
+
+.borde-fecha {
+  border: 1px solid grey;
 }

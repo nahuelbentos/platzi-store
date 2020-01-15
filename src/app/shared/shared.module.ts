@@ -15,6 +15,7 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
 
 import { MaterialModule } from '@material/material.module';
 import { ValueIPipe } from './pipes/value-i.pipe';
+import { DaySpanishPipe } from './pipes/day-spanish.pipe';
 
 @NgModule({
   declarations: [
@@ -24,14 +25,16 @@ import { ValueIPipe } from './pipes/value-i.pipe';
     FooterComponent,
     CartComponent,
     PageNotFoundComponent,
-    ValueIPipe
+    ValueIPipe,
+    DaySpanishPipe
   ],
   exports: [
     ExponentialPipe,
     HighlightDirective,
     HeaderComponent,
     FooterComponent,
-    ValueIPipe
+    ValueIPipe,
+    DaySpanishPipe
   ],
   imports: [
     CommonModule,

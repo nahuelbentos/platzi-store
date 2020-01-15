@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, AfterViewInit } from '@angular/core';
 import { AcuService } from '../../services/acu.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AgendarClaseComponent } from './modals/agendar-clase/agendar-clase.component';
@@ -51,18 +51,19 @@ export interface DataAgenda {
   templateUrl: './agenda.component.html',
   styleUrls: ['./agenda.component.scss']
 })
-export class AgendaComponent implements OnInit {
+export class AgendaComponent implements OnInit, AfterViewInit {
 
   animal: string;
   name: string;
 
-  agendaDisplayedColumns: string[] = ['Movil'];
+  agendaDisplayedColumns: string[];
   columns: string[] = [];
   agendaDataSource: AgendaElement[] = [];
   agenda: any[] = [];
   moviles: any[] = [];
   horas: any[] = [];
   fechaClase = '';
+  fecha: Date;
 
   horaMovilPlano: DataAgenda[] = null;
   // horaMovilPlano: [{
@@ -80,6 +81,7 @@ export class AgendaComponent implements OnInit {
 
   ngOnInit() {
     console.log('Fuciona?');
+    this.fecha = new Date();
     this.acuService.getAgenda()
       .subscribe((res: any) => {
         console.log('Agenda: ', res);
@@ -93,6 +95,7 @@ export class AgendaComponent implements OnInit {
         this.horaMovilPlano = res.TablaAgenda.HoraMovilPlano;
         this.agendaDataSource = this.makeDataSource(this.horas, this.moviles);
 
+        this.agendaDisplayedColumns = ['Movil'];
         this.agendaDisplayedColumns = this.agendaDisplayedColumns.concat(this.columns);
         console.log('agendaDisplayedColumns: ', this.agendaDisplayedColumns);
 
@@ -172,20 +175,84 @@ export class AgendaComponent implements OnInit {
 
       });
 
-
-
   }
 
 
-  public saveEmail(email: string): void {
-    // ... save user email
+  ngAfterViewInit() {
+    this.getAgenda(this.fecha);
+
   }
 
-  public handleRefusalToSetEmail(dismissMethod: string): void {
-    // dismissMethod can be 'cancel', 'overlay', 'close', and 'timer'
-    // ... do something
+  diaAnterior() {
+    const result = new Date(this.fecha);
+    console.log('1) result: ', result);
+    result.setDate(result.getDate() - 1);
+    console.log('2) result: ', result);
+
+    this.fecha = result; // .setDate(this.fecha.getDate() - 1);
+    this.getAgenda(this.fecha);
+
   }
 
+  diaSiguiente() {
+    const result = new Date(this.fecha);
+    console.log('1) result: ', result);
+    result.setDate(result.getDate() + 1);
+    console.log('2) result: ', result);
+
+    this.fecha = result; // .setDate(this.fecha.getDate() - 1);
+    this.getAgenda(this.fecha);
+
+  }
+
+  getAgenda(fecha: Date) {
+    console.log('1fecha: ', fecha.toLocaleDateString());
+
+    const strFecha = this.formatDateToString(fecha);
+    console.log('2strFecha: ', strFecha);
+    this.acuService.getAgendaPorFecha(strFecha)
+      .subscribe((res: any) => {
+        console.log('Agenda: ', res);
+
+        this.agenda = res.TablaAgenda;
+        this.moviles = res.TablaAgenda.Moviles;
+        this.horas = res.TablaAgenda.Horas;
+        this.fechaClase = res.TablaAgenda.FechaClase;
+        console.log('2)horas: ', this.horas);
+        this.columns = this.horas.map(item => item.Hora.toString()); // this.moviles.map(item => item.MovCod.toString());
+        this.horaMovilPlano = res.TablaAgenda.HoraMovilPlano;
+        this.agendaDataSource = this.makeDataSource(this.horas, this.moviles);
+
+        this.agendaDisplayedColumns = ['Movil'];
+        this.agendaDisplayedColumns = this.agendaDisplayedColumns.concat(this.columns);
+        console.log('agendaDisplayedColumns: ', this.agendaDisplayedColumns);
+
+      });
+  }
+
+  formatDateToString(fecha: Date): string {
+    const day = fecha.getDate();
+    const month = fecha.getMonth() + 1;
+    const year = fecha.getFullYear();
+
+    let strDay;
+    let strMonth;
+    const strYear = year.toString();
+
+    if (day < 10) {
+      strDay = '0' + day.toString();
+    } else {
+      strDay = day.toString();
+    }
+
+    if (month < 10) {
+      strMonth = '0' + month.toString();
+    } else {
+      strMonth = month.toString();
+    }
+    return `${strYear}-${strMonth}-${strDay}`;
+
+  }
   testAlert() {
     alert('ok');
   }

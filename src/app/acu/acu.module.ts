@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 
@@ -32,7 +32,7 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     SweetAlert2Module
   ],
   providers: [
-    { provide: MAT_DATE_LOCALE, useValue: 'es-UY' },
+    { provide: MAT_DATE_LOCALE, useValue: 'es-UY' }
   ],
 })
 export class AcuModule { }
