@@ -27,9 +27,14 @@
             </div>
         </div>
         <div class="row">
+            <div class="col-xs-2">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Alumno" [value]="agendaClase.AluNro">
+                </mat-form-field>
+            </div>
             <div class="col">
                 <mat-form-field class="full-width">
-                    <input matInput placeholder="Alumno" [value]="agendaClase.AluNomApe">
+                    <input matInput placeholder="   " [value]="agendaClase.AluNomApe">
                 </mat-form-field>
             </div>
         </div>
@@ -116,12 +121,36 @@
                 </mat-form-field>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col btns-agendar" align="center">
+                <button mat-raised-button>Grabar Clase</button>
+                <button mat-raised-button>Cambiar Clase</button>
+                <button mat-raised-button>Liberar Clase</button>
+                <button mat-raised-button>Mover Clase</button>
+                <button mat-raised-button>Copiar Clase</button>
+            </div>
+        </div>
+        <mat-divider></mat-divider>
+
+        <div class="row">
+            <div class="col-xs-2 btns-agendar" align="center">
+                <button mat-raised-button>Avisar</button>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+
+                    <textarea matInput placeholder="Observaciones" [value]="agendaClase.EsAgCuDetAviso"></textarea>
+                </mat-form-field>
+            </div>
+        </div>
     </div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-    <button mat-button [mat-dialog-close]="data.animal" cdkFocusInitial>Reservar</button>
-    <button mat-button [mat-dialog-close]="data.animal" cdkFocusInitial>Ok</button>
+    <button mat-button [mat-dialog-close]="data.animal" cdkFocusInitial>Grabar Cambio</button>
+    <button mat-button [mat-dialog-close]="data.animal" cdkFocusInitial>Disponibilidad</button>
+    <button mat-button [mat-dialog-close]="data.animal" cdkFocusInitial>Historial Eventos</button>
     <button mat-button mat-dialog-close (click)="onNoClick()">Cancelar</button>
 </mat-dialog-actions>
 

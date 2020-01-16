@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { AgendaComponent, DialogData } from '../../agenda.component';
+import { AgendaComponent } from '../../agenda.component';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Time } from '@angular/common';
+
 
 
 
@@ -19,6 +19,7 @@ export class AgendarClaseComponent implements OnInit {
   instructorAsignado = '';
   curso = '';
 
+  // constructor() { }
   constructor(
     public dialogRef: MatDialogRef<AgendaComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any) { }
@@ -28,14 +29,11 @@ export class AgendarClaseComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('Estoy en agendar-clase, mi data es ', this.data.agendaClase);
+    console.log('data: ', this.data);
     this.agendaClase = this.data.agendaClase;
     this.hora.setHours(this.agendaClase.Hora, 0);
     this.instructorAsignado = `${this.agendaClase.EsAgCuInsId.toString().trim()} ${this.agendaClase.EsAgCuInsNom}`;
-    console.log('Estoy en agendar-clase, mi hora  es ', this.hora);
-    console.log('La fecha de la clase es: ', this.agendaClase.FechaClase);
 
-    console.log('Estoy en agendar-clase, mi agendaClase es ', this.agendaClase);
   }
 
 }

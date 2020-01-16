@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AgendaComponent } from './components/agenda/agenda.component';
 import { NavComponent } from './components/nav/nav.component';
+import { AgendarClaseComponent } from './components/agenda/modals/agendar-clase/agendar-clase.component';
 
 
 const routes: Routes = [
@@ -12,6 +13,10 @@ const routes: Routes = [
       {
         path: 'agenda',
         component: AgendaComponent
+      },
+      {
+        path: 'agendaclase',
+        component: AgendarClaseComponent
       },
     ]
   }

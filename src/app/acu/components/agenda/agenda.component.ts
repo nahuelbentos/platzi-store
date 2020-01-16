@@ -43,6 +43,22 @@ export interface DataAgenda {
   EsAgCuInsNom: string;
   EsAgCuInsNomCorto: string;
   TipCurId: number;
+  HoraCoche: string;
+  AluNro: number;
+  InsEst: string;
+  TipCurEst: string;
+  EscCurEst: string;
+  EsAgCuEst: string;
+  EsAgCuAviso: number;
+  MovilEstado: string;
+  Situacion: string;
+  HorasNoDisponibles: string;
+  claseCelda: string;
+}
+
+export interface Cell {
+  value: string;
+  class: string;
 }
 
 
@@ -55,10 +71,12 @@ export class AgendaComponent implements OnInit, AfterViewInit {
 
   animal: string;
   name: string;
+  sabadoODomingo: number;
+  verAgenda: boolean;
 
   agendaDisplayedColumns: string[];
   columns: string[] = [];
-  agendaDataSource: AgendaElement[] = [];
+  agendaDataSource: AgendaElement[];
   agenda: any[] = [];
   moviles: any[] = [];
   horas: any[] = [];
@@ -66,13 +84,6 @@ export class AgendaComponent implements OnInit, AfterViewInit {
   fecha: Date;
 
   horaMovilPlano: DataAgenda[] = null;
-  // horaMovilPlano: [{
-  //   Hora: string;
-  //   MovCod: number;
-  //   AluId: number;
-  //   EsAgCuInsId: string;
-
-  // }] = null;
 
   constructor(
     private acuService: AcuService,
@@ -82,24 +93,7 @@ export class AgendaComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     console.log('Fuciona?');
     this.fecha = new Date();
-    this.acuService.getAgenda()
-      .subscribe((res: any) => {
-        console.log('Agenda: ', res);
-
-        this.agenda = res.TablaAgenda;
-        this.moviles = res.TablaAgenda.Moviles;
-        this.horas = res.TablaAgenda.Horas;
-        this.fechaClase = res.TablaAgenda.FechaClase;
-        console.log('2)horas: ', this.horas);
-        this.columns = this.horas.map(item => item.Hora.toString()); // this.moviles.map(item => item.MovCod.toString());
-        this.horaMovilPlano = res.TablaAgenda.HoraMovilPlano;
-        this.agendaDataSource = this.makeDataSource(this.horas, this.moviles);
-
-        this.agendaDisplayedColumns = ['Movil'];
-        this.agendaDisplayedColumns = this.agendaDisplayedColumns.concat(this.columns);
-        console.log('agendaDisplayedColumns: ', this.agendaDisplayedColumns);
-
-      });
+    this.getAgenda(this.fecha);
   }
 
   makeDataSource(
@@ -107,12 +101,7 @@ export class AgendaComponent implements OnInit, AfterViewInit {
     moviles: any[]) {
 
     const col: any[] = [];
-    console.log('horas: ', horas);
-    console.log('moviles: ', moviles);
 
-
-    let i = 0;
-    let j = 0;
     for (const m of moviles) {
 
       const o = {};
@@ -120,38 +109,30 @@ export class AgendaComponent implements OnInit, AfterViewInit {
       o['Movil'] = m.MovCod;
 
       for (const h of horas) {
-        let val = this.existeEnHorasMoviles(h, m);
-        // if (val === '') {
-        //   j--;
-        //   val = 'L'; // j.toString() + ' ';
-        // } else {
-        //   i++;
-        //   val = 'O' + ' ' + val;
-        // }
-        o['Hora' + h.Hora] = val;
+        const cell = this.existeEnHorasMoviles(h, m);
+
+        o['class' + h.Hora] = cell.class;
+        o['Hora' + h.Hora] = cell.value;
       }
 
-      console.log('object: ', o);
       col.push(o);
     }
-
-    console.log('col: ', col);
-
     return col;
-
-
   }
 
-  existeEnHorasMoviles(hora: any, movil: any) {
-
+  existeEnHorasMoviles(hora: any, movil: any): Cell {
+    const cell: Cell = {
+      value: '',
+      class: '',
+    };
     for (const h of this.horaMovilPlano) {
       if (h.Hora === hora.Hora && h.MovCod === movil.MovCod) {
-        console.log(`Hora movil: ${h}`);
-        return `${h.EsAgCuInsId} ${h.AluApe1.substring(0, 10)}`;
+        cell.value = `${h.EsAgCuInsId} ${h.AluApe1.substring(0, 10)}`;
+        cell.class = h.claseCelda;
       }
     }
 
-    return '';
+    return cell;
 
   }
 
@@ -185,31 +166,26 @@ export class AgendaComponent implements OnInit, AfterViewInit {
 
   diaAnterior() {
     const result = new Date(this.fecha);
-    console.log('1) result: ', result);
     result.setDate(result.getDate() - 1);
-    console.log('2) result: ', result);
-
-    this.fecha = result; // .setDate(this.fecha.getDate() - 1);
+    this.sabadoODomingo = result.getDay();
+    this.fecha = result;
     this.getAgenda(this.fecha);
 
   }
 
   diaSiguiente() {
+    this.agendaDataSource = [];
     const result = new Date(this.fecha);
-    console.log('1) result: ', result);
     result.setDate(result.getDate() + 1);
-    console.log('2) result: ', result);
-
-    this.fecha = result; // .setDate(this.fecha.getDate() - 1);
+    this.sabadoODomingo = result.getDay();
+    this.fecha = result;
     this.getAgenda(this.fecha);
 
   }
 
   getAgenda(fecha: Date) {
-    console.log('1fecha: ', fecha.toLocaleDateString());
-
+    this.verAgenda = false;
     const strFecha = this.formatDateToString(fecha);
-    console.log('2strFecha: ', strFecha);
     this.acuService.getAgendaPorFecha(strFecha)
       .subscribe((res: any) => {
         console.log('Agenda: ', res);
@@ -218,14 +194,13 @@ export class AgendaComponent implements OnInit, AfterViewInit {
         this.moviles = res.TablaAgenda.Moviles;
         this.horas = res.TablaAgenda.Horas;
         this.fechaClase = res.TablaAgenda.FechaClase;
-        console.log('2)horas: ', this.horas);
-        this.columns = this.horas.map(item => item.Hora.toString()); // this.moviles.map(item => item.MovCod.toString());
+        this.columns = this.horas.map(item => item.Hora.toString());
         this.horaMovilPlano = res.TablaAgenda.HoraMovilPlano;
         this.agendaDataSource = this.makeDataSource(this.horas, this.moviles);
 
         this.agendaDisplayedColumns = ['Movil'];
         this.agendaDisplayedColumns = this.agendaDisplayedColumns.concat(this.columns);
-        console.log('agendaDisplayedColumns: ', this.agendaDisplayedColumns);
+        this.verAgenda = true;
 
       });
   }
@@ -253,58 +228,4 @@ export class AgendaComponent implements OnInit, AfterViewInit {
     return `${strYear}-${strMonth}-${strDay}`;
 
   }
-  testAlert() {
-    alert('ok');
-  }
 }
-
-
-
-export interface DialogData {
-  FechaClase: string;
-  Hora: number;
-  EscMovCod: number;
-  AluId: string;
-  AluNro: string;
-  AluNomApe: string;
-  Cursos: string[];
-  CantidadClasesPracticas: number;
-  EsAgCuTipCla: string;
-  EsAgCuClaAdiSN: string;
-  EscInsId: string;
-  EscInsNom: string;
-  EsAgCuInsId: string;
-  EsAgCuInsNom: string;
-  EsAgCuDet: string;
-  EsAgCuEst: string;
-  EsAgCuObs: string;
-  EsAgCuDetAviso: string;
-  EscCurEmp: string;
-  EsAgCuInNoCorto: string;
-  EsAgCuNroCla: number;
-  EsAgCuEstOld: string;
-  EsAgCuAvisoOld: number;
-  EsAgCuAviso: number;
-  EsAgCuDetAvisoOld: string;
-}
-
-/*
-@Component({
-  // tslint:disable-next-line: component-selector
-  selector: 'dialog-content-example-dialog',
-  templateUrl: './modals/agendar-clase/agendar-clase.component.html',
-  // templateUrl: 'dialog-content-example-dialog.html',
-})
-// tslint:disable-next-line: component-class-suffix
-export class DialogContentExampleDialog {
-
-  constructor(
-    public dialogRef: MatDialogRef<AgendaComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) { }
-
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-
-}
-*/
