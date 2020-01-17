@@ -30,6 +30,23 @@ export class AgendarClaseComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any) {
 
     this.agendaClase = this.data.agendaClase;
+
+    console.log('1)fecha: ', this.agendaClase.FechaClase);
+    let day = Number(this.agendaClase.FechaClase.substring(this.agendaClase.FechaClase.length - 2, this.agendaClase.FechaClase.length));
+    let month = Number(this.agendaClase.FechaClase.substring(5, 7));
+    let year = Number(this.agendaClase.FechaClase.substring(0, 4));
+
+    this.fechaClase.setDate(day);
+    this.fechaClase.setMonth(month);
+    this.fechaClase.setFullYear(year);
+
+    console.log('2)day: ', day);
+    console.log('2)year: ', year);
+    console.log('2)month: ', month);
+    // this.fechaClase = this.agendaClase.FechaClase;
+    console.log('2)fecha: ', this.fechaClase);
+    // console.log('fecha.getDate(): ', this.fechaClase.getDate().toString());
+    // console.log('fecha.getUTCDate(): ', this.fechaClase.getUTCDate());
     this.hora.setHours(this.agendaClase.Hora, 0);
     this.instructorAsignado = `${this.agendaClase.EsAgCuInsId.toString().trim()} ${this.agendaClase.EsAgCuInsNom}`;
     this.movil = this.agendaClase.EscMovCod;
