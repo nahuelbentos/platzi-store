@@ -30,6 +30,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { AgendaComponent } from './acu/components/agenda/agenda.component';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { AcuModule } from './acu/acu.module';
+import { NgxSoapModule } from 'ngx-soap';
 
 // if (environment.production === true) {
 Sentry.init({
@@ -58,6 +59,7 @@ Sentry.init({
     MaterialModule,
     MatNativeDateModule,
     ReactiveFormsModule,
+    NgxSoapModule,
 
   ],
   providers: [

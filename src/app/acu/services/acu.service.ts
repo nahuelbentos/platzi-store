@@ -1,12 +1,18 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '@environments/environment';
+// import { xml2json } from 'xml-js';
+import { NgxXml2jsonService } from 'ngx-xml2json';
+
+import { NgxSoapService, Client, ISoapMethodResponse } from 'ngx-soap';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AcuService {
 
+  client: Client;
+  xmlhttp = new XMLHttpRequest();
 
   httpOptions = {
     headers: new HttpHeaders({
@@ -20,7 +26,15 @@ export class AcuService {
     })
   };
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private ngxXml2jsonService: NgxXml2jsonService,
+    private soapservice: NgxSoapService) {
+    this.soapservice.createClient(
+      'http://192.1.0.71/ACU_Web.NetEnvironment/wsvalidacionesagendaclase.aspx?wsdl')
+      .then(client => this.client = client);
+    // .subscribe();
+  }
 
   getTablaAgenda() {
     return this.http.post(`${environment.url_ws}/wsObtenerTablaAgenda`, {}, this.httpOptions)
@@ -32,18 +46,14 @@ export class AcuService {
       });
   }
 
+
   getClaseAgenda(fechaClase: string, horaClase: number, movCod: number) {
     return this.http.post(`${environment.url_ws}/wsObtenerAgendaClase`, {
       FechaClase: fechaClase,
       HoraClase: horaClase,
       MovCod: movCod
     }, this.httpOptions);
-    // .subscribe((res: any) => {
-    //   console.log('res: ', res);
-    //   console.log('res.AgendaClase', res.AgendaClase);
 
-    //   // return response.json();
-    // });
 
   }
 
@@ -58,23 +68,113 @@ export class AcuService {
     });
   }
 
-  getValidation1() {
+
+  alumnoYaAsignado(AluNro: number, fechaClase: any, horaClase: any, movCod: number) {
+
+    console.log('parametros: ');
+    console.log(' AluNro: ', AluNro);
+    console.log(' fechaClase: ', fechaClase);
+    console.log(' horaClase: ', horaClase);
+    console.log(' movCod: ', movCod);
+
+    this.xmlhttp.open('POST', `${environment.url_soap}/wsvalidacionesagendaclase.aspx`, true);
+
     const body = `
     <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:acu="ACU_Web">
-    <soapenv:Header/>
-    <soapenv:Body>
-       <acu:wsValidacionesAgendaClase.VALIDATION1>
-          <acu:Id>1</acu:Id>
-       </acu:wsValidacionesAgendaClase.VALIDATION1>
-    </soapenv:Body>
- </soapenv:Envelope>
+   <soapenv:Header/>
+   <soapenv:Body>
+      <acu:wsValidacionesAgendaClase.ALUMNOYAASIGNADO>
+         <acu:Alunro>${AluNro}</acu:Alunro>
+         <acu:Fchclase>${fechaClase}</acu:Fchclase>
+         <acu:Horclase>${horaClase}</acu:Horclase>
+         <acu:Escmovcod>${movCod}</acu:Escmovcod>
+      </acu:wsValidacionesAgendaClase.ALUMNOYAASIGNADO>
+   </soapenv:Body>
+</soapenv:Envelope>
     `;
-    return this.http.post(`${environment.url_soap}/wsvalidacionesagendaclase.aspx`, body, this.httOptionsXml);
+
+    this.xmlhttp.onreadystatechange = () => {
+      if (this.xmlhttp.readyState === 4) {
+        if (this.xmlhttp.status === 200) {
+
+
+          const xml: any = this.xmlhttp.responseXML;
+
+
+          console.log('responseText: ', this.xmlhttp.responseText);
+
+          let json = xml2json(this.xmlhttp.responseXML);
+          console.log('json: ', json);
+
+          const xmlDoc = this.formatXMLResponse(this.xmlhttp.responseText);
+          json = xml2json(xmlDoc);
+
+          console.log('json: ', json);
+          console.log(
+            'json.Cabezal.cabezal1.VALIDATION1Response.Mensaje: ',
+            json.response.value.ALUMNOYAASIGNADOResponse.Yaasignado);
+
+          return json.response.value.ALUMNOYAASIGNADOResponse.Yaasignado;
+
+        }
+      }
+    };
+
+    // Send the POST request
+    this.xmlhttp.setRequestHeader('Content-Type', 'text/json');
+    this.xmlhttp.send(body);
+  }
+
+  alumnoTieneExcepcion(aluId: number, fechaClase: any, horaClase: any) {
+
+    this.xmlhttp.open('POST', `${environment.url_soap}/wsvalidacionesagendaclase.aspx`, true);
+
+    const body = `
+    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:acu="ACU_Web">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <acu:wsValidacionesAgendaClase.ALUMNOTIENEEXCEPCION>
+         <acu:Aluid>${aluId}</acu:Aluid>
+         <acu:Fchclase>${fechaClase}</acu:Fchclase>
+         <acu:Horclase>${horaClase}</acu:Horclase>
+      </acu:wsValidacionesAgendaClase.ALUMNOTIENEEXCEPCION>
+   </soapenv:Body>
+</soapenv:Envelope>
+    `;
+
+    this.xmlhttp.onreadystatechange = () => {
+      if (this.xmlhttp.readyState === 4) {
+        if (this.xmlhttp.status === 200) {
+
+
+          const xml: any = this.xmlhttp.responseXML;
+
+
+          console.log('responseText: ', this.xmlhttp.responseText);
+
+          let json = xml2json(this.xmlhttp.responseXML);
+          console.log('json: ', json);
+
+          const xmlDoc = this.formatXMLResponse(this.xmlhttp.responseText);
+          json = xml2json(xmlDoc);
+
+          console.log('json: ', json);
+          console.log(
+            'json.Cabezal.cabezal1.VALIDATION1Response.Mensaje: ',
+            json.response.value.ALUMNOTIENEEXCEPCIONResponse.Tieneexcepcion);
+
+        }
+      }
+    };
+
+    // Send the POST request
+    this.xmlhttp.setRequestHeader('Content-Type', 'text/json');
+    this.xmlhttp.send(body);
   }
 
   soap() {
-    const xmlhttp = new XMLHttpRequest();
-    xmlhttp.open('POST', `${environment.url_soap}/wsvalidacionesagendaclase.aspx`, true);
+
+    this.xmlhttp.open('POST', `${environment.url_soap}/wsvalidacionesagendaclase.aspx`, true);
 
     // build SOAP request
 
@@ -82,30 +182,66 @@ export class AcuService {
     <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:acu="ACU_Web">
     <soapenv:Header/>
     <soapenv:Body>
-       <acu:wsValidacionesAgendaClase.VALIDATION1>
+       <acu:wsValidacionesAgendaClase.VALIDATION2>
           <acu:Id>1</acu:Id>
-       </acu:wsValidacionesAgendaClase.VALIDATION1>
+       </acu:wsValidacionesAgendaClase.VALIDATION2>
     </soapenv:Body>
  </soapenv:Envelope>
     `;
 
-    xmlhttp.onreadystatechange = () => {
-      if (xmlhttp.readyState === 4) {
-        if (xmlhttp.status === 200) {
-          const json = xml2json(xmlhttp.responseXML);
-          console.log('response: ', xmlhttp.response);
-          console.log('responseXML: ', xmlhttp.responseXML);
-          console.log('responseText: ', xmlhttp.responseText);
-          console.log('responseURL: ', xmlhttp.responseURL);
+    this.xmlhttp.onreadystatechange = () => {
+      if (this.xmlhttp.readyState === 4) {
+        if (this.xmlhttp.status === 200) {
+          // const convert =  xml2json.;
+
+          const xml: any = this.xmlhttp.responseXML;
+
+
+          console.log('responseText: ', this.xmlhttp.responseText);
+
+          let json = xml2json(this.xmlhttp.responseXML);
           console.log('json: ', json);
+
+          const xmlDoc = this.formatXMLResponse(this.xmlhttp.responseText);
+          json = xml2json(xmlDoc);
+
+          // resSubstring = this.xmlhttp.responseText.replace('xmlns:Soap', '');
+          console.log('json: ', json);
+          console.log('json.Cabezal.cabezal1.VALIDATION1Response.Mensaje: ', json.response.value.VALIDATION1Response.Mensaje);
+
+
         }
       }
     };
     // Send the POST request
-    xmlhttp.setRequestHeader('Content-Type', 'text/xml');
-    // xmlhttp.setRequestHeader('Authorization', 'Basic myusername/password here');
-    xmlhttp.send(body);
+    this.xmlhttp.setRequestHeader('Content-Type', 'text/json');
+    // this.xmlhttp.setRequestHeader('Authorization', 'Basic myusername/password here');
+    this.xmlhttp.send(body);
 
+  }
+
+  formatXMLResponse(xml: string) {
+
+    let resSubstring: string = xml;
+    resSubstring = resSubstring.replace('<?xml version = "1.0" encoding = "utf-8"?>', '');
+    resSubstring = resSubstring.replace('SOAP-ENV:Envelope ', 'response');
+    resSubstring = resSubstring.replace('SOAP-ENV:Envelope', 'response');
+    resSubstring = resSubstring.replace('SOAP-ENV:Body', 'value');
+    resSubstring = resSubstring.replace('SOAP-ENV:Body', 'value');
+    resSubstring = resSubstring.replace('xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"', '');
+
+    resSubstring = resSubstring.replace(' xmlns="ACU_Web"', '');
+    resSubstring = resSubstring.replace(' xmlns="ACU_Web"', '');
+    resSubstring = resSubstring.replace('wsValidacionesAgendaClase.', '');
+    resSubstring = resSubstring.replace('wsValidacionesAgendaClase.', '');
+
+    console.log('resSubstring: ', resSubstring);
+
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(resSubstring, 'text/xml');
+
+    console.log('xmlDoc: ', xmlDoc);
+    return xmlDoc;
   }
 }
 

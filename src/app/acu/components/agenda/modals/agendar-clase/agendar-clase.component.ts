@@ -1,9 +1,10 @@
-import { Component, OnInit, Inject, ErrorStateMatcher } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl, FormGroupDirective, NgForm } from '@angular/forms';
 import { AgendaComponent } from '../../agenda.component';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MyValidators } from '@utils/validators';
 import { AcuService } from '@acu/services/acu.service';
+import { ErrorStateMatcher } from '@angular/material/core';
 
 
 
@@ -52,23 +53,6 @@ export class AgendarClaseComponent {
     this.dialogRef.close();
   }
 
-  testSoap1() {
-    this.acuService.soap();
-    // .subscribe((res: any) => {
-    //   console.log('res: ', res);
-
-
-    // });
-  }
-
-  testSoap() {
-    this.acuService.getValidation1()
-      .subscribe((res: any) => {
-        console.log('res: ', res);
-
-
-      });
-  }
 
   private buildForm() {
     console.log('agenda from buildForm: ', this.agendaClase);
@@ -76,7 +60,7 @@ export class AgendarClaseComponent {
       this.form = this.formBuilder.group({
         fechaClase: [this.fechaClase],
         movil: [this.agendaClase.EscMovCod, [Validators.required]],
-        alumnoNumero: [this.agendaClase.AluNro, [MyValidators.existeAlumno]],
+        alumnoNumero: [this.agendaClase.AluNro, [MyValidators.isAlumnoValido]],
         alumnoNombre: [this.agendaClase.AluNomApe, [Validators.required]],
         curso: [this.agendaClase.Cursos[0], [Validators.required]],
         tipoClase: [this.agendaClase.EsAgCuTipCla],
