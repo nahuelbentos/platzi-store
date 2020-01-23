@@ -1,17 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '@environments/environment';
-// import { xml2json } from 'xml-js';
-import { NgxXml2jsonService } from 'ngx-xml2json';
 
-import { NgxSoapService, Client, ISoapMethodResponse } from 'ngx-soap';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AcuService {
 
-  client: Client;
   xmlhttp = new XMLHttpRequest();
 
   httpOptions = {
@@ -27,13 +23,7 @@ export class AcuService {
   };
 
   constructor(
-    private http: HttpClient,
-    private ngxXml2jsonService: NgxXml2jsonService,
-    private soapservice: NgxSoapService) {
-    this.soapservice.createClient(
-      'http://192.1.0.71/ACU_Web.NetEnvironment/wsvalidacionesagendaclase.aspx?wsdl')
-      .then(client => this.client = client);
-    // .subscribe();
+    private http: HttpClient) {
   }
 
   getTablaAgenda() {
@@ -77,171 +67,50 @@ export class AcuService {
     console.log(' horaClase: ', horaClase);
     console.log(' movCod: ', movCod);
 
-    this.xmlhttp.open('POST', `${environment.url_soap}/wsvalidacionesagendaclase.aspx`, true);
-
-    const body = `
-    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:acu="ACU_Web">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <acu:wsValidacionesAgendaClase.ALUMNOYAASIGNADO>
-         <acu:Alunro>${AluNro}</acu:Alunro>
-         <acu:Fchclase>${fechaClase}</acu:Fchclase>
-         <acu:Horclase>${horaClase}</acu:Horclase>
-         <acu:Escmovcod>${movCod}</acu:Escmovcod>
-      </acu:wsValidacionesAgendaClase.ALUMNOYAASIGNADO>
-   </soapenv:Body>
-</soapenv:Envelope>
-    `;
-
-    this.xmlhttp.onreadystatechange = () => {
-      if (this.xmlhttp.readyState === 4) {
-        if (this.xmlhttp.status === 200) {
-
-
-          const xml: any = this.xmlhttp.responseXML;
-
-
-          console.log('responseText: ', this.xmlhttp.responseText);
-
-          let json = xml2json(this.xmlhttp.responseXML);
-          console.log('json: ', json);
-
-          const xmlDoc = this.formatXMLResponse(this.xmlhttp.responseText);
-          json = xml2json(xmlDoc);
-
-          console.log('json: ', json);
-          console.log(
-            'json.Cabezal.cabezal1.VALIDATION1Response.Mensaje: ',
-            json.response.value.ALUMNOYAASIGNADOResponse.Yaasignado);
-
-          return json.response.value.ALUMNOYAASIGNADOResponse.Yaasignado;
-
-        }
-      }
-    };
-
-    // Send the POST request
-    this.xmlhttp.setRequestHeader('Content-Type', 'text/json');
-    this.xmlhttp.send(body);
   }
 
   alumnoTieneExcepcion(aluId: number, fechaClase: any, horaClase: any) {
 
-    this.xmlhttp.open('POST', `${environment.url_soap}/wsvalidacionesagendaclase.aspx`, true);
-
-    const body = `
-    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:acu="ACU_Web">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <acu:wsValidacionesAgendaClase.ALUMNOTIENEEXCEPCION>
-         <acu:Aluid>${aluId}</acu:Aluid>
-         <acu:Fchclase>${fechaClase}</acu:Fchclase>
-         <acu:Horclase>${horaClase}</acu:Horclase>
-      </acu:wsValidacionesAgendaClase.ALUMNOTIENEEXCEPCION>
-   </soapenv:Body>
-</soapenv:Envelope>
-    `;
-
-    this.xmlhttp.onreadystatechange = () => {
-      if (this.xmlhttp.readyState === 4) {
-        if (this.xmlhttp.status === 200) {
-
-
-          const xml: any = this.xmlhttp.responseXML;
-
-
-          console.log('responseText: ', this.xmlhttp.responseText);
-
-          let json = xml2json(this.xmlhttp.responseXML);
-          console.log('json: ', json);
-
-          const xmlDoc = this.formatXMLResponse(this.xmlhttp.responseText);
-          json = xml2json(xmlDoc);
-
-          console.log('json: ', json);
-          console.log(
-            'json.Cabezal.cabezal1.VALIDATION1Response.Mensaje: ',
-            json.response.value.ALUMNOTIENEEXCEPCIONResponse.Tieneexcepcion);
-
-        }
-      }
-    };
-
-    // Send the POST request
-    this.xmlhttp.setRequestHeader('Content-Type', 'text/json');
-    this.xmlhttp.send(body);
   }
 
-  soap() {
-
-    this.xmlhttp.open('POST', `${environment.url_soap}/wsvalidacionesagendaclase.aspx`, true);
-
-    // build SOAP request
-
-    const body = `
-    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:acu="ACU_Web">
-    <soapenv:Header/>
-    <soapenv:Body>
-       <acu:wsValidacionesAgendaClase.VALIDATION2>
-          <acu:Id>1</acu:Id>
-       </acu:wsValidacionesAgendaClase.VALIDATION2>
-    </soapenv:Body>
- </soapenv:Envelope>
-    `;
-
-    this.xmlhttp.onreadystatechange = () => {
-      if (this.xmlhttp.readyState === 4) {
-        if (this.xmlhttp.status === 200) {
-          // const convert =  xml2json.;
-
-          const xml: any = this.xmlhttp.responseXML;
-
-
-          console.log('responseText: ', this.xmlhttp.responseText);
-
-          let json = xml2json(this.xmlhttp.responseXML);
-          console.log('json: ', json);
-
-          const xmlDoc = this.formatXMLResponse(this.xmlhttp.responseText);
-          json = xml2json(xmlDoc);
-
-          // resSubstring = this.xmlhttp.responseText.replace('xmlns:Soap', '');
-          console.log('json: ', json);
-          console.log('json.Cabezal.cabezal1.VALIDATION1Response.Mensaje: ', json.response.value.VALIDATION1Response.Mensaje);
-
-
-        }
-      }
-    };
-    // Send the POST request
-    this.xmlhttp.setRequestHeader('Content-Type', 'text/json');
-    // this.xmlhttp.setRequestHeader('Authorization', 'Basic myusername/password here');
-    this.xmlhttp.send(body);
-
+  existeAlumno(aluNro: number) {
+    return this.http.post(`${environment.url_ws}/wsExisteAlumno`, {
+      AluNro: aluNro
+    });
   }
 
-  formatXMLResponse(xml: string) {
+  licenciaInstructor(insId: string) {
 
-    let resSubstring: string = xml;
-    resSubstring = resSubstring.replace('<?xml version = "1.0" encoding = "utf-8"?>', '');
-    resSubstring = resSubstring.replace('SOAP-ENV:Envelope ', 'response');
-    resSubstring = resSubstring.replace('SOAP-ENV:Envelope', 'response');
-    resSubstring = resSubstring.replace('SOAP-ENV:Body', 'value');
-    resSubstring = resSubstring.replace('SOAP-ENV:Body', 'value');
-    resSubstring = resSubstring.replace('xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"', '');
+    const fechaClaseStr = localStorage.getItem('fechaClase');
+    console.log('fechastr: ', fechaClaseStr);
+    const fechaClase = Date.parse(fechaClaseStr);
+    console.log('fechaClase: ', fechaClase);
+    return this.http.post(`${environment.url_ws}/wsLicenciaInstructor`, {
+      NroInstructor: insId,
+      FchClase: fechaClaseStr
+    });
+  }
 
-    resSubstring = resSubstring.replace(' xmlns="ACU_Web"', '');
-    resSubstring = resSubstring.replace(' xmlns="ACU_Web"', '');
-    resSubstring = resSubstring.replace('wsValidacionesAgendaClase.', '');
-    resSubstring = resSubstring.replace('wsValidacionesAgendaClase.', '');
+  instructorYaAsignado(insId: string) {
 
-    console.log('resSubstring: ', resSubstring);
+    const fechaClaseStr = localStorage.getItem('fechaClase').substring(0, 10);
+    const horaClaseStr = localStorage.getItem('horaClase');
+    const movilCodStr = localStorage.getItem('movilCod');
 
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(resSubstring, 'text/xml');
-
-    console.log('xmlDoc: ', xmlDoc);
-    return xmlDoc;
+    const fechaClase = Date.parse(fechaClaseStr);
+    const horaClase = parseInt(horaClaseStr);
+    const movilCod = parseInt(movilCodStr);
+    console.log('insId: ', insId);
+    console.log('fechaClaseStr: ', fechaClaseStr);
+    console.log('horaClase: ', horaClase);
+    console.log('movilCod: ', movilCod);
+    console.log('fechaClase: ', fechaClase);
+    return this.http.post(`${environment.url_ws}/wsInstructorYaAsignado`, {
+      NroInstructor: insId,
+      FchClase: fechaClaseStr,
+      HorClase: horaClase,
+      EscMovCod: movilCod
+    });
   }
 }
 

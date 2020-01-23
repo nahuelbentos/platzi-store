@@ -5,6 +5,11 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MyValidators } from '@utils/validators';
 import { AcuService } from '@acu/services/acu.service';
 import { ErrorStateMatcher } from '@angular/material/core';
+import { existeAlumnoValidator } from '@utils/validators/existe-alumno-validator.directive';
+import { licenciaInstructorValidator } from '@utils/validators/licencia-instructor-validator.directive';
+import { instructorYaAsignadoValidator } from '@utils/validators/instructor-ya-asignado-validator.directive';
+
+
 
 
 
@@ -14,7 +19,7 @@ import { ErrorStateMatcher } from '@angular/material/core';
   templateUrl: './agendar-clase.component.html',
   styleUrls: ['./agendar-clase.component.scss']
 })
-export class AgendarClaseComponent {
+export class AgendarClaseComponent implements OnInit {
 
   form: FormGroup;
   matcher = new MyErrorStateMatcher();
@@ -48,6 +53,27 @@ export class AgendarClaseComponent {
     this.movil = this.agendaClase.EscMovCod;
     this.buildForm();
   }
+  ngOnInit() {
+
+    // toISOString, es el formato que leyo bien la api.
+    localStorage.setItem('fechaClase', this.fechaClase.toISOString());
+
+
+    console.log('1) Hora: ', this.hora.toDateString());
+    console.log('2) Hora: ', this.hora.toString());
+    console.log('3) Hora: ', this.hora.toISOString());
+    console.log('4) Hora: ', this.hora.toJSON());
+    console.log('5) Hora: ', this.hora.toLocaleDateString());
+    console.log('6) Hora: ', this.hora.toLocaleString());
+    console.log('7) Hora: ', this.hora.toLocaleTimeString());
+    console.log('8) Hora: ', this.hora.toTimeString());
+    console.log('9) Hora: ', this.hora.toUTCString());
+    const horaStr = this.agendaClase.Hora * 100;
+    localStorage.setItem('horaClase', horaStr.toString());
+
+    console.log('1) Movil: ', this.movil.toString());
+    localStorage.setItem('movilCod', this.movil.toString());
+  }
 
   onNoClick(): void {
     this.dialogRef.close();
@@ -60,7 +86,11 @@ export class AgendarClaseComponent {
       this.form = this.formBuilder.group({
         fechaClase: [this.fechaClase],
         movil: [this.agendaClase.EscMovCod, [Validators.required]],
-        alumnoNumero: [this.agendaClase.AluNro, [MyValidators.isAlumnoValido]],
+        alumnoNumero: [
+          this.agendaClase.AluNro,
+          [Validators.required], // sync validators
+          [existeAlumnoValidator(this.acuService)] // async validators
+        ],
         alumnoNombre: [this.agendaClase.AluNomApe, [Validators.required]],
         curso: [this.agendaClase.Cursos[0], [Validators.required]],
         tipoClase: [this.agendaClase.EsAgCuTipCla],
@@ -68,6 +98,12 @@ export class AgendarClaseComponent {
         claseAdicional: [this.agendaClase.EsAgCuClaAdiSN],
         avisoInstructor: [this.agendaClase.AvisoInstructor],
         instructorAsignado: [this.instructorAsignado],
+        instructor: [
+          this.agendaClase.EscInsId,
+          [Validators.required], // sync validators
+          [licenciaInstructorValidator(this.acuService), instructorYaAsignadoValidator(this.acuService)] // async validators
+
+        ],
         detalle: [this.agendaClase.EsAgCuDet],
         estadoClase: [this.agendaClase.EsAgCuEst],
         observaciones: [this.agendaClase.EsAgCuObs],
@@ -78,7 +114,11 @@ export class AgendarClaseComponent {
       this.form = this.formBuilder.group({
         fechaClase: ['', [Validators.required]],
         movil: ['', [Validators.required]],
-        alumnoNumero: ['', [MyValidators.isAlumnoValido]],
+        alumnoNumero: [
+          '',
+          [Validators.required], // sync validators
+          [existeAlumnoValidator(this.acuService)] // async validators
+        ],
         alumnoNombre: ['', [Validators.required]],
         curso: ['', [Validators.required]],
         tipoClase: [''],
@@ -86,6 +126,12 @@ export class AgendarClaseComponent {
         claseAdicional: [''],
         avisoInstructor: [''],
         instructorAsignado: [''],
+        instructor: [
+          '',
+          [Validators.required], // sync validators
+          [licenciaInstructorValidator(this.acuService), instructorYaAsignadoValidator(this.acuService)] // async validators
+
+        ],
         detalle: [''],
         estadoClase: [''],
         observaciones: [''],
@@ -105,6 +151,9 @@ export class AgendarClaseComponent {
     return this.form.get('instructorAsignado');
   }
 
+  get instructorField() {
+    return this.form.get('instructor');
+  }
   get cursoField() {
     return this.form.get('curso');
   }

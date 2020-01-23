@@ -50,9 +50,31 @@
                     <mat-form-field class="full-width">
                         <input matInput placeholder="Alumno" [(ngModel)]="agendaClase.AluNro"
                             formControlName="alumnoNumero" [errorStateMatcher]="matcher">
-                        <mat-error *ngIf="alumnoNumeroField.hasError('alumno_invalid')">
+
+                        <!-- <div *ngIf="alumnoNumeroField.dirty && alumnoNumeroField.errors" class="error">
+                            <div *ngIf="alumnoNumeroField.errors.required">
+                                alumnoNumero required.
+                            </div>
+                            <div *ngIf="alumnoNumeroField.errors.alumnoNumeroExists">
+                                alumnoNumero already exists.
+                            </div>
+
+                            <mat-error *ngIf="alumnoNumeroField.hasError('existeAlumno')">
+                                El número del alumno <strong>no existe.</strong>
+                            </mat-error>
+                        </div> -->
+
+                        <!-- <div *ngIf="alumnoNumeroField.dirty && alumnoNumeroField.errors"> -->
+                        <mat-error
+                            *ngIf="alumnoNumeroField.hasError('required') && alumnoNumeroField.dirty && alumnoNumeroField.errors">
+                            El número del alumno <strong>es requerido.</strong>
+                        </mat-error>
+                        <mat-error
+                            *ngIf="alumnoNumeroField.hasError('existeAlumno')  && alumnoNumeroField.dirty && alumnoNumeroField.errors">
                             El número del alumno <strong>no existe.</strong>
                         </mat-error>
+
+                        <!-- </div> -->
                     </mat-form-field>
                 </div>
                 <div class="col">
@@ -130,6 +152,21 @@
                 </div>
             </div>
             <div class="row">
+                <div class="col-xs-4">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="Instructor" [(ngModel)]="agendaClase.EsAgCuInsId"
+                            formControlName="instructor">
+                        <mat-error
+                            *ngIf="instructorField.hasError('licenciaInstructor') && instructorField.dirty && instructorField.errors">
+                            El instructor se encuentra <strong> de licencia.</strong>
+                        </mat-error>
+                        <mat-error
+                            *ngIf="instructorField.hasError('instructorYaAsignado') && instructorField.dirty && instructorField.errors">
+                            El instructor se encuentra <strong> ya asignado</strong> para esta hora en otro movil.
+                        </mat-error>
+                    </mat-form-field>
+
+                </div>
                 <div class="col">
                     <mat-form-field class="full-width">
                         <input matInput placeholder="Instructor" [(ngModel)]="instructorAsignado"
@@ -168,11 +205,11 @@
 
             <div class="row">
                 <div class="col btns-agendar" align="center">
-                    <button mat-raised-button (click)="testAlumnoYaAsignado()">Grabar Clase</button>
-                    <button mat-raised-button (click)="testSoap1()">Cambiar Clase</button>
+                    <button mat-raised-button>Grabar Clase</button>
+                    <button mat-raised-button>Cambiar Clase</button>
                     <button mat-raised-button>Liberar Clase</button>
                     <button mat-raised-button>Mover Clase</button>
-                    <button mat-raised-button (click)="sum()">Copiar Clase</button>
+                    <button mat-raised-button>Copiar Clase</button>
                 </div>
             </div>
             <mat-divider></mat-divider>

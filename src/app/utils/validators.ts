@@ -4,7 +4,11 @@ import { AcuService } from '@acu/services/acu.service';
 
 export class MyValidators {
 
-  constructor(acuService: AcuService) { }
+  existeAlumno;
+
+  constructor(private acuService: AcuService) {
+    this.existeAlumno = aluNro => this.acuService.existeAlumno(aluNro);
+  }
 
   static isPriceValid(control: AbstractControl) {
     const value = control.value;
@@ -15,23 +19,11 @@ export class MyValidators {
     return null;
   }
 
-  static isAlumnoValido(control: AbstractControl, existe: boolean) {
-    const value = control.value;
-    console.log('value: ', value);
-    console.log(value);
-    if (value > 10000 || !existe) {
-      return { alumno_invalid: true };
-    }
-    return null;
-  }
-
   static alumnoYaAsignado(control: AbstractControl, existe: boolean) {
     const value = control.value;
     console.log('value: ', value);
-
     console.log(value);
-
-    if (!existeAlumno(value)) {
+    if (false) {
       return { alumno_invalid: true };
     }
     return null;
@@ -39,9 +31,22 @@ export class MyValidators {
 
   static instructorDeLicencia(control: AbstractControl) {
     const value = control.value;
-    // acuService.
-    //   console.log(value);
+
     if (value === 'S') {
+      return { alumno_invalid: true };
+    }
+    return null;
+  }
+
+
+
+  isAlumnoValido(control: AbstractControl, existe: boolean) {
+    const value = control.value;
+    console.log('value: ', value);
+    console.log(value);
+    this.existeAlumno(value);
+
+    if (value > 10000 || !existe) {
       return { alumno_invalid: true };
     }
     return null;
@@ -50,9 +55,12 @@ export class MyValidators {
 }
 
 
+export class FuncionesAuxiliares {
 
-function existeAlumno(alumnoNumero: number): boolean {
-  const acuService: AcuService;
-  // acuService.
-  return true;
+  constructor(private acuService: AcuService) { }
+
+  public existeAlumno(aluNro: number) {
+    return this.acuService.existeAlumno(aluNro);
+  }
+
 }

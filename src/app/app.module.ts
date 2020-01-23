@@ -31,6 +31,10 @@ import { AgendaComponent } from './acu/components/agenda/agenda.component';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { AcuModule } from './acu/acu.module';
 import { NgxSoapModule } from 'ngx-soap';
+import { AgendaClaseValidacionesDirective } from './utils/agenda-clase-validaciones.directive';
+import { ExisteAlumnoValidatorDirective } from './utils/validators/existe-alumno-validator.directive';
+import { LicenciaInstructorValidatorDirective } from './utils/validators/licencia-instructor-validator.directive';
+import { InstructorYaAsignadoValidatorDirective } from './utils/validators/instructor-ya-asignado-validator.directive';
 
 // if (environment.production === true) {
 Sentry.init({
@@ -41,7 +45,11 @@ Sentry.init({
 @NgModule({
   declarations: [
     AppComponent,
-    LayoutComponent
+    LayoutComponent,
+    AgendaClaseValidacionesDirective,
+    ExisteAlumnoValidatorDirective,
+    LicenciaInstructorValidatorDirective,
+    InstructorYaAsignadoValidatorDirective
   ],
   imports: [
     BrowserModule,
