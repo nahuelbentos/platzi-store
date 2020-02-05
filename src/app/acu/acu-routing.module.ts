@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { AgendaComponent } from './components/agenda/agenda.component';
 import { NavComponent } from './components/nav/nav.component';
 import { AgendarClaseComponent } from './components/agenda/modals/agendar-clase/agendar-clase.component';
+import { SeleccionarAlumnoComponent } from './components/agenda/modals/seleccionar-alumno/seleccionar-alumno.component';
 
 
 const routes: Routes = [
@@ -17,6 +18,10 @@ const routes: Routes = [
       {
         path: 'agendaclase',
         component: AgendarClaseComponent
+      },
+      {
+        path: 'seleccionarAlumno',
+        component: SeleccionarAlumnoComponent
       },
     ]
   }

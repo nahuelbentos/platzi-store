@@ -50,6 +50,10 @@
                     <mat-form-field class="full-width">
                         <input matInput placeholder="Alumno" [(ngModel)]="agendaClase.AluNro"
                             formControlName="alumnoNumero" [errorStateMatcher]="matcher">
+                        <button mat-icon-button matSuffix [attr.aria-label]="'Hide password'"
+                            (click)='seleccionarAlumno()'>
+                            <mat-icon> search </mat-icon>
+                        </button>
 
                         <!-- <div *ngIf="alumnoNumeroField.dirty && alumnoNumeroField.errors" class="error">
                             <div *ngIf="alumnoNumeroField.errors.required">

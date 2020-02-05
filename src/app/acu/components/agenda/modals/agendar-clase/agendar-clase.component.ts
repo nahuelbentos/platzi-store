@@ -1,14 +1,15 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl, FormGroupDirective, NgForm } from '@angular/forms';
 import { AgendaComponent } from '../../agenda.component';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MyValidators } from '@utils/validators';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { AcuService } from '@acu/services/acu.service';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { existeAlumnoValidator } from '@utils/validators/existe-alumno-validator.directive';
 import { licenciaInstructorValidator } from '@utils/validators/licencia-instructor-validator.directive';
 import { instructorYaAsignadoValidator } from '@utils/validators/instructor-ya-asignado-validator.directive';
-
+import { alumnoYaAsignadoValidator } from '@utils/validators/alumno-ya-asignado.directive';
+import { alumnoTieneExcepcionValidator } from '@utils/validators/alumno-tiene-excepecion.directive';
+import { SeleccionarAlumnoComponent } from '../seleccionar-alumno/seleccionar-alumno.component';
 
 
 
@@ -31,11 +32,15 @@ export class AgendarClaseComponent implements OnInit {
   instructorAsignado = '';
   curso: string;
 
+  // para el dialog
+  animal: string;
+
   // constructor() { }
   constructor(
     private formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<AgendaComponent>,
     private acuService: AcuService,
+    public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any) {
 
     this.agendaClase = this.data.agendaClase;
@@ -89,7 +94,11 @@ export class AgendarClaseComponent implements OnInit {
         alumnoNumero: [
           this.agendaClase.AluNro,
           [Validators.required], // sync validators
-          [existeAlumnoValidator(this.acuService)] // async validators
+          [
+            existeAlumnoValidator(this.acuService),
+            alumnoYaAsignadoValidator(this.acuService),
+            alumnoTieneExcepcionValidator(this.acuService)
+          ] // async validators
         ],
         alumnoNombre: [this.agendaClase.AluNomApe, [Validators.required]],
         curso: [this.agendaClase.Cursos[0], [Validators.required]],
@@ -117,7 +126,11 @@ export class AgendarClaseComponent implements OnInit {
         alumnoNumero: [
           '',
           [Validators.required], // sync validators
-          [existeAlumnoValidator(this.acuService)] // async validators
+          [
+            existeAlumnoValidator(this.acuService),
+            alumnoYaAsignadoValidator(this.acuService),
+            alumnoTieneExcepcionValidator(this.acuService)
+          ] // async validators
         ],
         alumnoNombre: ['', [Validators.required]],
         curso: ['', [Validators.required]],
@@ -138,6 +151,23 @@ export class AgendarClaseComponent implements OnInit {
         aviso: [''],
       });
     }
+  }
+
+  seleccionarAlumno() {
+
+
+    const dialogRef = this.dialog.open(SeleccionarAlumnoComponent, {
+
+      width: '650px',
+      height: '650px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed: ', result);
+      this.animal = result;
+    });
+
+    //       // });
   }
 
   get alumnoNombreField() {

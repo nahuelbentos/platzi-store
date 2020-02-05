@@ -20,6 +20,7 @@
       "@admin/*": ["src/app/admin/*"],
       "@utils/*": ["src/app/utils/*"],
       "@environments/*": ["src/environments/*"],
+      "@services/*": ["src/app/core/services/*"],
       "@acu/*": ["src/app/acu/*"]
     }
   },

@@ -59,19 +59,55 @@ export class AcuService {
   }
 
 
-  alumnoYaAsignado(AluNro: number, fechaClase: any, horaClase: any, movCod: number) {
+  alumnoYaAsignado(aluNro: number) {
+
+
+    const fechaClaseStr = localStorage.getItem('fechaClase').substring(0, 10);
+    const horaClaseStr = localStorage.getItem('horaClase');
+    const movilCodStr = localStorage.getItem('movilCod');
+
+    const fechaClase = Date.parse(fechaClaseStr);
+    const horaClase = parseInt(horaClaseStr, 10);
+    const movilCod = parseInt(movilCodStr, 10);
 
     console.log('parametros: ');
-    console.log(' AluNro: ', AluNro);
+    console.log(' AluNro: ', aluNro);
     console.log(' fechaClase: ', fechaClase);
     console.log(' horaClase: ', horaClase);
-    console.log(' movCod: ', movCod);
+    console.log(' movCod: ', movilCod);
 
+    console.log('fechaClaseStr: ', fechaClaseStr);
+
+
+    return this.http.post(`${environment.url_ws}/wsAlumnoYaAsignado`, {
+
+      AluNro: aluNro,
+      FchClase: fechaClaseStr,
+      HorClase: horaClase,
+      EscMovCod: movilCod
+    });
   }
 
-  alumnoTieneExcepcion(aluId: number, fechaClase: any, horaClase: any) {
+  alumnoTieneExcepcion(aluNro: number) {
 
+    const fechaClaseStr = localStorage.getItem('fechaClase').substring(0, 10);
+    const horaClaseStr = localStorage.getItem('horaClase');
+    const movilCodStr = localStorage.getItem('movilCod');
+
+    const fechaClase = Date.parse(fechaClaseStr);
+    const horaClase = parseInt(horaClaseStr, 10);
+
+    console.log('aluNro: ', aluNro);
+    console.log('fechaClaseStr: ', fechaClaseStr);
+    console.log('horaClase: ', horaClase);
+    console.log('fechaClase: ', fechaClase);
+    return this.http.post(`${environment.url_ws}/wsAlumnoTieneExcepcion`, {
+      AluNro: aluNro,
+      FchClase: fechaClaseStr,
+      HorClase: horaClase
+    });
   }
+
 
   existeAlumno(aluNro: number) {
     return this.http.post(`${environment.url_ws}/wsExisteAlumno`, {
@@ -98,8 +134,8 @@ export class AcuService {
     const movilCodStr = localStorage.getItem('movilCod');
 
     const fechaClase = Date.parse(fechaClaseStr);
-    const horaClase = parseInt(horaClaseStr);
-    const movilCod = parseInt(movilCodStr);
+    const horaClase = parseInt(horaClaseStr, 10);
+    const movilCod = parseInt(movilCodStr, 10);
     console.log('insId: ', insId);
     console.log('fechaClaseStr: ', fechaClaseStr);
     console.log('horaClase: ', horaClase);

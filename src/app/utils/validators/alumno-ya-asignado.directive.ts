@@ -6,15 +6,15 @@ import { map } from 'rxjs/operators';
 import { AcuService } from '@acu/services/acu.service';
 import { Observable } from 'rxjs';
 
-export function existeAlumnoValidator(acuService: AcuService): AsyncValidatorFn {
+export function alumnoYaAsignadoValidator(acuService: AcuService): AsyncValidatorFn {
   return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
-    return acuService.existeAlumno(control.value).pipe(
+    return acuService.alumnoYaAsignado(control.value).pipe(
       map(
         (res: any) => {
           console.log('res: ', res);
-          console.log('res.existe: ', res.existe);
+          console.log('res.yaAsignado: ', res.yaAsignado);
           // tslint:disable-next-line: object-literal-key-quotes
-          return !res.existe ? { 'existeAlumno': true } : null;
+          return !res.yaAsignado ? { 'alumnoYaAsignado': true } : null;
         })
     );
   };
@@ -22,13 +22,13 @@ export function existeAlumnoValidator(acuService: AcuService): AsyncValidatorFn 
 
 @Directive({
   // tslint:disable-next-line: directive-selector
-  selector: '[existeAlumno][formControlName],[existeAlumno][formControl],[existeAlumno][ngModel]',
-  providers: [{ provide: NG_ASYNC_VALIDATORS, useExisting: ExisteAlumnoValidatorDirective, multi: true }]
+  selector: '[alumnoYaAsignado][formControlName],[alumnoYaAsignado][formControl],[alumnoYaAsignado][ngModel]',
+  providers: [{ provide: NG_ASYNC_VALIDATORS, useExisting: AlumnoYaAsignadoValidatorDirective, multi: true }]
 })
-export class ExisteAlumnoValidatorDirective implements AsyncValidator {
+export class AlumnoYaAsignadoValidatorDirective implements AsyncValidator {
   constructor(private acuService: AcuService) { }
 
   validate(control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> {
-    return existeAlumnoValidator(this.acuService)(control);
+    return alumnoYaAsignadoValidator(this.acuService)(control);
   }
 }

@@ -35,6 +35,8 @@ import { AgendaClaseValidacionesDirective } from './utils/agenda-clase-validacio
 import { ExisteAlumnoValidatorDirective } from './utils/validators/existe-alumno-validator.directive';
 import { LicenciaInstructorValidatorDirective } from './utils/validators/licencia-instructor-validator.directive';
 import { InstructorYaAsignadoValidatorDirective } from './utils/validators/instructor-ya-asignado-validator.directive';
+import { AlumnoTieneExcepecionValidatorDirective } from './utils/validators/alumno-tiene-excepecion.directive';
+import { AlumnoYaAsignadoValidatorDirective } from './utils/validators/alumno-ya-asignado.directive';
 
 // if (environment.production === true) {
 Sentry.init({
@@ -49,7 +51,9 @@ Sentry.init({
     AgendaClaseValidacionesDirective,
     ExisteAlumnoValidatorDirective,
     LicenciaInstructorValidatorDirective,
-    InstructorYaAsignadoValidatorDirective
+    InstructorYaAsignadoValidatorDirective,
+    AlumnoTieneExcepecionValidatorDirective,
+    AlumnoYaAsignadoValidatorDirective
   ],
   imports: [
     BrowserModule,
