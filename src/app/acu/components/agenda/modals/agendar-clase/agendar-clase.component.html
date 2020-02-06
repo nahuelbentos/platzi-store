@@ -160,6 +160,10 @@
                     <mat-form-field class="full-width">
                         <input matInput placeholder="Instructor" [(ngModel)]="agendaClase.EsAgCuInsId"
                             formControlName="instructor">
+                        <button mat-icon-button matSuffix [attr.aria-label]="'Hide password'"
+                            (click)='seleccionarInstructor()'>
+                            <mat-icon> search </mat-icon>
+                        </button>
                         <mat-error
                             *ngIf="instructorField.hasError('licenciaInstructor') && instructorField.dirty && instructorField.errors">
                             El instructor se encuentra <strong> de licencia.</strong>

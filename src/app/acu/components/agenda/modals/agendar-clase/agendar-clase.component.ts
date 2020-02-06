@@ -10,6 +10,7 @@ import { instructorYaAsignadoValidator } from '@utils/validators/instructor-ya-a
 import { alumnoYaAsignadoValidator } from '@utils/validators/alumno-ya-asignado.directive';
 import { alumnoTieneExcepcionValidator } from '@utils/validators/alumno-tiene-excepecion.directive';
 import { SeleccionarAlumnoComponent } from '../seleccionar-alumno/seleccionar-alumno.component';
+import { SeleccionarInstructorComponent } from '../seleccionar-instructor/seleccionar-instructor.component';
 
 
 
@@ -33,7 +34,7 @@ export class AgendarClaseComponent implements OnInit {
   curso: string;
 
   // para el dialog
-  test: string;
+  alumno: any;
 
   // constructor() { }
   constructor(
@@ -153,45 +154,79 @@ export class AgendarClaseComponent implements OnInit {
     }
   }
 
-  seleccionarAlumno() {
-    const alumnos = JSON.parse(localStorage.getItem('Alumnos'));
+  seleccionarInstructor() {
+    let instructores = JSON.parse(localStorage.getItem('Instructores'));
     // let dialogRef ;
-    if (alumnos) {
-      console.log('1) existe alumnos');
-      const dialogRef = this.dialog.open(SeleccionarAlumnoComponent, {
-        height: 'auto',
-        width: '700px',
-        data: {
-          alumnos
-        }
-      });
 
-      dialogRef.afterClosed().subscribe(result => {
-        console.log('1) The dialog was closed: ', result);
-        this.test = result;
-      });
+    if (!instructores) {
+      this.acuService.getInstructores()
+        .subscribe((res: any) => {
+          console.log(' res  : ', res);
+          console.log(' res.Instructores  : ', res.Instructores);
+          instructores = res.Instructores;
+          localStorage.setItem('Instructores', JSON.stringify(instructores));
+          this.openDialogInstructores(instructores);
+        });
     } else {
-      console.log('2) No  existe alumnos');
+      this.openDialogInstructores(instructores);
+    }
+  }
+
+  private openDialogInstructores(instructores) {
+    const instructoresDialogRef = this.dialog.open(SeleccionarInstructorComponent, {
+      height: 'auto',
+      width: '700px',
+      data: {
+        instructores,
+      }
+    });
+
+    instructoresDialogRef.afterClosed().subscribe(result => {
+      console.log('2) The dialog was closed: ', result);
+      this.alumno = result;
+      this.form.patchValue({
+        instructor: result.EscInsId,
+        instructorAsignado: result.EscInsNom
+      });
+    });
+
+  }
+
+  seleccionarAlumno() {
+    let alumnos = JSON.parse(localStorage.getItem('Alumnos'));
+    // let dialogRef ;
+
+    if (!alumnos) {
       this.acuService.getAlumnos()
         .subscribe((res: any) => {
           console.log(' res  : ', res);
           console.log(' res.Alumnos  : ', res.Alumnos);
-
-          localStorage.setItem('Alumnos', JSON.stringify(res.Alumnos));
-          const dialogRef = this.dialog.open(SeleccionarAlumnoComponent, {
-            height: 'auto',
-            width: '700px',
-            data: {
-              alumnos: res.Alumnos,
-            }
-          });
-
-          dialogRef.afterClosed().subscribe(result => {
-            console.log('2) The dialog was closed: ', result);
-            this.test = result;
-          });
+          alumnos = res.Alumnos;
+          localStorage.setItem('Alumnos', JSON.stringify(alumnos));
+          this.openDialogAlumnos(alumnos);
         });
+    } else {
+      this.openDialogAlumnos(alumnos);
     }
+  }
+
+  private openDialogAlumnos(alumnos) {
+    const alumnosDialogRef = this.dialog.open(SeleccionarAlumnoComponent, {
+      height: 'auto',
+      width: '700px',
+      data: {
+        alumnos,
+      }
+    });
+
+    alumnosDialogRef.afterClosed().subscribe(result => {
+      console.log('2) The dialog was closed: ', result);
+      this.alumno = result;
+      this.form.patchValue({
+        alumnoNombre: result.AluNomComp,
+        alumnoNumero: result.AluNro
+      });
+    });
 
   }
 

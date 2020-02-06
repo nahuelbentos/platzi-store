@@ -5,24 +5,22 @@ import { MatTableDataSource } from '@angular/material/table';
 import { AgendarClaseComponent } from '../agendar-clase/agendar-clase.component';
 import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-export interface AlumnoData {
-  AluId: string;
-  AluNro: string;
-  AluNom: string;
-  AluApe1: string;
-  AluNomComp: string;
-  AluCI: number;
+export interface InstructorData {
+  EscInsId: string;
+  EscInsNom: string;
+  EscInsNomC: string;
+  EscInsTel: string;
 }
 
 @Component({
-  selector: 'app-seleccionar-alumno',
-  styleUrls: ['seleccionar-alumno.component.scss'],
-  templateUrl: 'seleccionar-alumno.component.html',
+  selector: 'app-seleccionar-instructor',
+  templateUrl: './seleccionar-instructor.component.html',
+  styleUrls: ['./seleccionar-instructor.component.scss']
 })
-export class SeleccionarAlumnoComponent implements OnInit {
+export class SeleccionarInstructorComponent implements OnInit {
 
-  displayedColumns: string[] = ['actions', 'AluNro', 'AluNomComp', 'AluCI'];
-  dataSource: MatTableDataSource<AlumnoData>;
+  displayedColumns: string[] = ['actions', 'EscInsNom', 'EscInsId', 'EscInsTel'];
+  dataSource: MatTableDataSource<InstructorData>;
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -32,11 +30,11 @@ export class SeleccionarAlumnoComponent implements OnInit {
     public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any) {
 
-    const alumnos = this.data.alumnos;
-    console.log('alumnos: ', alumnos);
+    const instructores = this.data.instructores;
+    console.log('instructores: ', instructores);
 
     // Assign the data to the data source for the table to render
-    this.dataSource = new MatTableDataSource(alumnos);
+    this.dataSource = new MatTableDataSource(instructores);
   }
 
   ngOnInit() {

@@ -152,6 +152,10 @@ export class AcuService {
   getAlumnos() {
     return this.http.post(`${environment.url_ws}/wsObtenerAlumnos`, {});
   }
+
+  getInstructores() {
+    return this.http.post(`${environment.url_ws}/wsObtenerInstructores`, {});
+  }
 }
 
 
