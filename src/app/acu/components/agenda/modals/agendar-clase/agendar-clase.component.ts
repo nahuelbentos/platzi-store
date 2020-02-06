@@ -15,6 +15,36 @@ import { SeleccionarInstructorComponent } from '../seleccionar-instructor/selecc
 
 
 
+export interface AgendaClase {
+  FechaClase: string;
+  Hora: number;
+  EscMovCod: number;
+  TrnMode: string;
+  AluId: string;
+  AluNro: string;
+  AluNomApe: string;
+  Cursos: string[];
+  CantidadClasesPracticas: number;
+  EsAgCuTipCla: string;
+  EsAgCuClaAdiSN: string;
+  EscInsId: string;
+  EscInsNom: string;
+  EsAgCuInsId: string;
+  EsAgCuInsNom: string;
+  EsAgCuDet: string;
+  EsAgCuEst: string;
+  EsAgCuObs: string;
+  EsAgCuDetAviso: string;
+  EscCurEmp: string;
+  EsAgCuInNoCorto: string;
+  EsAgCuNroCla: number;
+  EsAgCuEstOld: string;
+  EsAgCuAvisoOld: number;
+  EsAgCuAviso: number;
+  EsAgCuDetAvisoOld: string;
+  AvisoInstructor: string;
+}
+
 
 @Component({
   selector: 'app-agendar-clase',
@@ -156,7 +186,6 @@ export class AgendarClaseComponent implements OnInit {
 
   seleccionarInstructor() {
     let instructores = JSON.parse(localStorage.getItem('Instructores'));
-    // let dialogRef ;
 
     if (!instructores) {
       this.acuService.getInstructores()
@@ -194,7 +223,6 @@ export class AgendarClaseComponent implements OnInit {
 
   seleccionarAlumno() {
     let alumnos = JSON.parse(localStorage.getItem('Alumnos'));
-    // let dialogRef ;
 
     if (!alumnos) {
       this.acuService.getAlumnos()
@@ -257,35 +285,6 @@ export class AgendarClaseComponent implements OnInit {
     }
   }
 
-}
-
-export interface AgendaClase {
-  FechaClase: string;
-  Hora: number;
-  EscMovCod: number;
-  AluId: string;
-  AluNro: string;
-  AluNomApe: string;
-  Cursos: string[];
-  CantidadClasesPracticas: number;
-  EsAgCuTipCla: string;
-  EsAgCuClaAdiSN: string;
-  EscInsId: string;
-  EscInsNom: string;
-  EsAgCuInsId: string;
-  EsAgCuInsNom: string;
-  EsAgCuDet: string;
-  EsAgCuEst: string;
-  EsAgCuObs: string;
-  EsAgCuDetAviso: string;
-  EscCurEmp: string;
-  EsAgCuInNoCorto: string;
-  EsAgCuNroCla: number;
-  EsAgCuEstOld: string;
-  EsAgCuAvisoOld: number;
-  EsAgCuAviso: number;
-  EsAgCuDetAvisoOld: string;
-  AvisoInstructor: string;
 }
 
 

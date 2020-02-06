@@ -40,8 +40,8 @@
                     </mat-form-field>
                 </div>
                 <div class="col">
-                    <mat-form-field class="full-width">
-                        <input matInput placeholder="Número de Movil" [value]="movil" formControlName="movil" disabled>
+                    <mat-form-field class="full-width" disabled>
+                        <input matInput placeholder="Número de Movil" [value]="movil" formControlName="movil">
                     </mat-form-field>
                 </div>
             </div>
@@ -55,20 +55,6 @@
                             <mat-icon> search </mat-icon>
                         </button>
 
-                        <!-- <div *ngIf="alumnoNumeroField.dirty && alumnoNumeroField.errors" class="error">
-                            <div *ngIf="alumnoNumeroField.errors.required">
-                                alumnoNumero required.
-                            </div>
-                            <div *ngIf="alumnoNumeroField.errors.alumnoNumeroExists">
-                                alumnoNumero already exists.
-                            </div>
-
-                            <mat-error *ngIf="alumnoNumeroField.hasError('existeAlumno')">
-                                El número del alumno <strong>no existe.</strong>
-                            </mat-error>
-                        </div> -->
-
-                        <!-- <div *ngIf="alumnoNumeroField.dirty && alumnoNumeroField.errors"> -->
                         <mat-error
                             *ngIf="alumnoNumeroField.hasError('required') && alumnoNumeroField.dirty && alumnoNumeroField.errors">
                             El número del alumno <strong>es requerido.</strong>
@@ -76,6 +62,14 @@
                         <mat-error
                             *ngIf="alumnoNumeroField.hasError('existeAlumno')  && alumnoNumeroField.dirty && alumnoNumeroField.errors">
                             El número del alumno <strong>no existe.</strong>
+                        </mat-error>
+                        <mat-error
+                            *ngIf="alumnoNumeroField.hasError('alumnoYaAsignado')  && alumnoNumeroField.dirty && alumnoNumeroField.errors">
+                            El alumno ya se encuentra <strong> asignado </strong> en otro movil.
+                        </mat-error>
+                        <mat-error
+                            *ngIf="alumnoNumeroField.hasError('alumnoTieneExcepcion')  && (alumnoNumeroField.dirty || alumnoNumeroField.errors)">
+                            El alumno tiene cargada una <strong>excepción </strong> para este día y hora.
                         </mat-error>
 
                         <!-- </div> -->
@@ -95,7 +89,7 @@
                 <div class="col">
                     <mat-form-field class="full-width">
 
-                        <input matInput placeholder="Curso" [value]="agendaClase.Cursos[0]"
+                        <input matInput placeholder="Curso" [(ngModel)]="agendaClase.Cursos[0]"
                             *ngIf="agendaClase.Cursos.length === 1" formControlName="curso"
                             [errorStateMatcher]="matcher">
 
@@ -185,12 +179,13 @@
             <div class="row">
                 <div class="col">
                     <mat-form-field class="full-width">
-                        <input matInput placeholder="Detalle" [value]="agendaClase.EsAgCuDet" formControlName="detalle">
+                        <input matInput placeholder="Detalle" [(ngModel)]="agendaClase.EsAgCuDet"
+                            formControlName="detalle">
                     </mat-form-field>
                 </div>
                 <div class="col">
                     <mat-form-field class="full-width">
-                        <mat-select placeholder="Estado de la Clase" [(value)]="agendaClase.EsAgCuEst"
+                        <mat-select placeholder="Estado de la Clase" [(ngModel)]="agendaClase.EsAgCuEst"
                             formControlName="estadoClase">
                             <mat-option>-</mat-option>
                             <mat-option value="A">Asignada</mat-option>
@@ -205,7 +200,7 @@
                     <mat-form-field class="full-width">
 
                         <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1"
-                            cdkAutosizeMaxRows="5" placeholder="Observaciones" [value]="agendaClase.EsAgCuObs"
+                            cdkAutosizeMaxRows="5" placeholder="Observaciones" [(ngModel)]="agendaClase.EsAgCuObs"
                             formControlName="observaciones"></textarea>
                     </mat-form-field>
                 </div>
@@ -214,7 +209,6 @@
             <div class="row">
                 <div class="col btns-agendar" align="center">
                     <button mat-raised-button>Grabar Clase</button>
-                    <button mat-raised-button>Cambiar Clase</button>
                     <button mat-raised-button>Liberar Clase</button>
                     <button mat-raised-button>Mover Clase</button>
                     <button mat-raised-button>Copiar Clase</button>
@@ -239,7 +233,7 @@
 
     <mat-dialog-actions align="end">
         <button [disabled]="form.invalid" mat-raised-button type="submit" [mat-dialog-close]="agendaClase"
-            cdkFocusInitial>Grabar Cambio</button>
+            cdkFocusInitial>Guardar Cambios</button>
         <button mat-button [mat-dialog-close]="data.animal" cdkFocusInitial>Disponibilidad</button>
         <button mat-button [mat-dialog-close]="data.animal" cdkFocusInitial>Historial Eventos</button>
         <button mat-button mat-dialog-close (click)="onNoClick()">Cancelar</button>

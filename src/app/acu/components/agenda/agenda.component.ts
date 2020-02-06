@@ -143,7 +143,7 @@ export class AgendaComponent implements OnInit, AfterViewInit {
     localStorage.setItem('fechaClase', this.fechaClase);
     this.acuService.getClaseAgenda(this.fechaClase, hora, movil)
       .subscribe((res: any) => {
-        console.log('Agenda: ', res);
+        console.log('Agendaaaaaaaaaaaaa: ', res);
 
         const dialogRef = this.dialog.open(AgendarClaseComponent, {
           data: {

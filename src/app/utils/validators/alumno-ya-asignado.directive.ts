@@ -14,7 +14,7 @@ export function alumnoYaAsignadoValidator(acuService: AcuService): AsyncValidato
           console.log('res: ', res);
           console.log('res.yaAsignado: ', res.yaAsignado);
           // tslint:disable-next-line: object-literal-key-quotes
-          return !res.yaAsignado ? { 'alumnoYaAsignado': true } : null;
+          return res.yaAsignado ? { 'alumnoYaAsignado': true } : null;
         })
     );
   };

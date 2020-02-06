@@ -11,10 +11,10 @@ export function alumnoTieneExcepcionValidator(acuService: AcuService): AsyncVali
     return acuService.alumnoTieneExcepcion(control.value).pipe(
       map(
         (res: any) => {
-          console.log('res: ', res);
-          console.log('res.tieneExcepcion: ', res.tieneExcepcion);
+          console.log('AlumnoTieneExcepclion.res: ', res);
+          console.log('AlumnoTieneExcepclion.res.tieneExcepcion: ', res.tieneExcepcion);
           // tslint:disable-next-line: object-literal-key-quotes
-          return !res.tieneExcepcion ? { 'alumnoTieneExcepcion': true } : null;
+          return res.tieneExcepcion ? { 'alumnoTieneExcepcion': true } : null;
         })
     );
   };
