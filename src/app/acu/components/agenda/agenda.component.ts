@@ -139,6 +139,8 @@ export class AgendaComponent implements OnInit, AfterViewInit {
 
   showAlert(movil: number, hora: number): void {
     console.log(`Movil: ${movil}, Hora: ${hora}`);
+
+    localStorage.setItem('fechaClase', this.fechaClase);
     this.acuService.getClaseAgenda(this.fechaClase, hora, movil)
       .subscribe((res: any) => {
         console.log('Agenda: ', res);

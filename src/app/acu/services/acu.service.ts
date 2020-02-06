@@ -148,6 +148,10 @@ export class AcuService {
       EscMovCod: movilCod
     });
   }
+
+  getAlumnos() {
+    return this.http.post(`${environment.url_ws}/wsObtenerAlumnos`, {});
+  }
 }
 
 

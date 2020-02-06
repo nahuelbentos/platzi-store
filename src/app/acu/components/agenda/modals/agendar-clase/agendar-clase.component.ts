@@ -33,7 +33,7 @@ export class AgendarClaseComponent implements OnInit {
   curso: string;
 
   // para el dialog
-  animal: string;
+  test: string;
 
   // constructor() { }
   constructor(
@@ -154,20 +154,45 @@ export class AgendarClaseComponent implements OnInit {
   }
 
   seleccionarAlumno() {
+    const alumnos = JSON.parse(localStorage.getItem('Alumnos'));
+    // let dialogRef ;
+    if (alumnos) {
+      console.log('1) existe alumnos');
+      const dialogRef = this.dialog.open(SeleccionarAlumnoComponent, {
+        height: 'auto',
+        width: '700px',
+        data: {
+          alumnos
+        }
+      });
 
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('1) The dialog was closed: ', result);
+        this.test = result;
+      });
+    } else {
+      console.log('2) No  existe alumnos');
+      this.acuService.getAlumnos()
+        .subscribe((res: any) => {
+          console.log(' res  : ', res);
+          console.log(' res.Alumnos  : ', res.Alumnos);
 
-    const dialogRef = this.dialog.open(SeleccionarAlumnoComponent, {
+          localStorage.setItem('Alumnos', JSON.stringify(res.Alumnos));
+          const dialogRef = this.dialog.open(SeleccionarAlumnoComponent, {
+            height: 'auto',
+            width: '700px',
+            data: {
+              alumnos: res.Alumnos,
+            }
+          });
 
-      width: '650px',
-      height: '650px',
-    });
+          dialogRef.afterClosed().subscribe(result => {
+            console.log('2) The dialog was closed: ', result);
+            this.test = result;
+          });
+        });
+    }
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed: ', result);
-      this.animal = result;
-    });
-
-    //       // });
   }
 
   get alumnoNombreField() {

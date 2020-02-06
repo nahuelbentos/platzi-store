@@ -1,61 +1,98 @@
-import { AfterViewInit, Component, OnInit, ViewChild, Inject } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatTable } from '@angular/material/table';
-import { SeleccionarAlumnoDataSource, AlumnoItem } from './seleccionar-alumno-datasource';
-
-
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { AcuService } from '@acu/services/acu.service';
+import { MatTableDataSource } from '@angular/material/table';
 import { AgendarClaseComponent } from '../agendar-clase/agendar-clase.component';
+import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { AcuService } from '@acu/services/acu.service';
 
+export interface UserData {
+  id: string;
+  name: string;
+  progress: string;
+  color: string;
+}
+
+export interface AlumnoData {
+  AluId: string;
+  AluNro: string;
+  AluNom: string;
+  AluApe1: string;
+  AluNomComp: string;
+  AluCI: number;
+}
+/** Constants used to fill up our data base. */
+const COLORS: string[] = [
+  'maroon', 'red', 'orange', 'yellow', 'olive', 'green', 'purple', 'fuchsia', 'lime', 'teal',
+  'aqua', 'blue', 'navy', 'black', 'gray'
+];
+const NAMES: string[] = [
+  'Maia', 'Asher', 'Olivia', 'Atticus', 'Amelia', 'Jack', 'Charlotte', 'Theodore', 'Isla', 'Oliver',
+  'Isabella', 'Jasper', 'Cora', 'Levi', 'Violet', 'Arthur', 'Mia', 'Thomas', 'Elizabeth'
+];
+
+/**
+ * @title Data table with sorting, pagination, and filtering.
+ */
 @Component({
   selector: 'app-seleccionar-alumno',
-  templateUrl: './seleccionar-alumno.component.html',
-  styleUrls: ['./seleccionar-alumno.component.scss']
+  styleUrls: ['seleccionar-alumno.component.scss'],
+  templateUrl: 'seleccionar-alumno.component.html',
 })
-export class SeleccionarAlumnoComponent implements AfterViewInit, OnInit {
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(MatTable, { static: false }) table: MatTable<AlumnoItem>;
-  dataSource: SeleccionarAlumnoDataSource;
+export class SeleccionarAlumnoComponent implements OnInit {
 
-  /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['id', 'nro', 'nombre', 'apellido', 'ci', 'direccion'];
+  // displayedColumns: string[] = ['AluId', 'AluNro', 'AluNom', 'AluApe1', 'AluNomComp', 'AluCI'];
+  displayedColumns: string[] = ['actions', 'AluNro', 'AluNomComp', 'AluCI'];
+  dataSource: MatTableDataSource<UserData>;
+
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   constructor(
     public dialogRef: MatDialogRef<AgendarClaseComponent>,
-    private acuService: AcuService,
+    public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any) {
 
-    // this.agendaClase = this.data.agendaClase;
-    // tslint:disable-next-line: max-line-length
-    // const day = Number(this.agendaClase.FechaClase.substring(this.agendaClase.FechaClase.length - 2, this.agendaClase.FechaClase.length));
-    // const month = Number(this.agendaClase.FechaClase.substring(5, 7));
-    // const year = Number(this.agendaClase.FechaClase.substring(0, 4));
+    console.log('this.data: ', this.data);
+    console.log('this.data.alumnos: ', this.data.alumnos);
+    const alumnos = this.data.alumnos;
+    // console.log('Alumnos: ', alumnos);
+    // Create 100 users
+    const users = Array.from({ length: 100 }, (_, k) => createNewUser(k + 1));
 
-    // this.fechaClase.setDate(day);
-    // this.fechaClase.setMonth(month - 1);
-    // this.fechaClase.setFullYear(year);
-
-
-    // this.hora.setHours(this.agendaClase.Hora, 0);
-    // this.instructorAsignado = `${this.agendaClase.EsAgCuInsId.toString().trim()} ${this.agendaClase.EsAgCuInsNom}`;
-    // this.movil = this.agendaClase.EscMovCod;
-    // this.buildForm();
+    // Assign the data to the data source for the table to render
+    this.dataSource = new MatTableDataSource(alumnos);
   }
 
   ngOnInit() {
-    this.dataSource = new SeleccionarAlumnoDataSource();
+    console.log('this.data: ', this.data);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
+
+  applyFilter(filterValue: string) {
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
 
   onNoClick(): void {
     this.dialogRef.close();
   }
+}
 
-  ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
-    this.table.dataSource = this.dataSource;
-  }
+/** Builds and returns a new User. */
+function createNewUser(id: number): UserData {
+  const name = NAMES[Math.round(Math.random() * (NAMES.length - 1))] + ' ' +
+    NAMES[Math.round(Math.random() * (NAMES.length - 1))].charAt(0) + '.';
+
+  return {
+    id: id.toString(),
+    name,
+    progress: Math.round(Math.random() * 100).toString(),
+    color: COLORS[Math.round(Math.random() * (COLORS.length - 1))]
+  };
 }
