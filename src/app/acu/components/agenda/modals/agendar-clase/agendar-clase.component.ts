@@ -12,6 +12,9 @@ import { alumnoTieneExcepcionValidator } from '@utils/validators/alumno-tiene-ex
 import { SeleccionarAlumnoComponent } from '../seleccionar-alumno/seleccionar-alumno.component';
 import { SeleccionarInstructorComponent } from '../seleccionar-instructor/seleccionar-instructor.component';
 
+import swal from 'sweetalert2';
+import Swal from 'sweetalert2';
+import { SeleccionarFechaComponent } from '../seleccionar-fecha/seleccionar-fecha.component';
 
 
 
@@ -62,6 +65,7 @@ export class AgendarClaseComponent implements OnInit {
   movil: number;
   instructorAsignado = '';
   curso: string;
+  hoy = new Date();
 
   // para el dialog
   alumno: any;
@@ -283,6 +287,95 @@ export class AgendarClaseComponent implements OnInit {
 
 
     }
+  }
+
+  confirmarLiberarClase() {
+    Swal.fire({
+      title: 'Confirmación de Usuario',
+      text: 'Se liberará la hora, perdiendose datos actuales. ¿Confirma el proceso?',
+      icon: 'warning',
+      showCancelButton: true,
+      // confirmButtonColor: '#3085d6',
+      // cancelButtonColor: '#d33',
+      confirmButtonText: 'Confirmar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.value) {
+        console.log('Resultado:: ', result);
+
+        Swal.fire({
+          title: 'Confirmado!',
+          text: 'Se liberó la hora, correctamente',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false,
+          onClose: () => {
+            console.log('Cieerro antes de timer');
+          }
+        }).then((res) => {
+          if (res.dismiss === Swal.DismissReason.timer) {
+            console.log('Cierro  con el timer');
+          }
+        });
+
+      }
+    });
+
+  }
+
+  moverClase() {
+    const fechaDialogRef = this.dialog.open(SeleccionarFechaComponent, {
+      height: 'auto',
+      width: 'auto',
+      data: {
+        fecha: this.fechaClase,
+      }
+    });
+
+    fechaDialogRef.afterClosed().subscribe((fechaSeleccionada: Date) => {
+      console.log('2) The dialog  fecha was closed: ', fechaSeleccionada);
+      if (fechaSeleccionada < this.hoy && !(fechaSeleccionada.toLocaleDateString() === this.hoy.toLocaleDateString())) {
+        Swal.fire({
+          title: 'Confirmación de Usuario',
+          text: 'La fecha seleccionada es menor a la actual. ¿Confirma continuar?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Confirmar',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.value) {
+            console.log('Resultado:: ', result);
+
+            Swal.fire({
+              title: 'Confirmado!',
+              text: 'Se liberó la hora, correctamente',
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false,
+              onClose: () => {
+                console.log('Cieerro antes de timer');
+              }
+            }).then((res) => {
+              if (res.dismiss === Swal.DismissReason.timer) {
+                console.log('Cierro  con el timer');
+              }
+            });
+
+          }
+        });
+      }
+      // this.alumno = result;
+      // this.form.patchValue({
+      //   alumnoNombre: result.AluNomComp,
+      //   alumnoNumero: result.AluNro
+      // });
+    });
+
+  }
+
+
+  private openDialogFecha() {
+
   }
 
 }

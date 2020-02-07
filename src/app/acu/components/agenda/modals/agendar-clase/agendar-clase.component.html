@@ -209,8 +209,8 @@
             <div class="row">
                 <div class="col btns-agendar" align="center">
                     <button mat-raised-button>Grabar Clase</button>
-                    <button mat-raised-button>Liberar Clase</button>
-                    <button mat-raised-button>Mover Clase</button>
+                    <button mat-raised-button (click)="confirmarLiberarClase()">Liberar Clase</button>
+                    <button mat-raised-button (click)="moverClase()">Mover Clase</button>
                     <button mat-raised-button>Copiar Clase</button>
                 </div>
             </div>
