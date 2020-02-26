@@ -2,6 +2,8 @@ import { Component, OnInit, Inject, AfterViewInit } from '@angular/core';
 import { AcuService } from '../../services/acu.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AgendarClaseComponent } from './modals/agendar-clase/agendar-clase.component';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { SeleccionarAccionAgendaComponent } from './modals/seleccionar-accion-agenda/seleccionar-accion-agenda.component';
 
 
 export interface AgendaElement {
@@ -59,6 +61,7 @@ export interface DataAgenda {
 export interface Cell {
   value: string;
   class: string;
+  existe: boolean;
 }
 
 
@@ -87,7 +90,9 @@ export class AgendaComponent implements OnInit, AfterViewInit {
 
   constructor(
     private acuService: AcuService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    // tslint:disable-next-line: variable-name
+    private _bottomSheet: MatBottomSheet
   ) { }
 
   ngOnInit() {
@@ -112,6 +117,8 @@ export class AgendaComponent implements OnInit, AfterViewInit {
         const cell = this.existeEnHorasMoviles(h, m);
 
         o['class' + h.Hora] = cell.class;
+        // tslint:disable-next-line: no-string-literal
+        o['existe' + h.Hora] = cell.existe;
         o['Hora' + h.Hora] = cell.value;
       }
 
@@ -124,39 +131,29 @@ export class AgendaComponent implements OnInit, AfterViewInit {
     const cell: Cell = {
       value: '',
       class: '',
+      existe: false
     };
     for (const h of this.horaMovilPlano) {
       if (h.Hora === hora.Hora && h.MovCod === movil.MovCod) {
         cell.value = `${h.EsAgCuInsId} ${h.AluApe1.substring(0, 10)}`;
         cell.class = h.claseCelda;
+        cell.existe = true;
       }
     }
-
     return cell;
 
   }
 
 
-  showAlert(movil: number, hora: number): void {
-    console.log(`Movil: ${movil}, Hora: ${hora}`);
-
+  showAlert(movil: number, hora: number, existe: boolean): void {
+    const text = `Movil: ${movil} ; Hora: ${hora} ; Existe:  ${existe}`;
+    console.log(text);
     localStorage.setItem('fechaClase', this.fechaClase);
-    this.acuService.getClaseAgenda(this.fechaClase, hora, movil)
-      .subscribe((res: any) => {
-        console.log('Agendaaaaaaaaaaaaa: ', res);
+    localStorage.setItem('movil', movil.toString());
+    localStorage.setItem('hora', hora.toString());
+    localStorage.setItem('existe', existe.toString());
+    this._bottomSheet.open(SeleccionarAccionAgendaComponent);
 
-        const dialogRef = this.dialog.open(AgendarClaseComponent, {
-          data: {
-            agendaClase: res.AgendaClase,
-          }
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-          console.log('The dialog was closed: ', result);
-          this.animal = result;
-        });
-
-      });
 
   }
 
@@ -185,6 +182,10 @@ export class AgendaComponent implements OnInit, AfterViewInit {
 
   }
 
+  blurFecha(fecha: Date) {
+    console.log('blur fecha::', fecha);
+    this.getAgenda(fecha);
+  }
   getAgenda(fecha: Date) {
     this.verAgenda = false;
     const strFecha = this.formatDateToString(fecha);

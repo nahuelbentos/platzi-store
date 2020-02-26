@@ -12,7 +12,6 @@ import { alumnoTieneExcepcionValidator } from '@utils/validators/alumno-tiene-ex
 import { SeleccionarAlumnoComponent } from '../seleccionar-alumno/seleccionar-alumno.component';
 import { SeleccionarInstructorComponent } from '../seleccionar-instructor/seleccionar-instructor.component';
 
-import swal from 'sweetalert2';
 import Swal from 'sweetalert2';
 import { SeleccionarFechaComponent } from '../seleccionar-fecha/seleccionar-fecha.component';
 

@@ -16,6 +16,7 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { SeleccionarAlumnoComponent } from './components/agenda/modals/seleccionar-alumno/seleccionar-alumno.component';
 import { SeleccionarInstructorComponent } from './components/agenda/modals/seleccionar-instructor/seleccionar-instructor.component';
 import { SeleccionarFechaComponent } from './components/agenda/modals/seleccionar-fecha/seleccionar-fecha.component';
+import { SeleccionarAccionAgendaComponent } from './components/agenda/modals/seleccionar-accion-agenda/seleccionar-accion-agenda.component';
 
 
 
@@ -27,7 +28,8 @@ import { SeleccionarFechaComponent } from './components/agenda/modals/selecciona
     AgendarClaseComponent,
     SeleccionarAlumnoComponent,
     SeleccionarInstructorComponent,
-    SeleccionarFechaComponent
+    SeleccionarFechaComponent,
+    SeleccionarAccionAgendaComponent
   ],
   imports: [
     CommonModule,
