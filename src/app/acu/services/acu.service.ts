@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '@environments/environment';
-
+import { CopiarMoverParameters } from '@core/model/copiarMoverParameters.model';
 
 @Injectable({
   providedIn: 'root'
@@ -48,7 +48,7 @@ export class AcuService {
   }
 
 
-  getAgenda() {
+  getAgenda(fechaClase: string, horaClase: number, movCod: number) {
     return this.http.post(`${environment.url_ws}/wsObtenerTablaAgenda`, {});
   }
 
@@ -58,6 +58,27 @@ export class AcuService {
     });
   }
 
+  validarCopiarMoverClase(fechaClase: string, horaClase: number, movCod: number) {
+    return this.http.post(`${environment.url_ws}/WSValidarCopiarMoverClase`, {
+      FchClase: fechaClase,
+      MovCod: movCod,
+      Hora: horaClase
+    }, this.httpOptions);
+
+  }
+
+  copiarMoverClase(params: CopiarMoverParameters) {
+    return this.http.post(`${environment.url_ws}/WSCopiarMoverClase`, {
+      Accion: params.accion,
+      FchClaseOld: params.fechaClaseOld,
+      HorClaseOld: params.horaClaseOld,
+      MovilOld: params.movilOld,
+      FchClase: params.fechaClase,
+      HorClase: params.horaClase,
+      Movil: params.movil
+    }, this.httpOptions);
+
+  }
 
   alumnoYaAsignado(aluNro: number) {
 

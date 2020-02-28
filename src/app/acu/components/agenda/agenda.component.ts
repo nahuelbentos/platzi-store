@@ -149,11 +149,29 @@ export class AgendaComponent implements OnInit, AfterViewInit {
     const text = `Movil: ${movil} ; Hora: ${hora} ; Existe:  ${existe}`;
     console.log(text);
     localStorage.setItem('fechaClase', this.fechaClase);
+    localStorage.setItem('fecha', JSON.stringify(this.fecha));
     localStorage.setItem('movil', movil.toString());
     localStorage.setItem('hora', hora.toString());
     localStorage.setItem('existe', existe.toString());
-    this._bottomSheet.open(SeleccionarAccionAgendaComponent);
 
+    const mainParameters = {
+      fecha: this.fechaClase,
+      movil,
+      hora,
+    };
+
+    localStorage.setItem('mainParameters', JSON.stringify(mainParameters));
+    const t = this._bottomSheet.open(SeleccionarAccionAgendaComponent);
+    t.afterDismissed().subscribe(() => {
+      console.log('fin open sheet');
+
+      const refreshAgenda = localStorage.getItem('refreshAgenda');
+
+      if (refreshAgenda) {
+        localStorage.removeItem('refreshAgenda');
+        this.getAgenda(this.fecha);
+      }
+    });
 
   }
 

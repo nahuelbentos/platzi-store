@@ -17,7 +17,17 @@ export const environment = {
     appId: '1:81982978238:web:76e170fade21a24ff986ef'
   }
 };
+/*
 
+Url api desarrollo SQLServer:
+  url_ws: 'http://192.1.0.86/ACU_WS.NetEnvironment/rest',
+  url_soap: 'http://192.1.0.86/ACU_WS.NetEnvironment/',
+URL api prod Oracle:
+
+  url_ws: 'http://192.1.0.71/ACU_Web.NetEnvironment/rest',
+  url_soap: 'http://192.1.0.71/ACU_Web.NetEnvironment/',
+
+*/
 /*
  * For easier debugging in development mode, you can import the following file
  * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.

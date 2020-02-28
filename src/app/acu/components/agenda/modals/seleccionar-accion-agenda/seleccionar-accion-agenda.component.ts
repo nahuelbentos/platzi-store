@@ -3,6 +3,7 @@ import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { MatDialog } from '@angular/material/dialog';
 import { AgendarClaseComponent } from '../agendar-clase/agendar-clase.component';
 import { AcuService } from '@acu/services/acu.service';
+import { CopiarMoverParameters } from '@core/model/copiarMoverParameters.model';
 
 import Swal from 'sweetalert2';
 
@@ -29,25 +30,18 @@ export class SeleccionarAccionAgendaComponent {
     console.log('Event: ', event);
 
     const fechaClase = localStorage.getItem('fechaClase');
+
+    const fecha: Date = JSON.parse(localStorage.getItem('fecha'));
     const movil = parseInt(localStorage.getItem('movil'), 0);
     const hora = parseInt(localStorage.getItem('hora'), 0);
     const existe: boolean = JSON.parse(localStorage.getItem('existe'));
+    const mainParameters = JSON.parse(localStorage.getItem('mainParameters'));
 
-
-    console.log('fechaClase: ', fechaClase);
-    console.log('movil: ', movil);
-    console.log('hora: ', hora);
-    console.log('localStorage.getItem(existe): ', localStorage.getItem('existe'));
-    console.log('existe: ', existe);
-
+    let continuar = true;
     switch (key) {
 
       case 'abrir-clase':
         console.log('abrir-clase: ', key);
-
-        // const fechaClase = localStorage.getItem('fechaClase');
-        // const movil = parseInt(localStorage.getItem('movil'), 0);
-        // const hora = parseInt(localStorage.getItem('hora'), 0);
 
         this.acuService.getClaseAgenda(fechaClase, hora, movil)
           .subscribe((res: any) => {
@@ -68,24 +62,57 @@ export class SeleccionarAccionAgendaComponent {
         break;
 
       case 'mover-clase':
-        console.log('mover-clase: ', key);
-        this.setPegarStorage();
-        break;
-
       case 'copiar-clase':
-        console.log('pegar : ', this.pegar);
+        console.log(key);
+        // parametros: FechaOld, MovilOld, HoraOld
+
+        const copiarMoverParameters = {
+          accion: (key === 'mover-clase') ? 'MOVER' : 'COPIAR',
+          fechaOld: mainParameters.fecha,
+          movilOld: mainParameters.movil,
+          horaOld: mainParameters.hora,
+        };
+
+        localStorage.setItem('copiarMoverParameters', JSON.stringify(copiarMoverParameters));
+
         this.setPegarStorage();
-        console.log('copiar-clase: ', key);
         break;
 
       case 'liberar-clase':
-        console.log('pegar : ', this.pegar);
-        this.setPegarStorage();
-        console.log('liberar-clase: ', key);
+
+        Swal.fire({
+          title: 'Confirmación de usuario',
+          text: 'ATENCIÓN: Se liberará la hora, perdiendose los datos actuales. ¿Confirma continuar?',
+          icon: 'warning',
+          showCancelButton: true,
+          // confirmButtonColor: '#3085d6',
+          // cancelButtonColor: '#d33',
+          confirmButtonText: 'Confirmar',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.value) {
+            console.log('confirmar 1');
+          }
+
+          this._bottomSheetRef.dismiss();
+          event.preventDefault();
+        });
+
+
+
         break;
 
       case 'pegar-clase':
-        console.log('Pegar :::: existe: ', existe);
+
+        const oldParameters = JSON.parse(localStorage.getItem('copiarMoverParameters'));
+        console.log('oldParameters :::: ', oldParameters);
+        console.log('mainParameters :::: ', mainParameters);
+
+        console.log('fechaOld :::: ', oldParameters.fechaOld);
+        console.log('fecha :::: ', mainParameters.fecha);
+
+        console.log(Date.parse(oldParameters.fechaOld) > Date.parse(mainParameters.fecha));
+
         if (existe) {
           Swal.fire({
             icon: 'error',
@@ -93,32 +120,120 @@ export class SeleccionarAccionAgendaComponent {
             text: 'Ese turno ya esta ocupado, elegi otro!'
           });
         } else {
+          if (oldParameters.fechaOld > mainParameters.fecha) {
+            continuar = false;
+            Swal.fire({
+              title: 'Confirmación de usuario',
+              text: 'ATENCIÓN: La fecha seleccionada es anterior a la actual. ¿Confirma continuar?',
+              icon: 'warning',
+              showCancelButton: true,
+              // confirmButtonColor: '#3085d6',
+              // cancelButtonColor: '#d33',
+              confirmButtonText: 'Confirmar',
+              cancelButtonText: 'Cancelar'
+            }).then((result) => {
+              if (result.value) {
+                console.log('confirmar 1')
+                this.copiarMoverClase(oldParameters, mainParameters);
+              }
 
-          Swal.fire({
-            icon: 'success',
-            title: 'Clase copiada con exito!',
-            showConfirmButton: false,
-            timer: 1500
-          });
-          console.log(' pegar : ', this.pegar);
-          this.setPegarStorage();
-          console.log('pegar-clase: ', key);
+              this._bottomSheetRef.dismiss();
+              event.preventDefault();
+            });
+
+          } else {
+            this.copiarMoverClase(oldParameters, mainParameters);
+          }
+
+
+
         }
+        console.log('antes del break 1')
         break;
 
       case 'cancelar':
+        this.setPegarStorage();
+        break;
+
+      case 'confirmar':
+        this.acuService.validarCopiarMoverClase(fechaClase, hora, movil)
+          .subscribe((res: any) => {
+
+            console.log('Respuesta confirmmmm: ', res);
+
+            if (res.confirm) {
+
+              Swal.fire({
+                title: 'Confirmación de usuario',
+                text: res.texto,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirmar',
+                cancelButtonText: 'Cancelar'
+              }).then((result) => {
+                if (result.value) {
+                  Swal.fire({
+                    title: 'Confirmado!',
+                    text: 'Confirmaste!',
+                    icon: 'success',
+                  });
+                }
+              });
+            } else {
+
+            }
+
+          });
+
         break;
 
       default:
         break;
     }
-    this._bottomSheetRef.dismiss();
-    event.preventDefault();
+    if (continuar) {
+      this._bottomSheetRef.dismiss();
+      event.preventDefault();
+    }
   }
 
   setPegarStorage() {
 
     this.pegar = !this.pegar;
     localStorage.setItem('pegar-clase', this.pegar.toString());
+  }
+
+  copiarMoverClase(oldParameters, mainParameters) {
+
+    const params: CopiarMoverParameters = {
+      accion: oldParameters.accion,
+      fechaClaseOld: oldParameters.fechaOld,
+      horaClaseOld: oldParameters.horaOld,
+      movilOld: oldParameters.movilOld,
+      fechaClase: mainParameters.fecha,
+      horaClase: mainParameters.hora,
+      movil: mainParameters.movil,
+    };
+    console.log('params :::: ', params);
+
+    this.acuService.copiarMoverClase(params)
+      .subscribe((res: any) => {
+
+        console.log('Respuesta copar-mover: ', res);
+
+        Swal.fire({
+          icon: 'success',
+          title: res.Gx_msg,
+          showConfirmButton: false,
+          timer: 4000
+        });
+
+        localStorage.removeItem('copiarMoverParameters');
+        localStorage.setItem('refreshAgenda', 'true');
+      });
+
+
+    this.setPegarStorage();
   }
 }
