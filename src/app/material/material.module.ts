@@ -113,6 +113,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatSortModule,
     MatTableModule,
     MatToolbarModule,
+    MatTooltipModule,
     MatTreeModule,
     PortalModule,
     ScrollingModule,

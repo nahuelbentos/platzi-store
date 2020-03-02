@@ -8,13 +8,14 @@ export interface DialogData {
 @Component({
   selector: 'app-seleccionar-fecha',
   templateUrl: './seleccionar-fecha.component.html',
-  styleUrls: ['./seleccionar-fecha.component.scss']
+  styleUrls: ['./seleccionar-fecha.component.scss'],
 })
 export class SeleccionarFechaComponent {
 
   fecha: Date;
   sabadoODomingo: number;
   hoy = new Date();
+  invalidFecha = false;
   constructor(
     public dialogRef: MatDialogRef<AgendarClaseComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData) {
@@ -37,11 +38,17 @@ export class SeleccionarFechaComponent {
     this.modificarFecha(1);
   }
 
+  validarFecha() {
+    this.sabadoODomingo = this.fecha.getDay();
+    this.invalidFecha = (this.fecha < this.hoy && !(this.fecha.toLocaleDateString() === this.hoy.toLocaleDateString()));
+  }
+
   modificarFecha(addDay: number) {
     const result = new Date(this.fecha);
     result.setDate(result.getDate() + addDay);
     this.sabadoODomingo = result.getDay();
     this.fecha = result;
+    this.invalidFecha = (this.fecha < this.hoy && !(this.fecha.toLocaleDateString() === this.hoy.toLocaleDateString()));
 
   }
 }

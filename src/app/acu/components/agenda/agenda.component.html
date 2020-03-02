@@ -3,13 +3,13 @@
     <div class="row">
         <div class="col">
             <mat-button-toggle-group #group="matButtonToggleGroup">
-                <mat-button-toggle value="left" aria-label="Text align left">
+                <mat-button-toggle value="left" aria-label="Text align left" (click)="duplicarDia()">
                     Duplicar Día
                 </mat-button-toggle>
-                <mat-button-toggle value="center" aria-label="Text align center">
+                <mat-button-toggle value="center" aria-label="Text align center" (click)="liberarDia()">
                     Liberar Día
                 </mat-button-toggle>
-                <mat-button-toggle value="right" aria-label="Text align right">
+                <mat-button-toggle value="right" aria-label="Text align right" (click)="moverDia()">
                     Mover Día
                 </mat-button-toggle>
                 <mat-button-toggle mat-button [matMenuTriggerFor]="reportes" value="right"

@@ -1,11 +1,11 @@
-import { Component, OnInit, Inject, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { AcuService } from '../../services/acu.service';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { AgendarClaseComponent } from './modals/agendar-clase/agendar-clase.component';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { MatDialog } from '@angular/material/dialog';
 import { SeleccionarAccionAgendaComponent } from './modals/seleccionar-accion-agenda/seleccionar-accion-agenda.component';
+import { SeleccionarFechaComponent } from './modals/seleccionar-fecha/seleccionar-fecha.component';
 
-
+import Swal from 'sweetalert2';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 export interface AgendaElement {
   Movil: string;
   Hora0: string;
@@ -77,6 +77,7 @@ export class AgendaComponent implements OnInit, AfterViewInit {
   sabadoODomingo: number;
   verAgenda: boolean;
 
+  hoy = new Date();
   agendaDisplayedColumns: string[];
   columns: string[] = [];
   agendaDataSource: AgendaElement[];
@@ -85,6 +86,7 @@ export class AgendaComponent implements OnInit, AfterViewInit {
   horas: any[] = [];
   fechaClase = '';
   fecha: Date;
+  auxFechaClase: Date = new Date();
 
   horaMovilPlano: DataAgenda[] = null;
 
@@ -221,6 +223,185 @@ export class AgendaComponent implements OnInit, AfterViewInit {
 
   }
 
+  liberarDia() {
+
+    Swal.fire({
+      title: 'Confirmación de Usuario',
+      text: 'La fecha seleccionada es menor a la actual. ¿Confirma continuar?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Confirmar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.value) {
+
+        this.seleccionarFecha()
+          .subscribe((fechaSeleccionada: Date) => {
+            console.log('2) The dialog  fecha was closed: ', fechaSeleccionada);
+            if (fechaSeleccionada < this.hoy && !(fechaSeleccionada.toLocaleDateString() === this.hoy.toLocaleDateString())) {
+              Swal.fire({
+                title: 'Confirmación de Usuario',
+                text: 'La fecha seleccionada es menor a la actual. ¿Confirma continuar?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Confirmar',
+                cancelButtonText: 'Cancelar'
+              }).then((res) => {
+
+                if (res.value) {
+                  console.log('Resultado:: ', res);
+
+                  Swal.fire({
+                    title: 'Confirmado!',
+                    text: 'Se liberó la hora, correctamente',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    onClose: () => {
+                      console.log('Cieerro antes de timer');
+                    }
+                  }).then((res2) => {
+                    if (res2.dismiss === Swal.DismissReason.timer) {
+                      console.log('Cierro  con el timer');
+                    }
+                  });
+
+                }
+              });
+            }
+          });
+      }
+    });
+
+  }
+
+  duplicarDia() {
+    this.confirmacionUsuario(
+      'Confirmación de Usuario',
+      `ATENCIÓN: Se procederá a duplicar las clases, haciendo una copia los registros actuales a una nueva fecha. 
+    ¿Confirma el proceso?`)
+      .then((result) => {
+        if (result.value) {
+
+          this.seleccionarFecha()
+            .subscribe((fechaSeleccionada: Date) => {
+              console.log('2) The dialog  fecha was closed: ', fechaSeleccionada);
+              if (fechaSeleccionada < this.hoy && !(fechaSeleccionada.toLocaleDateString() === this.hoy.toLocaleDateString())) {
+
+                this.confirmacionUsuario(
+                  'Confirmación de Usuario',
+                  `La fecha seleccionada es menor a la actual. ¿Confirma continuar?`)
+                  .then((res) => {
+                    if (res.value) {
+
+                      this.confirmacionUsuario(
+                        'Confirmación de Usuario',
+                        `ATENCIÓN: Desea marcar las clases para avisar al alumno?`)
+                        .then((result2) => {
+
+                          console.log('Resultado:: ', result2);
+                          let EsAgCuAviso = 0;
+                          if (result2.value) {
+
+                            EsAgCuAviso = 1;
+
+                          }
+                          this.acuService.duplicarDiaAgenda({
+                            fechaClase: this.fecha,
+                            fechaNueva: fechaSeleccionada,
+                            EsAgCuAviso
+                          }).subscribe((response: any) => {
+                            console.log('Agenda: ', response);
+
+
+                          });
+
+
+                          Swal.fire({
+                            title: 'Confirmado!',
+                            text: 'Se liberó la hora, correctamente',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false,
+                            onClose: () => {
+                              console.log('Cieerro antes de timer');
+                            }
+                          }).then((res2) => {
+                            if (res2.dismiss === Swal.DismissReason.timer) {
+                              console.log('Cierro  con el timer');
+                            }
+                          });
+                        });
+
+
+                    }
+                  });
+              }
+            });
+
+        }
+      });
+  }
+
+  confirmacionUsuario(title, text) {
+    return Swal.fire({
+      title,
+      text,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Confirmar',
+      cancelButtonText: 'Cancelar'
+    });
+  }
+  moverDia() {
+    this.seleccionarFecha()
+      .subscribe((fechaSeleccionada: Date) => {
+        console.log('2) The dialog  fecha was closed: ', fechaSeleccionada);
+        if (fechaSeleccionada < this.hoy && !(fechaSeleccionada.toLocaleDateString() === this.hoy.toLocaleDateString())) {
+          Swal.fire({
+            title: 'Confirmación de Usuario',
+            text: 'La fecha seleccionada es menor a la actual. ¿Confirma continuar?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Confirmar',
+            cancelButtonText: 'Cancelar'
+          }).then((result) => {
+            if (result.value) {
+              console.log('Resultado:: ', result);
+
+              Swal.fire({
+                title: 'Confirmado!',
+                text: 'Se liberó la hora, correctamente',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false,
+                onClose: () => {
+                  console.log('Cieerro antes de timer');
+                }
+              }).then((res) => {
+                if (res.dismiss === Swal.DismissReason.timer) {
+                  console.log('Cierro  con el timer');
+                }
+              });
+
+            }
+          });
+        }
+      });
+
+  }
+  seleccionarFecha() {
+
+    const fechaDialogRef = this.dialog.open(SeleccionarFechaComponent, {
+      height: 'auto',
+      width: 'auto',
+      data: {
+        fecha: this.auxFechaClase,
+      }
+    });
+
+    return fechaDialogRef.afterClosed();
+  }
   diaAnterior() {
     const result = new Date(this.fecha);
     result.setDate(result.getDate() - 1);

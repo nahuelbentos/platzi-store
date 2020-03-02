@@ -9,6 +9,11 @@ export interface LiberarParameters {
   movil: number;
 }
 
+export interface DuplicarDiaParameters {
+  fechaClase: Date;
+  fechaNueva: Date;
+  EsAgCuAviso: number;
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -73,6 +78,14 @@ export class AcuService {
 
   }
 
+  duplicarDiaAgenda(params: DuplicarDiaParameters) {
+    return this.http.post(`${environment.url_ws}/wsDuplicarDiaAgenda`, {
+      FchClase: params.fechaClase,
+      FechaNueva: params.fechaNueva,
+      EsAgCuAviso: params.EsAgCuAviso
+    }, this.httpOptions);
+
+  }
   copiarMoverClase(params: CopiarMoverParameters) {
     return this.http.post(`${environment.url_ws}/WSCopiarMoverClase`, {
       Accion: params.accion,
