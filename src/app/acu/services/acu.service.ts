@@ -3,6 +3,12 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '@environments/environment';
 import { CopiarMoverParameters } from '@core/model/copiarMoverParameters.model';
 
+export interface LiberarParameters {
+  fechaClase: Date;
+  horaClase: number;
+  movil: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -73,6 +79,15 @@ export class AcuService {
       FchClaseOld: params.fechaClaseOld,
       HorClaseOld: params.horaClaseOld,
       MovilOld: params.movilOld,
+      FchClase: params.fechaClase,
+      HorClase: params.horaClase,
+      Movil: params.movil
+    }, this.httpOptions);
+
+  }
+
+  liberarClase(params: LiberarParameters) {
+    return this.http.post(`${environment.url_ws}/wsLiberarClase`, {
       FchClase: params.fechaClase,
       HorClase: params.horaClase,
       Movil: params.movil

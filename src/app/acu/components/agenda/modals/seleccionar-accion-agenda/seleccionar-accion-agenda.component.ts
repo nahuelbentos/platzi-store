@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { MatDialog } from '@angular/material/dialog';
 import { AgendarClaseComponent } from '../agendar-clase/agendar-clase.component';
-import { AcuService } from '@acu/services/acu.service';
+import { AcuService, LiberarParameters } from '@acu/services/acu.service';
 import { CopiarMoverParameters } from '@core/model/copiarMoverParameters.model';
 
 import Swal from 'sweetalert2';
@@ -64,13 +64,14 @@ export class SeleccionarAccionAgendaComponent {
       case 'mover-clase':
       case 'copiar-clase':
         console.log(key);
-        // parametros: FechaOld, MovilOld, HoraOld
 
         const copiarMoverParameters = {
           accion: (key === 'mover-clase') ? 'MOVER' : 'COPIAR',
           fechaOld: mainParameters.fecha,
           movilOld: mainParameters.movil,
           horaOld: mainParameters.hora,
+          classOld: mainParameters.class,
+          textOld: mainParameters.text,
         };
 
         localStorage.setItem('copiarMoverParameters', JSON.stringify(copiarMoverParameters));
@@ -80,22 +81,39 @@ export class SeleccionarAccionAgendaComponent {
 
       case 'liberar-clase':
 
+        continuar = false;
         Swal.fire({
           title: 'Confirmación de usuario',
           text: 'ATENCIÓN: Se liberará la hora, perdiendose los datos actuales. ¿Confirma continuar?',
           icon: 'warning',
           showCancelButton: true,
-          // confirmButtonColor: '#3085d6',
-          // cancelButtonColor: '#d33',
           confirmButtonText: 'Confirmar',
           cancelButtonText: 'Cancelar'
         }).then((result) => {
           if (result.value) {
             console.log('confirmar 1');
-          }
+            const liberarParameters: LiberarParameters = {
+              fechaClase: mainParameters.fecha,
+              horaClase: mainParameters.hora,
+              movil: mainParameters.movil
+            };
+            this.acuService.liberarClase(liberarParameters)
+              .subscribe((res: any) => {
 
-          this._bottomSheetRef.dismiss();
-          event.preventDefault();
+                console.log('Respuesta liberar: ', res);
+
+                Swal.fire({
+                  icon: 'success',
+                  title: res.Gx_msg,
+                  showConfirmButton: false,
+                  timer: 4000
+                });
+                localStorage.setItem('refreshLiberaAgenda', 'true');
+
+                this._bottomSheetRef.dismiss();
+                event.preventDefault();
+              });
+          }
         });
 
 
@@ -127,13 +145,11 @@ export class SeleccionarAccionAgendaComponent {
               text: 'ATENCIÓN: La fecha seleccionada es anterior a la actual. ¿Confirma continuar?',
               icon: 'warning',
               showCancelButton: true,
-              // confirmButtonColor: '#3085d6',
-              // cancelButtonColor: '#d33',
               confirmButtonText: 'Confirmar',
               cancelButtonText: 'Cancelar'
             }).then((result) => {
               if (result.value) {
-                console.log('confirmar 1')
+                console.log('confirmar 1');
                 this.copiarMoverClase(oldParameters, mainParameters);
               }
 
@@ -143,49 +159,20 @@ export class SeleccionarAccionAgendaComponent {
 
           } else {
             this.copiarMoverClase(oldParameters, mainParameters);
+            this._bottomSheetRef.dismiss();
+            event.preventDefault();
           }
 
 
 
         }
-        console.log('antes del break 1')
+        console.log('antes del break 1');
         break;
 
       case 'cancelar':
         this.setPegarStorage();
         break;
 
-      case 'confirmar':
-        this.acuService.validarCopiarMoverClase(fechaClase, hora, movil)
-          .subscribe((res: any) => {
-
-            console.log('Respuesta confirmmmm: ', res);
-
-            if (res.confirm) {
-
-              Swal.fire({
-                title: 'Confirmación de usuario',
-                text: res.texto,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Confirmar',
-                cancelButtonText: 'Cancelar'
-              }).then((result) => {
-                if (result.value) {
-                  Swal.fire({
-                    title: 'Confirmado!',
-                    text: 'Confirmaste!',
-                    icon: 'success',
-                  });
-                }
-              });
-            } else {
-
-            }
-
-          });
 
         break;
 
@@ -216,7 +203,9 @@ export class SeleccionarAccionAgendaComponent {
       movil: mainParameters.movil,
     };
     console.log('params :::: ', params);
-
+    if (oldParameters.accion === 'MOVER') {
+      localStorage.setItem('limpiarCeldaOld', 'true');
+    }
     this.acuService.copiarMoverClase(params)
       .subscribe((res: any) => {
 
@@ -229,7 +218,9 @@ export class SeleccionarAccionAgendaComponent {
           timer: 4000
         });
 
-        localStorage.removeItem('copiarMoverParameters');
+
+        localStorage.setItem('classOld', oldParameters.classOld);
+        localStorage.setItem('textOld', oldParameters.textOld);
         localStorage.setItem('refreshAgenda', 'true');
       });
 

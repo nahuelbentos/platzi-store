@@ -9,6 +9,25 @@ table {
   padding: 5px;
 }
 
+.cell-empty {
+  width: 6%;
+  height: 20px;
+  padding: 5px;
+  border-bottom-color: rgba(0, 0, 0, 0.12);
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-collapse: separate;
+  box-sizing: border-box;
+  color: rgba(0, 0, 0, 0.87);
+  display: table-cell;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-size: 14px;
+  text-align: center;
+  vertical-align: middle;
+  -webkit-border-horizontal-spacing: 0px;
+  -webkit-border-vertical-spacing: 0px;
+}
+
 .contenedor {
   width: 96%;
   margin: 2%;

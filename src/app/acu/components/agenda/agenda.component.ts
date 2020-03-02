@@ -147,6 +147,9 @@ export class AgendaComponent implements OnInit, AfterViewInit {
 
   showAlert(movil: number, hora: number, existe: boolean): void {
     const text = `Movil: ${movil} ; Hora: ${hora} ; Existe:  ${existe}`;
+
+    const celda = document.getElementById(`${movil}${hora}`);
+    celda.getAttribute('class');
     console.log(text);
     localStorage.setItem('fechaClase', this.fechaClase);
     localStorage.setItem('fecha', JSON.stringify(this.fecha));
@@ -158,6 +161,8 @@ export class AgendaComponent implements OnInit, AfterViewInit {
       fecha: this.fechaClase,
       movil,
       hora,
+      class: celda.getAttribute('class'),
+      text: celda.innerHTML,
     };
 
     localStorage.setItem('mainParameters', JSON.stringify(mainParameters));
@@ -166,10 +171,45 @@ export class AgendaComponent implements OnInit, AfterViewInit {
       console.log('fin open sheet');
 
       const refreshAgenda = localStorage.getItem('refreshAgenda');
+      const refreshLiberaAgenda = localStorage.getItem('refreshLiberaAgenda');
+
+      if (refreshLiberaAgenda) {
+        localStorage.removeItem('refreshLiberaAgenda');
+        celda.removeAttribute('class');
+        celda.innerHTML = '';
+        celda.classList.add('cdk-cell', 'mat-cell', `cdk-column-${hora}`, `mat-column-${hora}`, 'cell', 'ng-star-inserted');
+      }
 
       if (refreshAgenda) {
-        localStorage.removeItem('refreshAgenda');
-        this.getAgenda(this.fecha);
+        const classOld = localStorage.getItem('classOld');
+        const textOld = localStorage.getItem('textOld');
+
+        if (localStorage.getItem('limpiarCeldaOld')) {
+          const oldParameters = JSON.parse(localStorage.getItem('copiarMoverParameters'));
+          const celdaOld = document.getElementById(`${oldParameters.movilOld}${oldParameters.horaOld}`);
+          celdaOld.removeAttribute('class');
+          celdaOld.innerHTML = '';
+          celdaOld.classList.add(
+            'cdk-cell',
+            'mat-cell',
+            `cdk-column-${oldParameters.horaOld}`,
+            `mat-column-${oldParameters.horaOld}`,
+            'cell', 'ng-star-inserted'
+          );
+          localStorage.removeItem('copiarMoverParameters');
+          localStorage.removeItem('limpiarCeldaOld');
+        }
+        const arrayClass: string[] = classOld.split(' ');
+        localStorage.removeItem('classOld');
+        localStorage.removeItem('textOld');
+
+        localStorage.removeItem('refreshLiberaAgenda');
+        celda.removeAttribute('class');
+        celda.innerHTML = textOld;
+        arrayClass.forEach(element => {
+          console.log('class: ', element);
+          celda.classList.add(element);
+        });
       }
     });
 
