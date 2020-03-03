@@ -267,21 +267,10 @@ export class AgendaComponent implements OnInit, AfterViewInit {
   accionGeneralDia(accion: string) {
     this.seleccionarFecha()
       .subscribe((fechaSeleccionada: Date) => {
-        if (fechaSeleccionada < this.hoy && !(fechaSeleccionada.toLocaleDateString() === this.hoy.toLocaleDateString())) {
-
-          this.confirmacionUsuario(
-            'Confirmación de Usuario',
-            `La fecha seleccionada es menor a la actual. ¿Confirma continuar?`)
-            .then((res) => {
-              if (res.value) {
-
-                //  this.finDuplicarDia(fechaSeleccionada);
-
-              }
-            });
-        } else {
+        if (fechaSeleccionada) {
 
           this.finDuplicarDia(fechaSeleccionada, accion);
+
         }
       });
   }
@@ -395,7 +384,7 @@ export class AgendaComponent implements OnInit, AfterViewInit {
       width: 'auto',
       data: {
         fecha: this.auxFechaClase,
-        seleccionaFechaAnterior: false,
+        invalidFechaAnterior: true,
       }
     });
 

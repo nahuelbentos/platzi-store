@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AgendarClaseComponent } from '../agendar-clase/agendar-clase.component';
+import { FormControl, Validators } from '@angular/forms';
 export interface DialogData {
   fecha: Date;
   invalidFechaAnterior: boolean;
@@ -18,13 +19,19 @@ export class SeleccionarFechaComponent {
   invalidFechaAnterior: boolean;
   invalidFecha: boolean;
 
+
   constructor(
     public dialogRef: MatDialogRef<AgendarClaseComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData) {
-
+    console.log('data selecionar-fecha: ', data);
     this.fecha = data.fecha;
     this.invalidFechaAnterior = data.invalidFechaAnterior;
+
+    console.log('invalidFechaAnterior selecionar-fecha: ', this.invalidFechaAnterior);
   }
+
+
+
 
   onNoClick(): void {
     this.dialogRef.close();
@@ -50,9 +57,8 @@ export class SeleccionarFechaComponent {
   modificarFecha(addDay: number) {
     const result = new Date(this.fecha);
     result.setDate(result.getDate() + addDay);
-    this.sabadoODomingo = result.getDay();
     this.fecha = result;
-    this.invalidFecha = (this.fecha < this.hoy && !(this.fecha.toLocaleDateString() === this.hoy.toLocaleDateString()));
+    this.validarFecha();
 
   }
 }

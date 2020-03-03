@@ -40,6 +40,15 @@ mat-toolbar {
 mat-toolbar-row {
   height: 100%;
 }
+
+mat-hint {
+  color: #dc3545;
+  white-space: pre-line;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 0px;
+}
+
 .example-button-row button,
 .example-button-row a {
   margin-right: 8px;

@@ -16,15 +16,35 @@
 
             <mat-toolbar>
                 <mat-toolbar-row>
-                    <mat-form-field
-                        [class.text-danger]="fecha < hoy && !(fecha.toLocaleDateString() === hoy.toLocaleDateString())"
-                        [class.text-primary]="fecha.toLocaleDateString() === hoy.toLocaleDateString()"
-                        [class.text-success]="fecha > hoy">
-                        <mat-label>Mover a la fecha?</mat-label>
-                        <input matInput [matDatepicker]="picker" [(ngModel)]="fecha" (dateChange)="validarFecha()">
-                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                        <mat-datepicker #picker></mat-datepicker>
-                    </mat-form-field>
+                    <div class="row" style="width: 225px;">
+                        <div class="col-xs-12 ">
+                            <div class="box">
+                                <mat-form-field
+                                    [class.text-danger]="fecha < hoy && !(fecha.toLocaleDateString() === hoy.toLocaleDateString())"
+                                    [class.text-primary]="fecha.toLocaleDateString() === hoy.toLocaleDateString()"
+                                    [class.text-success]="fecha > hoy">
+                                    <mat-label>Mover a la fecha?</mat-label>
+                                    <input matInput [matDatepicker]="picker" [(ngModel)]="fecha"
+                                        (dateChange)="validarFecha()">
+
+
+                                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker></mat-datepicker>
+
+                                </mat-form-field>
+                            </div>
+
+                        </div>
+
+                        <div class="col-xs-12 ">
+                            <div class="box">
+                                <mat-hint [hidden]="!invalidFecha"> ATENCIÓN: la fecha seleccionada no puede ser menor a
+                                    la
+                                    actual.
+                                </mat-hint>
+                            </div>
+                        </div>
+                    </div>
 
                 </mat-toolbar-row>
                 <mat-toolbar-row>
@@ -51,7 +71,8 @@
 
     </mat-card-content>
     <mat-card-actions align="center">
-        <button mat-raised-button [mat-dialog-close]="fecha" cdkFocusInitial color="primary">Seleccionar</button>
+        <button mat-raised-button [mat-dialog-close]="fecha" cdkFocusInitial color="primary"
+            [disabled]="invalidFecha">Seleccionar</button>
         <button mat-raised-button (click)="onNoClick()">Cancelar</button>
     </mat-card-actions>
 </mat-card>
