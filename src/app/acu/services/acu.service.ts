@@ -86,6 +86,23 @@ export class AcuService {
     }, this.httpOptions);
 
   }
+
+  moverDiaAgenda(params: DuplicarDiaParameters) {
+    return this.http.post(`${environment.url_ws}/wsMoverDiaAgenda`, {
+      FchClase: params.fechaClase,
+      FechaNueva: params.fechaNueva,
+      EsAgCuAviso: params.EsAgCuAviso
+    }, this.httpOptions);
+
+  }
+
+  liberarDiaAgenda(FchClase: Date) {
+    return this.http.post(`${environment.url_ws}/wsLiberarDiaAgenda`, {
+      FchClase
+    }, this.httpOptions);
+
+  }
+
   copiarMoverClase(params: CopiarMoverParameters) {
     return this.http.post(`${environment.url_ws}/WSCopiarMoverClase`, {
       Accion: params.accion,

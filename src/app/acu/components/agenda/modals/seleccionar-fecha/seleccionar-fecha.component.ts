@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AgendarClaseComponent } from '../agendar-clase/agendar-clase.component';
 export interface DialogData {
   fecha: Date;
-  name: string;
+  invalidFechaAnterior: boolean;
 }
 @Component({
   selector: 'app-seleccionar-fecha',
@@ -15,12 +15,15 @@ export class SeleccionarFechaComponent {
   fecha: Date;
   sabadoODomingo: number;
   hoy = new Date();
-  invalidFecha = false;
+  invalidFechaAnterior: boolean;
+  invalidFecha: boolean;
+
   constructor(
     public dialogRef: MatDialogRef<AgendarClaseComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData) {
 
     this.fecha = data.fecha;
+    this.invalidFechaAnterior = data.invalidFechaAnterior;
   }
 
   onNoClick(): void {
@@ -40,7 +43,8 @@ export class SeleccionarFechaComponent {
 
   validarFecha() {
     this.sabadoODomingo = this.fecha.getDay();
-    this.invalidFecha = (this.fecha < this.hoy && !(this.fecha.toLocaleDateString() === this.hoy.toLocaleDateString()));
+    // tslint:disable-next-line: max-line-length
+    this.invalidFecha = (this.invalidFechaAnterior) && (this.fecha < this.hoy && !(this.fecha.toLocaleDateString() === this.hoy.toLocaleDateString()));
   }
 
   modificarFecha(addDay: number) {

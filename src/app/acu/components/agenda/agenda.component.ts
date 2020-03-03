@@ -225,122 +225,156 @@ export class AgendaComponent implements OnInit, AfterViewInit {
 
   liberarDia() {
 
-    Swal.fire({
-      title: 'Confirmación de Usuario',
-      text: 'La fecha seleccionada es menor a la actual. ¿Confirma continuar?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Confirmar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.value) {
+    this.confirmacionUsuario(
+      'Confirmación de Usuario',
+      'ATENCIÓN: Se procederá a liberar las clases, elimnando los registros actuales. ¿Confirma el proceso?')
+      .then((result) => {
+        if (result.value) {
+          this.accionGeneralDia('liberar');
+        }
+      });
 
-        this.seleccionarFecha()
-          .subscribe((fechaSeleccionada: Date) => {
-            console.log('2) The dialog  fecha was closed: ', fechaSeleccionada);
-            if (fechaSeleccionada < this.hoy && !(fechaSeleccionada.toLocaleDateString() === this.hoy.toLocaleDateString())) {
-              Swal.fire({
-                title: 'Confirmación de Usuario',
-                text: 'La fecha seleccionada es menor a la actual. ¿Confirma continuar?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Confirmar',
-                cancelButtonText: 'Cancelar'
-              }).then((res) => {
+  }
 
-                if (res.value) {
-                  console.log('Resultado:: ', res);
+  moverDia() {
 
-                  Swal.fire({
-                    title: 'Confirmado!',
-                    text: 'Se liberó la hora, correctamente',
-                    icon: 'success',
-                    timer: 2000,
-                    showConfirmButton: false,
-                    onClose: () => {
-                      console.log('Cieerro antes de timer');
-                    }
-                  }).then((res2) => {
-                    if (res2.dismiss === Swal.DismissReason.timer) {
-                      console.log('Cierro  con el timer');
-                    }
-                  });
-
-                }
-              });
-            }
-          });
-      }
-    });
+    this.confirmacionUsuario(
+      'Confirmación de Usuario',
+      `ATENCIÓN: Se procederá a mover las clases, eliminando los registros actuales.
+    ¿Confirma el proceso?`)
+      .then((result) => {
+        if (result.value) {
+          this.accionGeneralDia('mover');
+        }
+      });
 
   }
 
   duplicarDia() {
+
     this.confirmacionUsuario(
       'Confirmación de Usuario',
-      `ATENCIÓN: Se procederá a duplicar las clases, haciendo una copia los registros actuales a una nueva fecha. 
+      `ATENCIÓN: Se procederá a duplicar las clases, haciendo una copia los registros actuales a una nueva fecha.
     ¿Confirma el proceso?`)
       .then((result) => {
         if (result.value) {
-
-          this.seleccionarFecha()
-            .subscribe((fechaSeleccionada: Date) => {
-              console.log('2) The dialog  fecha was closed: ', fechaSeleccionada);
-              if (fechaSeleccionada < this.hoy && !(fechaSeleccionada.toLocaleDateString() === this.hoy.toLocaleDateString())) {
-
-                this.confirmacionUsuario(
-                  'Confirmación de Usuario',
-                  `La fecha seleccionada es menor a la actual. ¿Confirma continuar?`)
-                  .then((res) => {
-                    if (res.value) {
-
-                      this.confirmacionUsuario(
-                        'Confirmación de Usuario',
-                        `ATENCIÓN: Desea marcar las clases para avisar al alumno?`)
-                        .then((result2) => {
-
-                          console.log('Resultado:: ', result2);
-                          let EsAgCuAviso = 0;
-                          if (result2.value) {
-
-                            EsAgCuAviso = 1;
-
-                          }
-                          this.acuService.duplicarDiaAgenda({
-                            fechaClase: this.fecha,
-                            fechaNueva: fechaSeleccionada,
-                            EsAgCuAviso
-                          }).subscribe((response: any) => {
-                            console.log('Agenda: ', response);
-
-
-                          });
-
-
-                          Swal.fire({
-                            title: 'Confirmado!',
-                            text: 'Se liberó la hora, correctamente',
-                            icon: 'success',
-                            timer: 2000,
-                            showConfirmButton: false,
-                            onClose: () => {
-                              console.log('Cieerro antes de timer');
-                            }
-                          }).then((res2) => {
-                            if (res2.dismiss === Swal.DismissReason.timer) {
-                              console.log('Cierro  con el timer');
-                            }
-                          });
-                        });
-
-
-                    }
-                  });
-              }
-            });
-
+          this.accionGeneralDia('duplicar');
         }
       });
+
+  }
+
+  accionGeneralDia(accion: string) {
+    this.seleccionarFecha()
+      .subscribe((fechaSeleccionada: Date) => {
+        if (fechaSeleccionada < this.hoy && !(fechaSeleccionada.toLocaleDateString() === this.hoy.toLocaleDateString())) {
+
+          this.confirmacionUsuario(
+            'Confirmación de Usuario',
+            `La fecha seleccionada es menor a la actual. ¿Confirma continuar?`)
+            .then((res) => {
+              if (res.value) {
+
+                //  this.finDuplicarDia(fechaSeleccionada);
+
+              }
+            });
+        } else {
+
+          this.finDuplicarDia(fechaSeleccionada, accion);
+        }
+      });
+  }
+
+  finDuplicarDia(fechaSeleccionada, accion) {
+
+
+    if (accion === 'liberar') {
+      // acuservice.liberarDiaAgenda
+      this.acuService.liberarDiaAgenda(this.fecha)
+        .subscribe((response: any) => {
+
+          console.log('liberarDiaAgenda: ', response);
+
+          this.mensajeConfirmacion('Confirmado!', 'Se libero el día, correctamente.').then((res2) => {
+            if (res2.dismiss === Swal.DismissReason.timer) {
+              console.log('Cierro  con el timer');
+            }
+          });
+        });
+    } else {
+
+      this.confirmacionUsuario(
+        'Confirmación de Usuario',
+        `ATENCIÓN: Desea marcar las clases para avisar al alumno?`)
+        .then((result2) => {
+
+          console.log('Resultado:: ', result2);
+          let EsAgCuAviso = 0;
+          if (result2.value) {
+
+            EsAgCuAviso = 1;
+
+          }
+
+          switch (accion) {
+            case 'duplicar':
+              this.acuService.duplicarDiaAgenda({
+                fechaClase: this.fecha,
+                fechaNueva: fechaSeleccionada,
+                EsAgCuAviso
+              }).subscribe((response: any) => {
+                console.log('duplicarDiaAgenda: ', response);
+
+                this.mensajeConfirmacion('Confirmado!', response.mensaje).then((res2) => {
+                  if (res2.dismiss === Swal.DismissReason.timer) {
+                    console.log('Cierro  con el timer');
+                  }
+                });
+
+              });
+
+              break;
+            case 'mover':
+              this.acuService.moverDiaAgenda({
+                fechaClase: this.fecha,
+                fechaNueva: fechaSeleccionada,
+                EsAgCuAviso
+              }).subscribe((response: any) => {
+                console.log('moverDiaAgenda: ', response);
+
+                this.mensajeConfirmacion('Confirmado!', response.mensaje).then((res2) => {
+                  if (res2.dismiss === Swal.DismissReason.timer) {
+                    console.log('Cierro  con el timer');
+                  }
+                });
+
+              });
+
+              break;
+
+            default:
+              break;
+          }
+
+
+        });
+
+    }
+  }
+
+
+  mensajeConfirmacion(title, text) {
+    return Swal.fire({
+      title,
+      text,
+      icon: 'success',
+      timer: 5000,
+      showConfirmButton: false,
+      onClose: () => {
+        console.log('Cieerro antes de timer');
+      }
+    });
   }
 
   confirmacionUsuario(title, text) {
@@ -353,43 +387,7 @@ export class AgendaComponent implements OnInit, AfterViewInit {
       cancelButtonText: 'Cancelar'
     });
   }
-  moverDia() {
-    this.seleccionarFecha()
-      .subscribe((fechaSeleccionada: Date) => {
-        console.log('2) The dialog  fecha was closed: ', fechaSeleccionada);
-        if (fechaSeleccionada < this.hoy && !(fechaSeleccionada.toLocaleDateString() === this.hoy.toLocaleDateString())) {
-          Swal.fire({
-            title: 'Confirmación de Usuario',
-            text: 'La fecha seleccionada es menor a la actual. ¿Confirma continuar?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Confirmar',
-            cancelButtonText: 'Cancelar'
-          }).then((result) => {
-            if (result.value) {
-              console.log('Resultado:: ', result);
 
-              Swal.fire({
-                title: 'Confirmado!',
-                text: 'Se liberó la hora, correctamente',
-                icon: 'success',
-                timer: 2000,
-                showConfirmButton: false,
-                onClose: () => {
-                  console.log('Cieerro antes de timer');
-                }
-              }).then((res) => {
-                if (res.dismiss === Swal.DismissReason.timer) {
-                  console.log('Cierro  con el timer');
-                }
-              });
-
-            }
-          });
-        }
-      });
-
-  }
   seleccionarFecha() {
 
     const fechaDialogRef = this.dialog.open(SeleccionarFechaComponent, {
@@ -397,18 +395,19 @@ export class AgendaComponent implements OnInit, AfterViewInit {
       width: 'auto',
       data: {
         fecha: this.auxFechaClase,
+        seleccionaFechaAnterior: false,
       }
     });
 
     return fechaDialogRef.afterClosed();
   }
+
   diaAnterior() {
     const result = new Date(this.fecha);
     result.setDate(result.getDate() - 1);
     this.sabadoODomingo = result.getDay();
     this.fecha = result;
     this.getAgenda(this.fecha);
-
   }
 
   diaSiguiente() {
@@ -421,10 +420,6 @@ export class AgendaComponent implements OnInit, AfterViewInit {
 
   }
 
-  blurFecha(fecha: Date) {
-    console.log('blur fecha::', fecha);
-    this.getAgenda(fecha);
-  }
   getAgenda(fecha: Date) {
     this.verAgenda = false;
     const strFecha = this.formatDateToString(fecha);
