@@ -59,13 +59,14 @@ export class AcuService {
   }
 
 
-  getAgenda(fechaClase: string, horaClase: number, movCod: number) {
+  getAgenda() {
     return this.http.post(`${environment.url_ws}/wsObtenerTablaAgenda`, {});
   }
 
-  getAgendaPorFecha(fecha: any) {
+  getAgendaPorFecha(fecha: any, tipo: string) {
     return this.http.post(`${environment.url_ws}/wsObtenerAgendaPorFecha`, {
-      fecha
+      fecha,
+      tipo
     });
   }
 

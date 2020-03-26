@@ -27,7 +27,6 @@ export class SeleccionarAccionAgendaComponent {
   }
 
   openLink(event: MouseEvent, key: string): void {
-    console.log('Event: ', event);
 
     const fechaClase = localStorage.getItem('fechaClase');
 
@@ -41,11 +40,9 @@ export class SeleccionarAccionAgendaComponent {
     switch (key) {
 
       case 'abrir-clase':
-        console.log('abrir-clase: ', key);
 
         this.acuService.getClaseAgenda(fechaClase, hora, movil)
           .subscribe((res: any) => {
-            console.log('Agendaaaaaaaaaaaaa: ', res);
 
             const dialogRef = this.dialog.open(AgendarClaseComponent, {
               data: {
@@ -54,7 +51,6 @@ export class SeleccionarAccionAgendaComponent {
             });
 
             dialogRef.afterClosed().subscribe(result => {
-              console.log('The dialog was closed: ', result);
               this.animal = result;
             });
 
@@ -63,7 +59,6 @@ export class SeleccionarAccionAgendaComponent {
 
       case 'mover-clase':
       case 'copiar-clase':
-        console.log(key);
 
         const copiarMoverParameters = {
           accion: (key === 'mover-clase') ? 'MOVER' : 'COPIAR',
@@ -82,39 +77,31 @@ export class SeleccionarAccionAgendaComponent {
       case 'liberar-clase':
 
         continuar = false;
-        Swal.fire({
-          title: 'Confirmación de usuario',
-          text: 'ATENCIÓN: Se liberará la hora, perdiendose los datos actuales. ¿Confirma continuar?',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Confirmar',
-          cancelButtonText: 'Cancelar'
-        }).then((result) => {
-          if (result.value) {
-            console.log('confirmar 1');
-            const liberarParameters: LiberarParameters = {
-              fechaClase: mainParameters.fecha,
-              horaClase: mainParameters.hora,
-              movil: mainParameters.movil
-            };
-            this.acuService.liberarClase(liberarParameters)
-              .subscribe((res: any) => {
+        this.confirmacionUsuario('Confirmación de usuario',
+          'ATENCIÓN: Se liberará la hora, perdiendose los datos actuales. ¿Confirma continuar?')
+          .then((result) => {
+            if (result.value) {
+              const liberarParameters: LiberarParameters = {
+                fechaClase: mainParameters.fecha,
+                horaClase: mainParameters.hora,
+                movil: mainParameters.movil
+              };
+              this.acuService.liberarClase(liberarParameters)
+                .subscribe((res: any) => {
 
-                console.log('Respuesta liberar: ', res);
+                  Swal.fire({
+                    icon: 'success',
+                    title: res.Gx_msg,
+                    showConfirmButton: false,
+                    timer: 4000
+                  });
+                  localStorage.setItem('refreshLiberaAgenda', 'true');
 
-                Swal.fire({
-                  icon: 'success',
-                  title: res.Gx_msg,
-                  showConfirmButton: false,
-                  timer: 4000
+                  this._bottomSheetRef.dismiss();
+                  event.preventDefault();
                 });
-                localStorage.setItem('refreshLiberaAgenda', 'true');
-
-                this._bottomSheetRef.dismiss();
-                event.preventDefault();
-              });
-          }
-        });
+            }
+          });
 
 
 
@@ -123,13 +110,6 @@ export class SeleccionarAccionAgendaComponent {
       case 'pegar-clase':
 
         const oldParameters = JSON.parse(localStorage.getItem('copiarMoverParameters'));
-        console.log('oldParameters :::: ', oldParameters);
-        console.log('mainParameters :::: ', mainParameters);
-
-        console.log('fechaOld :::: ', oldParameters.fechaOld);
-        console.log('fecha :::: ', mainParameters.fecha);
-
-        console.log(Date.parse(oldParameters.fechaOld) > Date.parse(mainParameters.fecha));
 
         if (existe) {
           Swal.fire({
@@ -140,22 +120,17 @@ export class SeleccionarAccionAgendaComponent {
         } else {
           if (oldParameters.fechaOld > mainParameters.fecha) {
             continuar = false;
-            Swal.fire({
-              title: 'Confirmación de usuario',
-              text: 'ATENCIÓN: La fecha seleccionada es anterior a la actual. ¿Confirma continuar?',
-              icon: 'warning',
-              showCancelButton: true,
-              confirmButtonText: 'Confirmar',
-              cancelButtonText: 'Cancelar'
-            }).then((result) => {
-              if (result.value) {
-                console.log('confirmar 1');
-                this.copiarMoverClase(oldParameters, mainParameters);
-              }
+            this.confirmacionUsuario(
+              'Confirmación de usuario',
+              'ATENCIÓN: La fecha seleccionada es anterior a la actual. ¿Confirma continuar?')
+              .then((result) => {
+                if (result.value) {
+                  this.copiarMoverClase(oldParameters, mainParameters);
+                }
 
-              this._bottomSheetRef.dismiss();
-              event.preventDefault();
-            });
+                this._bottomSheetRef.dismiss();
+                event.preventDefault();
+              });
 
           } else {
             this.copiarMoverClase(oldParameters, mainParameters);
@@ -166,14 +141,10 @@ export class SeleccionarAccionAgendaComponent {
 
 
         }
-        console.log('antes del break 1');
         break;
 
       case 'cancelar':
         this.setPegarStorage();
-        break;
-
-
         break;
 
       default:
@@ -183,6 +154,32 @@ export class SeleccionarAccionAgendaComponent {
       this._bottomSheetRef.dismiss();
       event.preventDefault();
     }
+  }
+
+
+
+  mensajeConfirmacion(title, text) {
+    return Swal.fire({
+      title,
+      text,
+      icon: 'success',
+      timer: 5000,
+      showConfirmButton: false,
+      onClose: () => {
+        console.log('Cieerro antes de timer');
+      }
+    });
+  }
+
+  confirmacionUsuario(title, text) {
+    return Swal.fire({
+      title,
+      text,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Confirmar',
+      cancelButtonText: 'Cancelar'
+    });
   }
 
   setPegarStorage() {
@@ -208,8 +205,6 @@ export class SeleccionarAccionAgendaComponent {
     }
     this.acuService.copiarMoverClase(params)
       .subscribe((res: any) => {
-
-        console.log('Respuesta copar-mover: ', res);
 
         Swal.fire({
           icon: 'success',

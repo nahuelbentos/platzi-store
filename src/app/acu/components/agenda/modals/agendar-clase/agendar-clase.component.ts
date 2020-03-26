@@ -69,7 +69,6 @@ export class AgendarClaseComponent implements OnInit {
   // para el dialog
   alumno: any;
 
-  // constructor() { }
   constructor(
     private formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<AgendaComponent>,
@@ -96,22 +95,10 @@ export class AgendarClaseComponent implements OnInit {
 
     // toISOString, es el formato que leyo bien la api.
     localStorage.setItem('fechaClase', this.fechaClase.toISOString());
-
-
-    console.log('1) Hora: ', this.hora.toDateString());
-    console.log('2) Hora: ', this.hora.toString());
-    console.log('3) Hora: ', this.hora.toISOString());
-    console.log('4) Hora: ', this.hora.toJSON());
-    console.log('5) Hora: ', this.hora.toLocaleDateString());
-    console.log('6) Hora: ', this.hora.toLocaleString());
-    console.log('7) Hora: ', this.hora.toLocaleTimeString());
-    console.log('8) Hora: ', this.hora.toTimeString());
-    console.log('9) Hora: ', this.hora.toUTCString());
     const horaStr = this.agendaClase.Hora * 100;
     localStorage.setItem('horaClase', horaStr.toString());
-
-    console.log('1) Movil: ', this.movil.toString());
     localStorage.setItem('movilCod', this.movil.toString());
+
   }
 
   onNoClick(): void {
@@ -120,7 +107,6 @@ export class AgendarClaseComponent implements OnInit {
 
 
   private buildForm() {
-    console.log('agenda from buildForm: ', this.agendaClase);
     if (this.agendaClase) {
       this.form = this.formBuilder.group({
         fechaClase: [this.fechaClase],
@@ -193,8 +179,7 @@ export class AgendarClaseComponent implements OnInit {
     if (!instructores) {
       this.acuService.getInstructores()
         .subscribe((res: any) => {
-          console.log(' res  : ', res);
-          console.log(' res.Instructores  : ', res.Instructores);
+
           instructores = res.Instructores;
           localStorage.setItem('Instructores', JSON.stringify(instructores));
           this.openDialogInstructores(instructores);
@@ -214,7 +199,6 @@ export class AgendarClaseComponent implements OnInit {
     });
 
     instructoresDialogRef.afterClosed().subscribe(result => {
-      console.log('2) The dialog was closed: ', result);
       this.alumno = result;
       this.form.patchValue({
         instructor: result.EscInsId,
@@ -230,8 +214,6 @@ export class AgendarClaseComponent implements OnInit {
     if (!alumnos) {
       this.acuService.getAlumnos()
         .subscribe((res: any) => {
-          console.log(' res  : ', res);
-          console.log(' res.Alumnos  : ', res.Alumnos);
           alumnos = res.Alumnos;
           localStorage.setItem('Alumnos', JSON.stringify(alumnos));
           this.openDialogAlumnos(alumnos);
@@ -251,7 +233,6 @@ export class AgendarClaseComponent implements OnInit {
     });
 
     alumnosDialogRef.afterClosed().subscribe(result => {
-      console.log('2) The dialog was closed: ', result);
       this.alumno = result;
       this.form.patchValue({
         alumnoNombre: result.AluNomComp,
@@ -286,95 +267,6 @@ export class AgendarClaseComponent implements OnInit {
 
 
     }
-  }
-
-  confirmarLiberarClase() {
-    Swal.fire({
-      title: 'Confirmación de Usuario',
-      text: 'Se liberará la hora, perdiendose datos actuales. ¿Confirma el proceso?',
-      icon: 'warning',
-      showCancelButton: true,
-      // confirmButtonColor: '#3085d6',
-      // cancelButtonColor: '#d33',
-      confirmButtonText: 'Confirmar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.value) {
-        console.log('Resultado:: ', result);
-
-        Swal.fire({
-          title: 'Confirmado!',
-          text: 'Se liberó la hora, correctamente',
-          icon: 'success',
-          timer: 2000,
-          showConfirmButton: false,
-          onClose: () => {
-            console.log('Cieerro antes de timer');
-          }
-        }).then((res) => {
-          if (res.dismiss === Swal.DismissReason.timer) {
-            console.log('Cierro  con el timer');
-          }
-        });
-
-      }
-    });
-
-  }
-
-  moverClase() {
-    const fechaDialogRef = this.dialog.open(SeleccionarFechaComponent, {
-      height: 'auto',
-      width: 'auto',
-      data: {
-        fecha: this.fechaClase,
-      }
-    });
-
-    fechaDialogRef.afterClosed().subscribe((fechaSeleccionada: Date) => {
-      console.log('2) The dialog  fecha was closed: ', fechaSeleccionada);
-      if (fechaSeleccionada < this.hoy && !(fechaSeleccionada.toLocaleDateString() === this.hoy.toLocaleDateString())) {
-        Swal.fire({
-          title: 'Confirmación de Usuario',
-          text: 'La fecha seleccionada es menor a la actual. ¿Confirma continuar?',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Confirmar',
-          cancelButtonText: 'Cancelar'
-        }).then((result) => {
-          if (result.value) {
-            console.log('Resultado:: ', result);
-
-            Swal.fire({
-              title: 'Confirmado!',
-              text: 'Se liberó la hora, correctamente',
-              icon: 'success',
-              timer: 2000,
-              showConfirmButton: false,
-              onClose: () => {
-                console.log('Cieerro antes de timer');
-              }
-            }).then((res) => {
-              if (res.dismiss === Swal.DismissReason.timer) {
-                console.log('Cierro  con el timer');
-              }
-            });
-
-          }
-        });
-      }
-      // this.alumno = result;
-      // this.form.patchValue({
-      //   alumnoNombre: result.AluNomComp,
-      //   alumnoNumero: result.AluNro
-      // });
-    });
-
-  }
-
-
-  private openDialogFecha() {
-
   }
 
 }

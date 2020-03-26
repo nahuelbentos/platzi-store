@@ -4,6 +4,8 @@ import { AgendaComponent } from './components/agenda/agenda.component';
 import { NavComponent } from './components/nav/nav.component';
 import { AgendarClaseComponent } from './components/agenda/modals/agendar-clase/agendar-clase.component';
 import { SeleccionarAlumnoComponent } from './components/agenda/modals/seleccionar-alumno/seleccionar-alumno.component';
+import { AgendaInstructorComponent } from './components/agenda/agenda-instructor/agenda-instructor.component';
+import { MercadopagoComponent } from './components/mercadopago/mercadopago.component';
 
 
 const routes: Routes = [
@@ -16,12 +18,20 @@ const routes: Routes = [
         component: AgendaComponent
       },
       {
+        path: 'agenda-instructor',
+        component: AgendaInstructorComponent
+      },
+      {
         path: 'agendaclase',
         component: AgendarClaseComponent
       },
       {
         path: 'seleccionarAlumno',
         component: SeleccionarAlumnoComponent
+      },
+      {
+        path: 'mercadopago',
+        component: MercadopagoComponent
       },
     ]
   }

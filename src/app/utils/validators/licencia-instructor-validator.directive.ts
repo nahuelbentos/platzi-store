@@ -11,8 +11,6 @@ export function licenciaInstructorValidator(acuService: AcuService): AsyncValida
     return acuService.licenciaInstructor(control.value).pipe(
       map(
         (res: any) => {
-          console.log('res: ', res);
-          console.log('res.licencia: ', res.licencia);
           // tslint:disable-next-line: object-literal-key-quotes
           return res.licencia ? { 'licenciaInstructor': true } : null;
         })

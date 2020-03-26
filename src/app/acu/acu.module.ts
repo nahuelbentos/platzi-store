@@ -17,6 +17,12 @@ import { SeleccionarAlumnoComponent } from './components/agenda/modals/seleccion
 import { SeleccionarInstructorComponent } from './components/agenda/modals/seleccionar-instructor/seleccionar-instructor.component';
 import { SeleccionarFechaComponent } from './components/agenda/modals/seleccionar-fecha/seleccionar-fecha.component';
 import { SeleccionarAccionAgendaComponent } from './components/agenda/modals/seleccionar-accion-agenda/seleccionar-accion-agenda.component';
+import { AgendaInstructorComponent } from './components/agenda/agenda-instructor/agenda-instructor.component';
+import { MercadopagoComponent } from './components/mercadopago/mercadopago.component';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { SeleccionarSocioComponent } from './components/mercadopago/modals/seleccionar-socio/seleccionar-socio.component';
 
 
 
@@ -29,7 +35,10 @@ import { SeleccionarAccionAgendaComponent } from './components/agenda/modals/sel
     SeleccionarAlumnoComponent,
     SeleccionarInstructorComponent,
     SeleccionarFechaComponent,
-    SeleccionarAccionAgendaComponent
+    SeleccionarAccionAgendaComponent,
+    AgendaInstructorComponent,
+    MercadopagoComponent,
+    SeleccionarSocioComponent
   ],
   imports: [
     CommonModule,
@@ -38,7 +47,10 @@ import { SeleccionarAccionAgendaComponent } from './components/agenda/modals/sel
     ReactiveFormsModule,
     SharedModule,
     FormsModule,
-    SweetAlert2Module
+    SweetAlert2Module,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'es-UY' }

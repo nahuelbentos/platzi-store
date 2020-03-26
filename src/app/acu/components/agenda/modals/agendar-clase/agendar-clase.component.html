@@ -40,8 +40,9 @@
                     </mat-form-field>
                 </div>
                 <div class="col">
-                    <mat-form-field class="full-width" disabled>
-                        <input matInput placeholder="Número de Movil" [value]="movil" formControlName="movil">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="Número de Movil" [value]="movil" disabled>
+                        <!-- formControlName="movil" -->
                     </mat-form-field>
                 </div>
             </div>
@@ -205,20 +206,10 @@
                     </mat-form-field>
                 </div>
             </div>
-
-            <div class="row">
-                <div class="col btns-agendar" align="center">
-                    <button mat-raised-button>Grabar Clase</button>
-                    <button mat-raised-button (click)="confirmarLiberarClase()">Liberar Clase</button>
-                    <button mat-raised-button (click)="moverClase()">Mover Clase</button>
-                    <button mat-raised-button>Copiar Clase</button>
-                </div>
-            </div>
-            <mat-divider></mat-divider>
-
             <div class="row">
                 <div class="col-xs-2 btns-agendar" align="center">
-                    <button mat-raised-button>Avisar</button>
+                    <button [disabled]="agendaClase.EsAgCuAviso === 0 || agendaClase.EsAgCuAviso === 2"
+                        mat-raised-button cdkFocusInitial>Avisar</button>
                 </div>
                 <div class="col">
                     <mat-form-field class="full-width">

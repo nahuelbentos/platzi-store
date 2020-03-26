@@ -1,13 +1,13 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { AcuService } from '../../services/acu.service';
 import { MatDialog } from '@angular/material/dialog';
-import { SeleccionarAccionAgendaComponent } from './modals/seleccionar-accion-agenda/seleccionar-accion-agenda.component';
-import { SeleccionarFechaComponent } from './modals/seleccionar-fecha/seleccionar-fecha.component';
 
 import Swal from 'sweetalert2';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { AcuService } from '@acu/services/acu.service';
+import { SeleccionarAccionAgendaComponent } from '../modals/seleccionar-accion-agenda/seleccionar-accion-agenda.component';
+import { SeleccionarFechaComponent } from '../modals/seleccionar-fecha/seleccionar-fecha.component';
 export interface AgendaElement {
-  Movil: string;
+  Instructor: string;
   Hora0: string;
   Hora1: string;
   Hora2: string;
@@ -66,11 +66,11 @@ export interface Cell {
 
 
 @Component({
-  selector: 'app-agenda',
-  templateUrl: './agenda.component.html',
-  styleUrls: ['./agenda.component.scss']
+  selector: 'app-agenda-instructor',
+  templateUrl: './agenda-instructor.component.html',
+  styleUrls: ['./agenda-instructor.component.scss']
 })
-export class AgendaComponent implements OnInit, AfterViewInit {
+export class AgendaInstructorComponent implements OnInit, AfterViewInit {
 
   animal: string;
   name: string;
@@ -113,7 +113,7 @@ export class AgendaComponent implements OnInit, AfterViewInit {
 
       const o = {};
       // tslint:disable-next-line: no-string-literal
-      o['Movil'] = m.MovCod;
+      o['Instructor'] = m.MovCod;
 
       for (const h of horas) {
         const cell = this.existeEnHorasMoviles(h, m);
@@ -419,7 +419,7 @@ export class AgendaComponent implements OnInit, AfterViewInit {
   getAgenda(fecha: Date) {
     this.verAgenda = false;
     const strFecha = this.formatDateToString(fecha);
-    this.acuService.getAgendaPorFecha(strFecha, 'movil')
+    this.acuService.getAgendaPorFecha(strFecha, 'instructor')
       .subscribe((res: any) => {
         console.log('Agenda: ', res);
 
@@ -431,7 +431,7 @@ export class AgendaComponent implements OnInit, AfterViewInit {
         this.horaMovilPlano = res.TablaAgenda.HoraMovilPlano;
         this.agendaDataSource = this.makeDataSource(this.horas, this.moviles);
 
-        this.agendaDisplayedColumns = ['Movil'];
+        this.agendaDisplayedColumns = ['Instructor'];
         this.agendaDisplayedColumns = this.agendaDisplayedColumns.concat(this.columns);
         this.verAgenda = true;
 

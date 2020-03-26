@@ -5,8 +5,13 @@
 export const environment = {
   production: false,
   url_api: 'https://platzi-store.herokuapp.com',
-  url_ws: 'http://192.1.0.71/ACU_WS.NetEnvironment/rest',
-  url_soap: 'http://192.1.0.71/ACU_WS.NetEnvironment/',
+  url_ws: 'http://192.1.0.86/ACU_WS.NetEnvironment/rest',
+  url_soap: 'http://192.1.0.86/ACU_WS.NetEnvironment/',
+  // esto de mercado pago es con la cuenta cobranzas@acu.com.uy
+  mercadopago: {
+    publicKey: 'TEST-e11f1f78-a4b1-4177-b436-1c003c562703',
+    accessToken: 'TEST-7353008330854860-032418-203321aef96dd4f579d418884d2dcb5d-538915915'
+  },
   firebase: {
     apiKey: 'AIzaSyDASAzo60dHc7rH1vR6jxzmtP_IoOSb58I',
     authDomain: 'platzi-store-139e7.firebaseapp.com',
@@ -18,6 +23,10 @@ export const environment = {
   }
 };
 /*
+
+Url api local desarrollo SQLServer:
+  url_ws: 'http://localhost/ACU_web/rest',
+  url_soap: 'http://localhost/ACU_web/',
 
 Url api desarrollo SQLServer:
   url_ws: 'http://192.1.0.86/ACU_WS.NetEnvironment/rest',
