@@ -6,6 +6,8 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { AcuService } from '@acu/services/acu.service';
 import { SeleccionarAccionAgendaComponent } from '../modals/seleccionar-accion-agenda/seleccionar-accion-agenda.component';
 import { SeleccionarFechaComponent } from '../modals/seleccionar-fecha/seleccionar-fecha.component';
+import { AgendarClaseComponent } from '../modals/agendar-clase/agendar-clase.component';
+import { AgendaCursoComponent } from '../modals/agenda-curso/agenda-curso.component';
 export interface AgendaElement {
   Instructor: string;
   Hora0: string;
@@ -41,10 +43,11 @@ export interface DataAgenda {
   Disponible: boolean;
   AluId: string;
   AluApe1: string;
-  EsAgCuInsId: string;
+  EscInsId: string;
   EsAgCuInsNom: string;
   EsAgCuInsNomCorto: string;
   TipCurId: number;
+  TipCurNom: string;
   HoraCoche: string;
   AluNro: number;
   InsEst: string;
@@ -82,7 +85,7 @@ export class AgendaInstructorComponent implements OnInit, AfterViewInit {
   columns: string[] = [];
   agendaDataSource: AgendaElement[];
   agenda: any[] = [];
-  moviles: any[] = [];
+  instructores: any[] = [];
   horas: any[] = [];
   fechaClase = '';
   fecha: Date;
@@ -105,18 +108,18 @@ export class AgendaInstructorComponent implements OnInit, AfterViewInit {
 
   makeDataSource(
     horas: any[],
-    moviles: any[]) {
+    instructores: any[]) {
 
     const col: any[] = [];
 
-    for (const m of moviles) {
+    for (const i of instructores) {
 
       const o = {};
       // tslint:disable-next-line: no-string-literal
-      o['Instructor'] = m.MovCod;
+      o['Instructor'] = i.EscInsId;
 
       for (const h of horas) {
-        const cell = this.existeEnHorasMoviles(h, m);
+        const cell = this.existeEnHorasMoviles(h, i);
 
         o['class' + h.Hora] = cell.class;
         // tslint:disable-next-line: no-string-literal
@@ -129,15 +132,15 @@ export class AgendaInstructorComponent implements OnInit, AfterViewInit {
     return col;
   }
 
-  existeEnHorasMoviles(hora: any, movil: any): Cell {
+  existeEnHorasMoviles(hora: any, instructor: any): Cell {
     const cell: Cell = {
       value: '',
       class: '',
       existe: false
     };
     for (const h of this.horaMovilPlano) {
-      if (h.Hora === hora.Hora && h.MovCod === movil.MovCod) {
-        cell.value = `${h.EsAgCuInsId} ${h.AluApe1.substring(0, 10)}`;
+      if (h.Hora === hora.Hora && h.EscInsId === instructor.EscInsId) {
+        cell.value = `${h.TipCurNom}`; // ${h.EscInsId}
         cell.class = h.claseCelda;
         cell.existe = true;
       }
@@ -147,21 +150,23 @@ export class AgendaInstructorComponent implements OnInit, AfterViewInit {
   }
 
 
-  showAlert(movil: number, hora: number, existe: boolean): void {
-    const text = `Movil: ${movil} ; Hora: ${hora} ; Existe:  ${existe}`;
+  showAlert(instructor: string, hora: number, existe: boolean): void {
+    const text = `Instructor: ${instructor} ; Hora: ${hora} ; Existe:  ${existe}`;
 
-    const celda = document.getElementById(`${movil}${hora}`);
+    const celda = document.getElementById(`${instructor}${hora}`);
     celda.getAttribute('class');
     console.log(text);
     localStorage.setItem('fechaClase', this.fechaClase);
     localStorage.setItem('fecha', JSON.stringify(this.fecha));
-    localStorage.setItem('movil', movil.toString());
+    localStorage.setItem('instructor', instructor.toString());
     localStorage.setItem('hora', hora.toString());
     localStorage.setItem('existe', existe.toString());
+    console.log('fechaClase: ', this.fechaClase);
+    localStorage.setItem('tipoAgenda', 'instructor');
 
     const mainParameters = {
       fecha: this.fechaClase,
-      movil,
+      instructor,
       hora,
       class: celda.getAttribute('class'),
       text: celda.innerHTML,
@@ -170,48 +175,89 @@ export class AgendaInstructorComponent implements OnInit, AfterViewInit {
     localStorage.setItem('mainParameters', JSON.stringify(mainParameters));
     const t = this._bottomSheet.open(SeleccionarAccionAgendaComponent);
     t.afterDismissed().subscribe(() => {
-      console.log('fin open sheet');
+      console.log('fin open sheet: ');
 
-      const refreshAgenda = localStorage.getItem('refreshAgenda');
-      const refreshLiberaAgenda = localStorage.getItem('refreshLiberaAgenda');
+      const abrirAgenda = localStorage.getItem('abrirAgenda');
+      switch (abrirAgenda) {
+        case 'instructor':
+          console.log('3)fechaClase: ', this.fechaClase);
+          console.log('4)hora: ', hora);
+          console.log('5)instructor: ', instructor);
+          this.acuService.getInstructorAgenda(this.fechaClase, hora, instructor)
+            .subscribe((res: any) => {
 
-      if (refreshLiberaAgenda) {
-        localStorage.removeItem('refreshLiberaAgenda');
-        celda.removeAttribute('class');
-        celda.innerHTML = '';
-        celda.classList.add('cdk-cell', 'mat-cell', `cdk-column-${hora}`, `mat-column-${hora}`, 'cell', 'ng-star-inserted');
-      }
+              console.log('6)res: ', res);
+              const dialogRef = this.dialog.open(AgendaCursoComponent, {
+                data: {
+                  agendaCurso: res.AgendaCurso,
+                }
+              });
 
-      if (refreshAgenda) {
-        const classOld = localStorage.getItem('classOld');
-        const textOld = localStorage.getItem('textOld');
+              dialogRef.afterClosed().subscribe(result => {
+                console.log('cierro el dialog, resultado: ', result);
+                if (result) {
+                  this.mensajeConfirmacion('Confirmado!', result.mensaje).then((res2) => {
+                    if (res2.dismiss === Swal.DismissReason.timer) {
+                      console.log('Cierro  con el timer');
+                    }
+                  });
+                  // cambiar la celda.
 
-        if (localStorage.getItem('limpiarCeldaOld')) {
-          const oldParameters = JSON.parse(localStorage.getItem('copiarMoverParameters'));
-          const celdaOld = document.getElementById(`${oldParameters.movilOld}${oldParameters.horaOld}`);
-          celdaOld.removeAttribute('class');
-          celdaOld.innerHTML = '';
-          celdaOld.classList.add(
-            'cdk-cell',
-            'mat-cell',
-            `cdk-column-${oldParameters.horaOld}`,
-            `mat-column-${oldParameters.horaOld}`,
-            'cell', 'ng-star-inserted'
-          );
-          localStorage.removeItem('copiarMoverParameters');
-          localStorage.removeItem('limpiarCeldaOld');
-        }
-        const arrayClass: string[] = classOld.split(' ');
-        localStorage.removeItem('classOld');
-        localStorage.removeItem('textOld');
+                  celda.removeAttribute('class');
+                  celda.innerHTML = result.TipCurNom;
+                  celda.classList.add('cdk-cell', 'mat-cell', `cdk-column-${hora}`,
+                    `mat-column-${hora}`, 'cell', 'greenLight-black', 'ng-star-inserted');
+                  this.animal = result;
+                }
+              });
 
-        localStorage.removeItem('refreshLiberaAgenda');
-        celda.removeAttribute('class');
-        celda.innerHTML = textOld;
-        arrayClass.forEach(element => {
-          console.log('class: ', element);
-          celda.classList.add(element);
-        });
+            });
+          break;
+
+        default:
+          const refreshAgenda = localStorage.getItem('refreshAgenda');
+          const refreshLiberaAgenda = localStorage.getItem('refreshLiberaAgenda');
+
+          if (refreshLiberaAgenda) {
+            localStorage.removeItem('refreshLiberaAgenda');
+            celda.removeAttribute('class');
+            celda.innerHTML = '';
+            celda.classList.add('cdk-cell', 'mat-cell', `cdk-column-${hora}`, `mat-column-${hora}`, 'cell', 'ng-star-inserted');
+          }
+
+          if (refreshAgenda) {
+            const classOld = localStorage.getItem('classOld');
+            const textOld = localStorage.getItem('textOld');
+
+            if (localStorage.getItem('limpiarCeldaOld')) {
+              const oldParameters = JSON.parse(localStorage.getItem('copiarMoverParameters'));
+              const celdaOld = document.getElementById(`${oldParameters.movilOld}${oldParameters.horaOld}`);
+              celdaOld.removeAttribute('class');
+              celdaOld.innerHTML = '';
+              celdaOld.classList.add(
+                'cdk-cell',
+                'mat-cell',
+                `cdk-column-${oldParameters.horaOld}`,
+                `mat-column-${oldParameters.horaOld}`,
+                'cell', 'ng-star-inserted'
+              );
+              localStorage.removeItem('copiarMoverParameters');
+              localStorage.removeItem('limpiarCeldaOld');
+            }
+            const arrayClass: string[] = classOld.split(' ');
+            localStorage.removeItem('classOld');
+            localStorage.removeItem('textOld');
+
+            localStorage.removeItem('refreshLiberaAgenda');
+            celda.removeAttribute('class');
+            celda.innerHTML = textOld;
+            arrayClass.forEach(element => {
+              console.log('class: ', element);
+              celda.classList.add(element);
+            });
+          }
+
+          break;
       }
     });
 
@@ -424,12 +470,12 @@ export class AgendaInstructorComponent implements OnInit, AfterViewInit {
         console.log('Agenda: ', res);
 
         this.agenda = res.TablaAgenda;
-        this.moviles = res.TablaAgenda.Moviles;
+        this.instructores = res.TablaAgenda.Instructores;
         this.horas = res.TablaAgenda.Horas;
         this.fechaClase = res.TablaAgenda.FechaClase;
         this.columns = this.horas.map(item => item.Hora.toString());
         this.horaMovilPlano = res.TablaAgenda.HoraMovilPlano;
-        this.agendaDataSource = this.makeDataSource(this.horas, this.moviles);
+        this.agendaDataSource = this.makeDataSource(this.horas, this.instructores);
 
         this.agendaDisplayedColumns = ['Instructor'];
         this.agendaDisplayedColumns = this.agendaDisplayedColumns.concat(this.columns);

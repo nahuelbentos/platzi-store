@@ -1,86 +1,104 @@
-<mat-button-toggle-group name="fontStyle" aria-label="Font Style" class="contenedor">
-
-  <mat-button-toggle value="Agregar producto" routerLink="create">Agregar producto
-  </mat-button-toggle>
-  <mat-button-toggle value="Excel">Excel</mat-button-toggle>
-  <mat-button-toggle value="Pagar"> Pagar</mat-button-toggle>
-
-</mat-button-toggle-group>
+<!-- (ngSubmit)="pagar($event)" -->
+<div [formGroup]="form">
+  <mat-button-toggle-group name=" fontStyle" aria-label="Font Style" class="buttons-header">
+    <mat-button-toggle value="Pagar" (click)="verMensaje()"> Pagar</mat-button-toggle>
+  </mat-button-toggle-group>
 
 
 
-<div class="contenedor">
-  <div class="row">
-    <div class="col-xs-4">
-      <mat-form-field class="full-width">
-        <input matInput placeholder="Alumno" [(ngModel)]="agendaClase.AluNro" formControlName="alumnoNumero"
-          [errorStateMatcher]="matcher">
-        <button mat-icon-button matSuffix [attr.aria-label]="'Hide password'" (click)='seleccionarAlumno()'>
+  <div class="contenedor">
+
+    <div class="row">
+      <div class="flex-basis-0 col-xs-4">
+        <mat-form-field>
+          <mat-select placeholder="Tipo" formControlName="tipo" [(ngModel)]="tipo">
+            <mat-option></mat-option>
+            <mat-option value="CI">Cédula de Identidad </mat-option>
+            <mat-option value="RUT">RUT</mat-option>
+            <mat-option value="B">Número de Socio</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+
+        <mat-form-field>
+          <input matInput placeholder="Socio" [(ngModel)]="parametro" formControlName="parametro">
+
+        </mat-form-field>
+        <!-- <button mat-icon-button matSuffix [attr.aria-label]="'Hide password'" (click)='seleccionarSocio(tipo)'>
           <mat-icon> search </mat-icon>
-        </button>
-
-        <mat-error
-          *ngIf="alumnoNumeroField.hasError('required') && alumnoNumeroField.dirty && alumnoNumeroField.errors">
-          El número del alumno <strong>es requerido.</strong>
-        </mat-error>
-        <mat-error
-          *ngIf="alumnoNumeroField.hasError('existeAlumno')  && alumnoNumeroField.dirty && alumnoNumeroField.errors">
-          El número del alumno <strong>no existe.</strong>
-        </mat-error>
-        <mat-error
-          *ngIf="alumnoNumeroField.hasError('alumnoYaAsignado')  && alumnoNumeroField.dirty && alumnoNumeroField.errors">
-          El alumno ya se encuentra <strong> asignado </strong> en otro movil.
-        </mat-error>
-        <mat-error
-          *ngIf="alumnoNumeroField.hasError('alumnoTieneExcepcion')  && (alumnoNumeroField.dirty || alumnoNumeroField.errors)">
-          El alumno tiene cargada una <strong>excepción </strong> para este día y hora.
-        </mat-error>
-
-        <!-- </div> -->
-      </mat-form-field>
+        </button> -->
+      </div>
     </div>
-    <div class="col">
-      <mat-form-field class="full-width">
-        <input matInput placeholder="   " [(ngModel)]="agendaClase.AluNomApe" formControlName="alumnoNombre"
-          [errorStateMatcher]="matcher">
-        <mat-error *ngIf="alumnoNombreField.hasError('required')">
-          Alumno es <strong>requerido</strong>
-        </mat-error>
-      </mat-form-field>
+    <div class="row">
+      <div class="flex-basis-0 col-xs-4">
+        <mat-form-field>
+          <input matInput placeholder="Número de Socio" [(ngModel)]="socioId" formControlName="socioId">
+
+        </mat-form-field>
+      </div>
+      <div class="col-xs-8">
+        <mat-form-field style="width: 100%;">
+          <input matInput placeholder="Nombre " [(ngModel)]="socioNombre" formControlName="socioNombre"
+            [errorStateMatcher]="matcher">
+          <mat-error *ngIf="socioNombreField.hasError('required')">
+            El socio es <strong>requerido</strong>
+          </mat-error>
+        </mat-form-field>
+      </div>
     </div>
   </div>
+
+  <div class="mat-elevation-z8">
+    <table mat-table class="mat-elevation-z8 products-table" matSort aria-label="Elements">
+
+      <!-- Checkbox Column -->
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()">
+          </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(element) : null"
+            [checked]="selection.isSelected(element)" [aria-label]="checkboxLabel(element)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <!-- Id Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
+        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+      </ng-container>
+
+      <!-- NombreSocio Column -->
+      <ng-container matColumnDef="nombreSocio">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
+        <td mat-cell *matCellDef="let element"> {{element.nombreSocio}} </td>
+      </ng-container>
+
+      <!-- Precio Column -->
+      <ng-container matColumnDef="precio">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Precio </th>
+        <td mat-cell *matCellDef="let element"> {{element.precio}} </td>
+      </ng-container>
+
+      <!-- Fecha Column -->
+      <ng-container matColumnDef="fecha">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha </th>
+        <td mat-cell *matCellDef="let element"> {{element.fecha}} </td>
+      </ng-container>
+
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let element; columns: displayedColumns;" (click)="selection.toggle(element)">
+      </tr>
+    </table>
+
+    <mat-paginator #paginator class="mat-elevation-z8 products-table" [length]="dataSource?.data.length" [pageIndex]="0"
+      [pageSize]="10" [pageSizeOptions]="[5, 10 , 25 , 20 , 50, 100, 250]">
+    </mat-paginator>
+  </div>
+
 </div>
-
-
-
-<table mat-table [dataSource]="products" class="mat-elevation-z8 products-table">
-
-  <!--- Note that these columns can be defined in any order.
-        The actual rendered columns are set as a property on the row definition" -->
-
-  <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef> ID </th>
-    <td mat-cell *matCellDef="let product"> {{product.id}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="title">
-    <th mat-header-cell *matHeaderCellDef> Title </th>
-    <td mat-cell *matCellDef="let product"> {{product.title}} </td>
-  </ng-container>
-
-
-  <ng-container matColumnDef="price">
-    <th mat-header-cell *matHeaderCellDef> Price </th>
-    <td mat-cell *matCellDef="let product"> {{product.price}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="actions">
-    <th mat-header-cell *matHeaderCellDef> Actions </th>
-    <td mat-cell *matCellDef="let product">
-      <a mat-raised-button [routerLink]="['edit',product.id]">Editar</a>
-      <button mat-raised-button color="warn" (click)="deleteProduct(product.id)">Eliminar</button>
-    </td>
-  </ng-container>
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>

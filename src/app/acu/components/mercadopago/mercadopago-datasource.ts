@@ -5,33 +5,18 @@ import { map } from 'rxjs/operators';
 import { Observable, of as observableOf, merge } from 'rxjs';
 
 // TODO: Replace this with your own data model type
-export interface MercadopagoItem {
-  name: string;
+
+export interface CuotaSocial {
   id: number;
+  nombreSocio: string;
+  precio: string;
+  fecha: string;
 }
 
-// TODO: replace this with real data from your application
-const EXAMPLE_DATA: MercadopagoItem[] = [
-  {id: 1, name: 'Hydrogen'},
-  {id: 2, name: 'Helium'},
-  {id: 3, name: 'Lithium'},
-  {id: 4, name: 'Beryllium'},
-  {id: 5, name: 'Boron'},
-  {id: 6, name: 'Carbon'},
-  {id: 7, name: 'Nitrogen'},
-  {id: 8, name: 'Oxygen'},
-  {id: 9, name: 'Fluorine'},
-  {id: 10, name: 'Neon'},
-  {id: 11, name: 'Sodium'},
-  {id: 12, name: 'Magnesium'},
-  {id: 13, name: 'Aluminum'},
-  {id: 14, name: 'Silicon'},
-  {id: 15, name: 'Phosphorus'},
-  {id: 16, name: 'Sulfur'},
-  {id: 17, name: 'Chlorine'},
-  {id: 18, name: 'Argon'},
-  {id: 19, name: 'Potassium'},
-  {id: 20, name: 'Calcium'},
+const ELEMENT_DATA: CuotaSocial[] = [
+  { id: 1, nombreSocio: 'Juan Perez', precio: '$100', fecha: '16/04/2020' },
+  { id: 2, nombreSocio: 'Juan Perez', precio: '$1200', fecha: '16/04/2020' },
+  { id: 3, nombreSocio: 'Juan Perez', precio: '$750', fecha: '16/04/2020' },
 ];
 
 /**
@@ -39,8 +24,8 @@ const EXAMPLE_DATA: MercadopagoItem[] = [
  * encapsulate all logic for fetching and manipulating the displayed data
  * (including sorting, pagination, and filtering).
  */
-export class MercadopagoDataSource extends DataSource<MercadopagoItem> {
-  data: MercadopagoItem[] = EXAMPLE_DATA;
+export class MercadopagoDataSource extends DataSource<CuotaSocial> {
+  data: CuotaSocial[] = ELEMENT_DATA;
   paginator: MatPaginator;
   sort: MatSort;
 
@@ -53,7 +38,7 @@ export class MercadopagoDataSource extends DataSource<MercadopagoItem> {
    * the returned stream emits new items.
    * @returns A stream of the items to be rendered.
    */
-  connect(): Observable<MercadopagoItem[]> {
+  connect(): Observable<CuotaSocial[]> {
     // Combine everything that affects the rendered data into one update
     // stream for the data-table to consume.
     const dataMutations = [
@@ -71,13 +56,13 @@ export class MercadopagoDataSource extends DataSource<MercadopagoItem> {
    *  Called when the table is being destroyed. Use this function, to clean up
    * any open connections or free any held resources that were set up during connect.
    */
-  disconnect() {}
+  disconnect() { }
 
   /**
    * Paginate the data (client-side). If you're using server-side pagination,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getPagedData(data: MercadopagoItem[]) {
+  private getPagedData(data: CuotaSocial[]) {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     return data.splice(startIndex, this.paginator.pageSize);
   }
@@ -86,7 +71,7 @@ export class MercadopagoDataSource extends DataSource<MercadopagoItem> {
    * Sort the data (client-side). If you're using server-side sorting,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getSortedData(data: MercadopagoItem[]) {
+  private getSortedData(data: CuotaSocial[]) {
     if (!this.sort.active || this.sort.direction === '') {
       return data;
     }
@@ -94,7 +79,9 @@ export class MercadopagoDataSource extends DataSource<MercadopagoItem> {
     return data.sort((a, b) => {
       const isAsc = this.sort.direction === 'asc';
       switch (this.sort.active) {
-        case 'name': return compare(a.name, b.name, isAsc);
+        case 'nombreSocio': return compare(a.nombreSocio, b.nombreSocio, isAsc);
+        case 'fecha': return compare(a.fecha, b.fecha, isAsc);
+        case 'precio': return compare(a.precio, b.precio, isAsc);
         case 'id': return compare(+a.id, +b.id, isAsc);
         default: return 0;
       }

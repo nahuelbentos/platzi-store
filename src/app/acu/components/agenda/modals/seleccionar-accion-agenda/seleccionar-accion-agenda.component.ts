@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { MatDialog } from '@angular/material/dialog';
-import { AgendarClaseComponent } from '../agendar-clase/agendar-clase.component';
 import { AcuService, LiberarParameters } from '@acu/services/acu.service';
 import { CopiarMoverParameters } from '@core/model/copiarMoverParameters.model';
 
@@ -30,31 +29,16 @@ export class SeleccionarAccionAgendaComponent {
 
     const fechaClase = localStorage.getItem('fechaClase');
 
-    const fecha: Date = JSON.parse(localStorage.getItem('fecha'));
-    const movil = parseInt(localStorage.getItem('movil'), 0);
-    const hora = parseInt(localStorage.getItem('hora'), 0);
+    const tipoAgenda = localStorage.getItem('tipoAgenda');
     const existe: boolean = JSON.parse(localStorage.getItem('existe'));
     const mainParameters = JSON.parse(localStorage.getItem('mainParameters'));
 
+    console.log('2)fechaClase: ', fechaClase);
     let continuar = true;
     switch (key) {
 
       case 'abrir-clase':
-
-        this.acuService.getClaseAgenda(fechaClase, hora, movil)
-          .subscribe((res: any) => {
-
-            const dialogRef = this.dialog.open(AgendarClaseComponent, {
-              data: {
-                agendaClase: res.AgendaClase,
-              }
-            });
-
-            dialogRef.afterClosed().subscribe(result => {
-              this.animal = result;
-            });
-
-          });
+        localStorage.setItem('abrirAgenda', tipoAgenda);
         break;
 
       case 'mover-clase':

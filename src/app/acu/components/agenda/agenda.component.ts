@@ -6,6 +6,7 @@ import { SeleccionarFechaComponent } from './modals/seleccionar-fecha/selecciona
 
 import Swal from 'sweetalert2';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { AgendarClaseComponent } from './modals/agendar-clase/agendar-clase.component';
 export interface AgendaElement {
   Movil: string;
   Hora0: string;
@@ -159,6 +160,8 @@ export class AgendaComponent implements OnInit, AfterViewInit {
     localStorage.setItem('hora', hora.toString());
     localStorage.setItem('existe', existe.toString());
 
+    localStorage.setItem('tipoAgenda', 'movil');
+
     const mainParameters = {
       fecha: this.fechaClase,
       movil,
@@ -172,46 +175,69 @@ export class AgendaComponent implements OnInit, AfterViewInit {
     t.afterDismissed().subscribe(() => {
       console.log('fin open sheet');
 
-      const refreshAgenda = localStorage.getItem('refreshAgenda');
-      const refreshLiberaAgenda = localStorage.getItem('refreshLiberaAgenda');
 
-      if (refreshLiberaAgenda) {
-        localStorage.removeItem('refreshLiberaAgenda');
-        celda.removeAttribute('class');
-        celda.innerHTML = '';
-        celda.classList.add('cdk-cell', 'mat-cell', `cdk-column-${hora}`, `mat-column-${hora}`, 'cell', 'ng-star-inserted');
-      }
+      const abrirAgenda = localStorage.getItem('abrirAgenda');
+      switch (abrirAgenda) {
+        case 'movil':
+          this.acuService.getClaseAgenda(this.fechaClase, hora, movil)
+            .subscribe((res: any) => {
 
-      if (refreshAgenda) {
-        const classOld = localStorage.getItem('classOld');
-        const textOld = localStorage.getItem('textOld');
+              const dialogRef = this.dialog.open(AgendarClaseComponent, {
+                data: {
+                  agendaClase: res.AgendaClase,
+                }
+              });
 
-        if (localStorage.getItem('limpiarCeldaOld')) {
-          const oldParameters = JSON.parse(localStorage.getItem('copiarMoverParameters'));
-          const celdaOld = document.getElementById(`${oldParameters.movilOld}${oldParameters.horaOld}`);
-          celdaOld.removeAttribute('class');
-          celdaOld.innerHTML = '';
-          celdaOld.classList.add(
-            'cdk-cell',
-            'mat-cell',
-            `cdk-column-${oldParameters.horaOld}`,
-            `mat-column-${oldParameters.horaOld}`,
-            'cell', 'ng-star-inserted'
-          );
-          localStorage.removeItem('copiarMoverParameters');
-          localStorage.removeItem('limpiarCeldaOld');
-        }
-        const arrayClass: string[] = classOld.split(' ');
-        localStorage.removeItem('classOld');
-        localStorage.removeItem('textOld');
+              dialogRef.afterClosed().subscribe(result => {
+                this.animal = result;
+              });
 
-        localStorage.removeItem('refreshLiberaAgenda');
-        celda.removeAttribute('class');
-        celda.innerHTML = textOld;
-        arrayClass.forEach(element => {
-          console.log('class: ', element);
-          celda.classList.add(element);
-        });
+            });
+          break;
+
+        default:
+          const refreshAgenda = localStorage.getItem('refreshAgenda');
+          const refreshLiberaAgenda = localStorage.getItem('refreshLiberaAgenda');
+
+          if (refreshLiberaAgenda) {
+            localStorage.removeItem('refreshLiberaAgenda');
+            celda.removeAttribute('class');
+            celda.innerHTML = '';
+            celda.classList.add('cdk-cell', 'mat-cell', `cdk-column-${hora}`, `mat-column-${hora}`, 'cell', 'ng-star-inserted');
+          }
+
+          if (refreshAgenda) {
+            const classOld = localStorage.getItem('classOld');
+            const textOld = localStorage.getItem('textOld');
+
+            if (localStorage.getItem('limpiarCeldaOld')) {
+              const oldParameters = JSON.parse(localStorage.getItem('copiarMoverParameters'));
+              const celdaOld = document.getElementById(`${oldParameters.movilOld}${oldParameters.horaOld}`);
+              celdaOld.removeAttribute('class');
+              celdaOld.innerHTML = '';
+              celdaOld.classList.add(
+                'cdk-cell',
+                'mat-cell',
+                `cdk-column-${oldParameters.horaOld}`,
+                `mat-column-${oldParameters.horaOld}`,
+                'cell', 'ng-star-inserted'
+              );
+              localStorage.removeItem('copiarMoverParameters');
+              localStorage.removeItem('limpiarCeldaOld');
+            }
+            const arrayClass: string[] = classOld.split(' ');
+            localStorage.removeItem('classOld');
+            localStorage.removeItem('textOld');
+
+            localStorage.removeItem('refreshLiberaAgenda');
+            celda.removeAttribute('class');
+            celda.innerHTML = textOld;
+            arrayClass.forEach(element => {
+              console.log('class: ', element);
+              celda.classList.add(element);
+            });
+          }
+          break;
       }
     });
 

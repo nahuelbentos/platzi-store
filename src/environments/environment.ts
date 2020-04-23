@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   url_api: 'https://platzi-store.herokuapp.com',
   url_ws: 'http://192.1.0.86/ACU_WS.NetEnvironment/rest',
-  url_soap: 'http://192.1.0.86/ACU_WS.NetEnvironment/',
+  url_soap: 'http://192.1.0.86/ACU_WS.NetEnvironment/rest',
   // esto de mercado pago es con la cuenta cobranzas@acu.com.uy
   mercadopago: {
     publicKey: 'TEST-e11f1f78-a4b1-4177-b436-1c003c562703',

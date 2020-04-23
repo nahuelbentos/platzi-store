@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '@environments/environment';
 import { CopiarMoverParameters } from '@core/model/copiarMoverParameters.model';
+import { AgendaCurso } from '@acu/components/agenda/modals/agenda-curso/agenda-curso.component';
 
 export interface LiberarParameters {
   fechaClase: Date;
@@ -55,9 +56,16 @@ export class AcuService {
       MovCod: movCod
     }, this.httpOptions);
 
-
   }
 
+  getInstructorAgenda(fechaClase: string, horaClase: number, EscInsId: string) {
+    return this.http.post(`${environment.url_ws}/wsObtenerInstructorAgenda`, {
+      Fecha: fechaClase,
+      Hora: horaClase,
+      EscInsId
+    }, this.httpOptions);
+
+  }
 
   getAgenda() {
     return this.http.post(`${environment.url_ws}/wsObtenerTablaAgenda`, {});
@@ -218,6 +226,30 @@ export class AcuService {
 
   getAlumnos() {
     return this.http.post(`${environment.url_ws}/wsObtenerAlumnos`, {});
+  }
+
+  getCursos() {
+    return this.http.post(`${environment.url_ws}/wsObtenerCursos`, {});
+  }
+
+  getCurso(TipCurId) {
+    return this.http.post(`${environment.url_ws}/wsObtenerCurso`, { TipCurId });
+
+  }
+
+  guardarAgendaInstructor(agendaCurso: AgendaCurso) {
+    return this.http.post(`${environment.url_ws}/wsGuardarAgendaInstructor`, {
+      agendaCurso
+    });
+  }
+  getSocios(cantidad: number, page: number) {
+    return this.http.get(`${environment.url_ws}/wsGetSocios?CntPorPag=${cantidad}&skip=${page}`);
+    // return this.http.post(`${environment.url_ws}/wsGetSocios`, {
+    // });
+
+    // return this.http.post(`${environment.url_ws}/WSObtenerSocios`, {
+    //   Tipo: tipo
+    // });
   }
 
   getInstructores() {

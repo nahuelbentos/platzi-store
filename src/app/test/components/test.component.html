@@ -1,17 +1,12 @@
-<mat-toolbar color="primary">
-    <h2 mat-dialog-title>Seleccionar Socio</h2>
-</mat-toolbar>
+<div class="example-container mat-elevation-z8">
+    <div class="example-loading-shade" *ngIf="isLoadingResults || isRateLimitReached">
+        <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+        <div class="example-rate-limit-reached" *ngIf="isRateLimitReached">
+            GitHub's API rate limit has been reached. It will be reset in one minute.
+        </div>
+    </div>
 
-
-
-<mat-dialog-content class="mat-typography">
-
-
-    <mat-form-field class="full-width">
-        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Buscar...">
-    </mat-form-field>
-
-    <div class="mat-elevation-z8">
+    <div class="example-table-container">
         <table mat-table [dataSource]="dataSource" matSort>
 
             <!-- Actions Column -->
@@ -59,19 +54,14 @@
             <tr mat-row *matRowDef="let row; columns: displayedColumns;">
             </tr>
         </table>
-
-        <!--  -->
-
-        <mat-paginator [length]="cantidad" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
-            (page)="updateEvent($event)">
-        </mat-paginator>
-
-
-
     </div>
 
 
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close (click)="onNoClick()">Cancelar</button>
-</mat-dialog-actions>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+</div>
+
+
+<!-- Copyright 2019 Google LLC. All Rights Reserved.
+      Use of this source code is governed by an MIT-style license that
+      can be found in the LICENSE file at http://angular.io/license -->
