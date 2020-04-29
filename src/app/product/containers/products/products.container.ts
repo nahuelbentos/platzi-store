@@ -20,6 +20,7 @@ export class ProductsContainer implements OnInit {
   }
 
   clickProduct(id: number) {
+    console.log('test');
     console.log('product');
     console.log(id);
   }

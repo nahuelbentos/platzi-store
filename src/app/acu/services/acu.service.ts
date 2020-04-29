@@ -228,6 +228,10 @@ export class AcuService {
     return this.http.post(`${environment.url_ws}/wsObtenerAlumnos`, {});
   }
 
+  obtenerAlumnos(pageSize: number, pageNumber: number, filtro: string) {
+    return this.http.get(`${environment.url_ws}/wsGetAlumnos?PageSize=${pageSize}&PageNumber=${pageNumber}&Filtro=${filtro}`);
+  }
+
   getCursos() {
     return this.http.post(`${environment.url_ws}/wsObtenerCursos`, {});
   }

@@ -34,6 +34,7 @@ export class SeleccionarAccionAgendaComponent {
     const mainParameters = JSON.parse(localStorage.getItem('mainParameters'));
 
     console.log('2)fechaClase: ', fechaClase);
+    localStorage.removeItem('abrirAgenda');
     let continuar = true;
     switch (key) {
 
@@ -42,7 +43,7 @@ export class SeleccionarAccionAgendaComponent {
         break;
 
       case 'mover-clase':
-      case 'copiar-clase':
+      case 'copiar-clase': // setItem('abrirAgenda', tipoAgenda);
 
         const copiarMoverParameters = {
           accion: (key === 'mover-clase') ? 'MOVER' : 'COPIAR',

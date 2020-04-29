@@ -6,6 +6,8 @@ import { AgendarClaseComponent } from './components/agenda/modals/agendar-clase/
 import { SeleccionarAlumnoComponent } from './components/agenda/modals/seleccionar-alumno/seleccionar-alumno.component';
 import { AgendaInstructorComponent } from './components/agenda/agenda-instructor/agenda-instructor.component';
 import { MercadopagoComponent } from './components/mercadopago/mercadopago.component';
+import { PaginatorComponent } from './components/agenda/aux/paginator/paginator.component';
+import { TableComponent } from './components/agenda/aux/table/table.component';
 
 
 const routes: Routes = [
@@ -32,6 +34,10 @@ const routes: Routes = [
       {
         path: 'mercadopago',
         component: MercadopagoComponent
+      },
+      {
+        path: 'aux',
+        component: TableComponent
       },
     ]
   }

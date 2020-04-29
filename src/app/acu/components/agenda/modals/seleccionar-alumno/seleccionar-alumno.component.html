@@ -50,7 +50,8 @@
             </tr>
         </table>
 
-        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+        <mat-paginator [length]="length" [pageSizeOptions]="[5, 10, 25, 100]" (page)="ejecutoEvent($event)">
+        </mat-paginator>
 
 
 

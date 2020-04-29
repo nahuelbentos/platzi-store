@@ -25,6 +25,9 @@ import { MatSortModule } from '@angular/material/sort';
 import { SeleccionarSocioComponent } from './components/mercadopago/modals/seleccionar-socio/seleccionar-socio.component';
 import { AgendaCursoComponent } from './components/agenda/modals/agenda-curso/agenda-curso.component';
 import { SeleccionarCursoComponent } from './components/agenda/modals/seleccionar-curso/seleccionar-curso.component';
+import { InscripcionCursoComponent } from './components/agenda/modals/inscripcion-curso/inscripcion-curso.component';
+import { PaginatorComponent } from './components/agenda/aux/paginator/paginator.component';
+import { TableComponent } from './components/agenda/aux/table/table.component';
 
 
 
@@ -42,7 +45,10 @@ import { SeleccionarCursoComponent } from './components/agenda/modals/selecciona
     MercadopagoComponent,
     SeleccionarSocioComponent,
     AgendaCursoComponent,
-    SeleccionarCursoComponent
+    SeleccionarCursoComponent,
+    InscripcionCursoComponent,
+    PaginatorComponent,
+    TableComponent
   ],
   imports: [
     CommonModule,

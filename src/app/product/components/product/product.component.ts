@@ -16,7 +16,7 @@ import { CartService } from '@core/services/cart.service';
     templateUrl: './product.component.html',
     styleUrls: ['./product.component.scss']
 })
-export class ProductComponent implements OnInit, DoCheck, OnDestroy {
+export class ProductComponent { // implements OnInit, DoCheck, OnDestroy {
 
     @Input() product: Product;
 
@@ -35,28 +35,29 @@ export class ProductComponent implements OnInit, DoCheck, OnDestroy {
 
     // }
 
-    ngOnInit(): void {
-        // Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-        // Add 'implements OnInit' to the class.
-        console.log('ngOnInit');
+    // ngOnInit(): void {
+    //     // Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    //     // Add 'implements OnInit' to the class.
+    //     console.log('ngOnInit');
 
 
-    }
+    // }
 
-    ngDoCheck(): void {
-        // Called every time that the input properties of a component or a directive are checked.
-        // Use it to extend change detection by performing a custom check.
-        // Add 'implements DoCheck' to the class.
-        console.log('ngDoCheck');
+    // ngDoCheck(): void {
+    //     // Called every time that the input properties of a component or a directive are checked.
+    //     // Use it to extend change detection by performing a custom check.
+    //     // Add 'implements DoCheck' to the class.
+    //     console.log('ngDoCheck');
 
-    }
+    // }
 
-    ngOnDestroy(): void {
-        // Called once, before the instance is destroyed.
-        // Add 'implements OnDestroy' to the class.
-        console.log('ngOnDestroy');
+    // ngOnDestroy(): void {
+    //     // Called once, before the instance is destroyed.
+    //     // Add 'implements OnDestroy' to the class.
+    //     console.log('ngOnDestroy');
 
-    }
+    // }
+
     addCart() {
         console.log('Añadir al carrito');
         this.productClicked.emit(this.product.id);

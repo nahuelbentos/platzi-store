@@ -7,6 +7,7 @@ import { SeleccionarFechaComponent } from './modals/seleccionar-fecha/selecciona
 import Swal from 'sweetalert2';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { AgendarClaseComponent } from './modals/agendar-clase/agendar-clase.component';
+import { InscripcionCursoComponent } from './modals/inscripcion-curso/inscripcion-curso.component';
 export interface AgendaElement {
   Movil: string;
   Hora0: string;
@@ -287,6 +288,39 @@ export class AgendaComponent implements OnInit, AfterViewInit {
           this.accionGeneralDia('duplicar');
         }
       });
+
+  }
+
+  test() {
+    this.acuService.obtenerAlumnos(100, 1, '')
+      .subscribe((res: any) => {
+        console.log('res: ', res);
+        console.log('res.Cantidad: ', res.Cantidad);
+        console.log('res.Alumnos: ', res.Alumnos);
+      });
+  }
+
+  inscripcion() {
+
+    const dialogRef = this.dialog.open(InscripcionCursoComponent, {
+      data: {
+        inscripcionCurso: {
+          TrnMode: '',
+          FechaClase: '',
+          Hora: 0,
+          EscInsId: '',
+          EscInsNom: '',
+          TipCurId: 0,
+          TipCurNom: '',
+          EscAgeInsObservaciones: '',
+          mensaje: 'string'
+        }
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.animal = result;
+    });
 
   }
 
