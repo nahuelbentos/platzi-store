@@ -6,16 +6,21 @@ import { AcuService } from '@acu/services/acu.service';
 
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatTable } from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 import { SeleccionarSocioComponent } from './modals/seleccionar-socio/seleccionar-socio.component';
 import { MyErrorStateMatcher } from '../agenda/modals/agendar-clase/agendar-clase.component';
 
-
-import { MercadopagoDataSource, CuotaSocial } from './mercadopago-datasource';
 import { SelectionModel } from '@angular/cdk/collections';
 import Swal from 'sweetalert2';
+import { Time } from '@angular/common';
 
 
+// export interface CuotaSocialData {
+//   id: number;
+//   nombreSocio: string;
+//   precio: string;
+//   fecha: string;
+// }
 
 @Component({
   selector: 'app-mercadopago',
@@ -23,14 +28,18 @@ import Swal from 'sweetalert2';
   styleUrls: ['./mercadopago.component.scss']
 })
 export class MercadopagoComponent implements AfterViewInit, OnInit {
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(MatTable, { static: false }) table: MatTable<CuotaSocial>;
 
-  dataSource: MercadopagoDataSource;
+  // @ViewChild(MatTable, { static: false }) table: MatTable<CuotaSocial>;
 
+  // dataSource: MercadopagoDataSource;
   displayedColumns: string[] = ['select', 'id', 'nombreSocio', 'precio', 'fecha'];
-  selection = new SelectionModel<CuotaSocial>(true, []);
+  dataSource: MatTableDataSource<FacturaData>;
+
+  selection = new SelectionModel<FacturaData>(true, []);
+
+
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   form: FormGroup;
   matcher = new MyErrorStateMatcher();
@@ -39,7 +48,7 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
   socioNombre: string;
   tipo: string;
   parametro: number;
-
+  cantidad: number;
   // para el dialog
   socio: any;
 
@@ -50,19 +59,21 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
     private acuService: AcuService,
     public dialog: MatDialog,
   ) {
+    this.dataSource = new MatTableDataSource();
     this.buildForm();
   }
 
   ngOnInit() {
 
-    this.dataSource = new MercadopagoDataSource();
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.paginator.length = this.cantidad;
+    this.dataSource.sort = this.sort;
 
   }
 
   ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
-    this.table.dataSource = this.dataSource;
+    // this.dataSource.paginator = this.paginator;
+    // this.dataSource.sort = this.sort;
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -80,11 +91,11 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
   }
 
   /** The label for the checkbox on the passed row */
-  checkboxLabel(row?: CuotaSocial): string {
+  checkboxLabel(row?: FacturaData): string {
     if (!row) {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
-    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.FacCod + 1}`;
   }
 
   buildForm() {
@@ -128,75 +139,21 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
     });
   }
 
-  seleccionarSocio(tipo) {
+  seleccionarSocio(tipo, parametro) {
     console.log('1)tipo: ', tipo);
+    console.log('2)parametro: ', parametro);
     // let socios = JSON.parse(localStorage.getItem('Socios'));
-    caches.open('testCache').then(
-      (cache: Cache) => {
-        let socios;
-
-        cache.match(`http://192.1.0.86/ACU_WS.NetEnvironment/rest/wsGetSocios?CntPorPag=0&skip=0`).then(resp => {
-          console.log('2) res cache 11: ', resp);
-          if (resp) {
-
-            resp.json().then(body => {
-              console.log('3) body: ', body);
-              socios = body;
-              console.log('4) socios: ', socios);
-
-              console.log('5) res socios: ', socios);
 
 
-              if (!socios) {
-                console.log('6) res cache:1 ', cache);
-                // if (!socios) {
-                this.acuService.getSocios(0, 0)
-                  .subscribe((res: any) => {
-                    console.log('7) res.socios22: ', res);
-                    const response = new Response(res);
-                    cache.put(`http://192.1.0.86/ACU_WS.NetEnvironment/rest/wsGetSocios?CntPorPag=0&skip=0`, response);
+    this.acuService.getSocios(100, 1, tipo, parametro)
+      .subscribe((res: any) => {
+        console.log('3) res.socios22: ', res);
+        const response = new Response(res);
 
-                    console.log('8) res cache:2 ', cache);
-                    cache.add(`http://192.1.0.86/ACU_WS.NetEnvironment/rest/wsGetSocios?CntPorPag=0&skip=0`);
-
-                    console.log('9) res cache:3 ', cache);
-
-                    //  socios = res.Socios;
-                    this.openDialogSocios(res.Socios, res.Cantidad, tipo);
-                    // localStorage.setItem('Socios', JSON.stringify(socios));
-                  });
-              } else {
-
-                this.openDialogSocios(socios.Socios, socios.Cantidad, tipo);
-              }
-
-
-            });
-          } else {
-            this.acuService.getSocios(0, 0)
-              .subscribe((res: any) => {
-                console.log('7) res.socios22: ', res);
-                const response = new Response(res);
-                cache.put(`http://192.1.0.86/ACU_WS.NetEnvironment/rest/wsGetSocios?CntPorPag=0&skip=0`, response);
-
-                console.log('8) res cache:2 ', cache);
-                cache.add(`http://192.1.0.86/ACU_WS.NetEnvironment/rest/wsGetSocios?CntPorPag=0&skip=0`);
-
-                console.log('9) res cache:3 ', cache);
-
-                //  socios = res.Socios;
-                this.openDialogSocios(res.Socios, res.Cantidad, tipo);
-                // localStorage.setItem('Socios', JSON.stringify(socios));
-              });
-          }
-
-
-
-        });
-
-      }
-    );
-
+        //  socios = res.Socios;
+        this.openDialogSocios(res.Socios, res.Cantidad, tipo);
+        // localStorage.setItem('Socios', JSON.stringify(socios));
+      });
 
   }
 
@@ -231,11 +188,22 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
 
     sociosDialogRef.afterClosed().subscribe(result => {
       console.log('result: ', result);
-      this.socio = result;
-      this.form.patchValue({
-        socioId: result.SocId,
-        socioNombre: result.Nombre
-      });
+
+      if (result) {
+        this.socio = result;
+        this.form.patchValue({
+          socioId: result.SocId,
+          socioNombre: result.Nombre
+        });
+
+        this.acuService.getFacturasPendientes(200, 1, result.SocId)
+          .subscribe((res: any) => {
+            console.log('3) facturas: ', res.Facturas);
+            this.actualizarDatasource(res.Facturas, res.Facturas.length);
+            // this.dataSource = new MatTableDataSource(res.Facturas);
+          });
+
+      }
 
 
     });
@@ -246,6 +214,14 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
     return this.form.get('socioNombre');
   }
 
+  actualizarDatasource(data, cantidad) {
+
+    this.dataSource = new MatTableDataSource(data);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.paginator.length = cantidad;
+    this.dataSource.sort = this.sort;
+  }
+
   pagar(event: Event) {
     event.preventDefault();
     if (this.form.valid) {
@@ -254,4 +230,51 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
 
     }
   }
+}
+
+
+export interface FacturaData {
+  FacCod: number;
+  FacNro: number;
+  SOCID: number;
+  FacNom: string;
+  FacApe: string;
+  FacDir: string;
+  FacDto: number;
+  FacDes: string;
+  FacFech: Date;
+  FacRuc: number;
+  FacConFin: string;
+  MonTipo: number;
+  FacAnu: string;
+  FacUsrAnu: string;
+  FacUsrIns: string;
+  FacNroSector: number;
+  FacPrdId: number;
+  FacFmaPgo: string;
+  FacNroMat: string;
+  FacSecId: string;
+  FacUsrPrn: string;
+  FacFchPgo: Date;
+  FacTotRed: number;
+  FacHora: Time;
+  FacRed: number;
+  FacCiCaNro: number;
+  FacUltLin: number;
+  FacPromEspId: number;
+  FacCntCuoEsp: number;
+  FACCLICOD: number;
+  FacSerie: string;
+  FacNroDocCli: number;
+  FacTpoDocCli: number;
+  FacTiDoId: number;
+  FacFHCorr: Date;
+  FacCAEEstatus: string;
+  FacPrcEstatus: string;
+  FacOrigen: string;
+  FacRucCh: string;
+  FacCodPaiDocCli: string;
+  FacTitTel: string;
+  TpTiId: string;
+  FacTitId: number;
 }

@@ -39,6 +39,7 @@ import { AlumnoTieneExcepecionValidatorDirective } from './utils/validators/alum
 import { AlumnoYaAsignadoValidatorDirective } from './utils/validators/alumno-ya-asignado.directive';
 import { TestComponent } from './test/components/test.component';
 
+
 // if (environment.production === true) {
 Sentry.init({
   dsn: 'https://7d756537d9ae48a49195bdef6a69b908@sentry.io/1869535'

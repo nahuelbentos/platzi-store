@@ -246,14 +246,14 @@ export class AcuService {
       agendaCurso
     });
   }
-  getSocios(cantidad: number, page: number) {
-    return this.http.get(`${environment.url_ws}/wsGetSocios?CntPorPag=${cantidad}&skip=${page}`);
-    // return this.http.post(`${environment.url_ws}/wsGetSocios`, {
-    // });
 
-    // return this.http.post(`${environment.url_ws}/WSObtenerSocios`, {
-    //   Tipo: tipo
-    // });
+  getSocios(cantidad: number, page: number, tipo: string, filtro: number) {
+
+    return this.http.get(`${environment.url_ws}/wsGetSDTSocios?PageSize=${cantidad}&PageNumber=${page}&Tipo=${tipo}&Filtro=${filtro}`);
+  }
+
+  getFacturasPendientes(cantidad: number, page: number, socId: number) {
+    return this.http.get(`${environment.url_ws}/wsGetFacturasPendientes?PageSize=${cantidad}&PageNumber=${page}&SocId=${socId}`);
   }
 
   getInstructores() {

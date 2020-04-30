@@ -73,7 +73,7 @@ export class SeleccionarSocioComponent implements OnInit {
     console.log('entro en updateEvent ');
     this.pageEvent = $event;
 
-    this.acuService.getSocios(1000, this.pageEvent.pageIndex)
+    this.acuService.getSocios(100, this.pageEvent.pageIndex, ' ', 0) // (1000, this.pageEvent.pageIndex)
       .subscribe((res: any) => {
         console.log('res.socios: ', res);
 
