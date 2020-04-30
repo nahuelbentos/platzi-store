@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Inject } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -20,7 +20,7 @@ export interface SocioData {
   templateUrl: './seleccionar-socio.component.html',
   styleUrls: ['./seleccionar-socio.component.scss']
 })
-export class SeleccionarSocioComponent implements OnInit {
+export class SeleccionarSocioComponent implements AfterViewInit, OnInit, AfterViewChecked {
 
   displayedColumns: string[] = ['actions', 'SocId', 'Nombre', 'SocMes', 'SocNroCI', 'SocNroMat'];
   dataSource: MatTableDataSource<SocioData>;
@@ -35,6 +35,9 @@ export class SeleccionarSocioComponent implements OnInit {
   pageSize = 10;
   pageSizeOptions: number[] = [5, 10, 25, 100];
   cantidad = 60000;
+  length: number;
+
+  filtro: string;
 
   constructor(
     public dialogRef: MatDialogRef<MercadopagoComponent>,
@@ -44,12 +47,24 @@ export class SeleccionarSocioComponent implements OnInit {
 
     console.log('this.data: ', this.data);
     const socios = this.data.socios;
+    this.filtro = this.data.filtro;
     this.cantidad = this.data.cantidad;
     console.log('socios: ', socios);
-
+    this.actualizarDatasource(this.data.socios);
+    this.length = this.cantidad;
     // Assign the data to the data source for the table to render
-    this.dataSource = new MatTableDataSource(socios);
+    // this.dataSource = new MatTableDataSource(socios);
 
+  }
+  ngAfterViewInit(): void {
+
+    this.dataSource.paginator.length = this.length;
+    this.paginator.length = this.length;
+    console.log(' 2) this.length: ', this.length);
+  }
+
+  ngAfterViewChecked() {
+    this.paginator.length = this.length;
   }
 
   ngOnInit() {
@@ -66,6 +81,24 @@ export class SeleccionarSocioComponent implements OnInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+
+    const filter = (filterValue) ? filterValue : '';
+
+    this.getSocios(1000, 1, filter);
+
+  }
+
+  getSocios(pageSize, pageNumber, filtro) {
+    console.log('pageSize: ', pageSize);
+    console.log('pageNumber: ', pageNumber);
+    console.log('filtro: ', filtro);
+
+    this.acuService.getSocios(pageSize, pageNumber, 'FREE', filtro)
+      .subscribe((res: any) => {
+        console.log('3) res.socios22: ', res);
+
+        this.actualizarDatasource(res.Socios);
+      });
   }
 
   updateEvent($event: PageEvent) {
@@ -87,4 +120,12 @@ export class SeleccionarSocioComponent implements OnInit {
     this.dialogRef.close();
   }
 
+
+  actualizarDatasource(data) {
+
+    this.dataSource = new MatTableDataSource(data);
+    this.dataSource.paginator = this.paginator;
+    // this.dataSource.paginator.length = cantidad;
+    this.dataSource.sort = this.sort;
+  }
 }

@@ -151,7 +151,7 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
         const response = new Response(res);
 
         //  socios = res.Socios;
-        this.openDialogSocios(res.Socios, res.Cantidad, tipo);
+        this.openDialogSocios(res.Socios, res.Cantidad, tipo, parametro);
         // localStorage.setItem('Socios', JSON.stringify(socios));
       });
 
@@ -175,11 +175,12 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
 
   }
 
-  private openDialogSocios(socios, cantidad, tipo) {
+  private openDialogSocios(socios, cantidad, tipo, filtro) {
     const sociosDialogRef = this.dialog.open(SeleccionarSocioComponent, {
       height: 'auto',
       width: '700px',
       data: {
+        filtro,
         tipo,
         cantidad,
         socios,
@@ -204,7 +205,6 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
           });
 
       }
-
 
     });
 
