@@ -1,0 +1,149 @@
+<form [formGroup]="alumnoForm" novalidate (ngSubmit)="onSubmit()">
+  <mat-toolbar color="primary">
+    <h2 mat-dialog-title>Datos del Alumno</h2>
+  </mat-toolbar>
+
+
+  <mat-dialog-content class="mat-typography">
+    <div class="contenedor">
+
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Número" formControlName="aluNro">
+          </mat-form-field>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Nombre" formControlName="aluNom">
+            <mat-error *ngIf="alumnoForm.controls['aluNom'].hasError('required')">
+              Nombre es <strong>requerido</strong>.
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Apellido" formControlName="aluApe1">
+            <mat-error *ngIf="alumnoForm.controls['aluApe1'].hasError('required')">
+              Apellido es <strong>requerido</strong>.
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+
+      <div class="row">
+
+        <div class="col-xs-8">
+          <div class="row">
+
+            <div class="col-xs-6">
+              <mat-form-field>
+                <input matInput placeholder="Cédula de Identidad" formControlName="aluCi">
+                <mat-error *ngIf="alumnoForm.controls['aluCi'].hasError('required')">
+                  Cédula de Identidad es <strong>requerida</strong>.
+                </mat-error>
+
+              </mat-form-field>
+
+            </div>
+
+            <div class="col-xs-2">
+              <mat-form-field>
+                <input matInput placeholder="Dígito Verificador" formControlName="aluDV">
+
+                <mat-error *ngIf="alumnoForm.controls['aluDV'].hasError('required')">
+                  Dígito Verificador es <strong>requerido</strong>.
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="col-xs-4">
+          <mat-form-field class="full-width">
+            <input matInput [matDatepicker]="picker" placeholder="Fecha de Nacimiento" formControlName="aluFchNac">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Télefono" formControlName="aluTel1">
+            <mat-error *ngIf="alumnoForm.controls['aluTel1'].hasError('required')">
+              Télefono es <strong>requerido</strong>.
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Celular" formControlName="aluTel2">
+            <mat-error *ngIf="alumnoForm.controls['aluTel2'].hasError('required')">
+              Celular es <strong>requerido</strong>.
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <mat-select placeholder="Departamento" formControlName="aluDepId">
+              <mat-option *ngFor="let departamento of departamentos" [value]="departamento.aluDepId">
+                {{ departamento.aluDepNom }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="alumnoForm.controls['aluDepId'].hasError('required')">
+              Departamento es <strong>requerido</strong>.
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="full-width">
+            <mat-select placeholder="Localidad" formControlName="aluLocId">
+              <mat-option *ngFor="let localidad of localidades" [value]="localidad.locId">
+                {{ localidad.locNom }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="alumnoForm.controls['aluLocId'].hasError('required')">
+              Localidad es <strong>requerido</strong>.
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Dirección" formControlName="aluDir">
+          </mat-form-field>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Correo Electronico" formControlName="aluMail">
+            <mat-error *ngIf="alumnoForm.controls['aluMail'].hasError('required')">
+              Correo Electronico es <strong>requerido</strong>.
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-raised-button color="primary" type="submit">Submit</button>
+    <button mat-button mat-dialog-close (click)="onNoClick()">Cancelar</button>
+  </mat-dialog-actions>
+</form>

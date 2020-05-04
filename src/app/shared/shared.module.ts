@@ -16,6 +16,7 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
 import { MaterialModule } from '@material/material.module';
 import { ValueIPipe } from './pipes/value-i.pipe';
 import { DaySpanishPipe } from './pipes/day-spanish.pipe';
+import { CiPipe } from './pipes/ci.pipe';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { DaySpanishPipe } from './pipes/day-spanish.pipe';
     CartComponent,
     PageNotFoundComponent,
     ValueIPipe,
-    DaySpanishPipe
+    DaySpanishPipe,
+    CiPipe
   ],
   exports: [
     ExponentialPipe,
@@ -34,7 +36,8 @@ import { DaySpanishPipe } from './pipes/day-spanish.pipe';
     HeaderComponent,
     FooterComponent,
     ValueIPipe,
-    DaySpanishPipe
+    DaySpanishPipe,
+    CiPipe
   ],
   imports: [
     CommonModule,

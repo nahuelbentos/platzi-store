@@ -28,6 +28,12 @@ import { SeleccionarCursoComponent } from './components/agenda/modals/selecciona
 import { InscripcionCursoComponent } from './components/agenda/modals/inscripcion-curso/inscripcion-curso.component';
 import { PaginatorComponent } from './components/agenda/aux/paginator/paginator.component';
 import { TableComponent } from './components/agenda/aux/table/table.component';
+import { AltaAlumnoComponent } from './components/agenda/modals/alta-alumno/alta-alumno.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatCardModule } from '@angular/material/card';
 
 
 
@@ -48,7 +54,8 @@ import { TableComponent } from './components/agenda/aux/table/table.component';
     SeleccionarCursoComponent,
     InscripcionCursoComponent,
     PaginatorComponent,
-    TableComponent
+    TableComponent,
+    AltaAlumnoComponent
   ],
   imports: [
     CommonModule,
@@ -60,7 +67,12 @@ import { TableComponent } from './components/agenda/aux/table/table.component';
     SweetAlert2Module,
     MatTableModule,
     MatPaginatorModule,
-    MatSortModule
+    MatSortModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatRadioModule,
+    MatCardModule
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'es-UY' }

@@ -47,6 +47,7 @@ export class SeleccionarSocioComponent implements AfterViewInit, OnInit, AfterVi
 
     console.log('this.data: ', this.data);
     const socios = this.data.socios;
+
     this.filtro = this.data.filtro;
     this.cantidad = this.data.cantidad;
     console.log('socios: ', socios);
@@ -76,12 +77,6 @@ export class SeleccionarSocioComponent implements AfterViewInit, OnInit, AfterVi
 
   applyFilter(filterValue: string) {
 
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-
     const filter = (filterValue) ? filterValue : '';
 
     this.getSocios(1000, 1, filter);
@@ -110,8 +105,7 @@ export class SeleccionarSocioComponent implements AfterViewInit, OnInit, AfterVi
       .subscribe((res: any) => {
         console.log('res.socios: ', res);
 
-        // const socios = res.Socios;
-        // localStorage.setItem('Socios', JSON.stringify(socios));
+        this.actualizarDatasource(res.Socios);
       });
     console.log('pageIndex: ', this.pageEvent.pageIndex);
   }

@@ -54,22 +54,20 @@ export class SeleccionarAlumnoComponent implements OnInit, AfterViewInit, AfterV
 
   displayedColumns: string[] = ['actions', 'AluNro', 'AluNomComp', 'AluCI'];
   dataSource: MatTableDataSource<AlumnoData>;
-  alumnos: AlumnoData[];
 
-
-  filtro: string;
-  resultsLength: number;
-  cantidad: number;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   // MatPaginator Output
   pageEvent: PageEvent;
 
+  // MatPaginator Inputs
+  pageSize = 10;
+  pageSizeOptions: number[] = [5, 10, 25, 100];
+  cantidad = 60000;
   length: number;
-  pageSize: number;
-  pageindex: number;
 
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  filtro: string;
 
 
 
@@ -79,108 +77,79 @@ export class SeleccionarAlumnoComponent implements OnInit, AfterViewInit, AfterV
     private acuService: AcuService,
     @Inject(MAT_DIALOG_DATA) public data: any) {
 
-    this.alumnos = this.data.alumnos;
-    console.log('alumnos: ', this.alumnos);
+    // this.alumnos = this.data.alumnos;
+    console.log('this.data: ', this.data);
     console.log('cantidad: ', this.data.cantidad);
 
 
-    // Assign the data to the data source for the table to render
-    this.dataSource = new MatTableDataSource(this.alumnos);
-
+    this.filtro = this.data.filtro;
     this.cantidad = this.data.cantidad;
+
+    // Assign the data to the data source for the table to render
+    this.dataSource = new MatTableDataSource(this.data.alumnos);
+
     this.length = this.data.cantidad;
   }
+  ngAfterViewInit(): void {
 
-
-  ngOnInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-    this.resultsLength = this.cantidad;
-  }
-
-
-  ngAfterViewInit() {
-    console.log('AfterViewInit:');
-
-    console.log(' 1) datasources: ', this.dataSource);
-    this.resultsLength = this.cantidad;
-    console.log(' 2) this.resultsLength: ', this.resultsLength);
-    this.paginator.length = this.cantidad;
-    console.log(' 2) this.cantidad: ', this.cantidad);
+    this.dataSource.paginator.length = this.length;
+    this.paginator.length = this.length;
+    console.log(' 2) this.length: ', this.length);
   }
 
   ngAfterViewChecked() {
     this.paginator.length = this.cantidad;
   }
 
-  applyFilter(filterValue: string) {
-
-    this.filtro = filterValue;
-    const filter = (this.filtro) ? this.filtro : '';
-    console.log('1) datasources: ', this.dataSource);
-    console.log('2) datasources.filterData: ', this.dataSource.filteredData);
-    // if (this.dataSource.filteredData.length === 0) {
-    console.log('applyFilter');
-    console.log('   filter: ', filter);
-
-    this.getAlumnos(10, 1, filter);
-
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-    // } else {
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-    // }
+  ngOnInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.paginator.length = this.cantidad;
+    this.dataSource.sort = this.sort;
   }
 
+
+
+  applyFilter(filterValue: string) {
+
+
+    const filter = (filterValue) ? filterValue : '';
+
+    this.getAlumnos(1000, 1, filter);
+
+  }
+
+  getAlumnos(pageSize, pageNumber, filtro) {
+    console.log('filtro: ', filtro);
+
+    this.acuService.obtenerAlumnos(pageSize, pageNumber, filtro)
+      .subscribe((res: any) => {
+
+        this.actualizarDatasource(res.Alumnos);
+
+
+      });
+  }
 
   ejecutoEvent(pageEvento: PageEvent) {
     this.pageEvent = pageEvento;
     const filter = (this.filtro) ? this.filtro : '';
 
-    if ((pageEvento.pageSize * (pageEvento.pageIndex + 1)) > this.alumnos.length) {
-      console.log('ejecutoEvent');
-      this.getAlumnos(pageEvento.pageSize, pageEvento.pageIndex, filter);
+    console.log('ejecutoEvent');
+    this.getAlumnos(pageEvento.pageSize, pageEvento.pageIndex, filter);
 
-      // this.acuService.obtenerAlumnos(pageEvento.pageSize, pageEvento.pageIndex, filter)
-      //   .subscribe((res: any) => {
+  }
 
-      //     const aux: AlumnoData[] = res.Alumnos;
-      //     this.alumnos = this.alumnos.concat(aux); // = [... this.alumnos, res.Alumnos];
+  actualizarDatasource(data) {
 
-      //     this.dataSource = new MatTableDataSource(this.alumnos);
-      //     this.dataSource.paginator = this.paginator;
-      //     this.resultsLength = this.cantidad;
-      //     this.dataSource.sort = this.sort;
-      //   });
-
-    }
-    // this.getAlumnos(this.pageEvent.pageSize, this.pageEvent.pageIndex, this.filtro);
+    this.dataSource = new MatTableDataSource(data);
+    this.dataSource.paginator = this.paginator;
+    // this.dataSource.paginator.length = cantidad;
+    this.dataSource.sort = this.sort;
   }
 
   onNoClick(): void {
     this.dialogRef.close();
   }
 
-  getAlumnos(pageSize, pageNumber, filtro) {
-    console.log('filtro: ', filtro);
-    this.acuService.obtenerAlumnos(pageSize, pageNumber, filtro)
-      .subscribe((res: any) => {
-
-        console.log(' res: ', res);
-
-        const aux: AlumnoData[] = res.Alumnos;
-        if (this.filtro === '') {
-          this.alumnos = this.alumnos.concat(aux);
-        } else {
-          this.alumnos = aux;
-        }
-        this.dataSource = new MatTableDataSource(this.alumnos);
-        this.dataSource.paginator = this.paginator;
-        this.resultsLength = this.cantidad;
-        this.dataSource.sort = this.sort;
-
-      });
-  }
 
 }

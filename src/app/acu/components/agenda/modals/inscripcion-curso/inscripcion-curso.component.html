@@ -41,6 +41,9 @@
                             (click)='seleccionarAlumno()'>
                             <mat-icon> search </mat-icon>
                         </button>
+                        <button mat-icon-button matSuffix [attr.aria-label]="'Hide password'" (click)='altaAlumno()'>
+                            <mat-icon> add </mat-icon>
+                        </button>
 
                         <mat-error
                             *ngIf="alumnoNumeroField.hasError('required') && alumnoNumeroField.dirty && alumnoNumeroField.errors">
@@ -83,13 +86,13 @@
                 <div class="col">
                     <mat-form-field class="full-width">
                         <input matInput placeholder="Télefono" [(ngModel)]="inscripcionCurso.AluTel1"
-                            formControlName="alumnoCI">
+                            formControlName="alumnoTelefono">
                     </mat-form-field>
                 </div>
                 <div class="col">
                     <mat-form-field class="full-width">
                         <input matInput placeholder="Celular" [(ngModel)]="inscripcionCurso.AluTel2"
-                            formControlName="alumnoCI">
+                            formControlName="alumnoCelular">
                     </mat-form-field>
                 </div>
             </div>

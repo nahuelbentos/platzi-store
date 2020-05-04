@@ -11,6 +11,7 @@ import { SeleccionarAlumnoComponent } from '../seleccionar-alumno/seleccionar-al
 import { existeAlumnoValidator } from '@utils/validators/existe-alumno-validator.directive';
 import { alumnoYaAsignadoValidator } from '@utils/validators/alumno-ya-asignado.directive';
 import { alumnoTieneExcepcionValidator } from '@utils/validators/alumno-tiene-excepecion.directive';
+import { AltaAlumnoComponent } from '../alta-alumno/alta-alumno.component';
 
 
 export interface InscripcionCurso {
@@ -117,9 +118,13 @@ export class InscripcionCursoComponent implements OnInit {
         ] // async validators
       ],
       alumnoNombre: ['', [Validators.required]],
+      alumnoCI: [''],
+      alumnoTelefono: [''],
+      alumnoCelular: [''],
       observaciones: ['']
     });
   }
+
 
   seleccionarCurso() {
     let cursos = JSON.parse(localStorage.getItem('Cursos'));
@@ -152,22 +157,11 @@ export class InscripcionCursoComponent implements OnInit {
       this.cursoNombre = this.inscripcionCurso.TipCurNom = result.TipCurNom;
 
       this.form.patchValue({
-        cursoNombre: result.TipCurNom,
-        //  cursoId: result.TipCurId
+        cursoId: result.TipCurId,
+        cursoNombre: result.TipCurNom
       });
     });
 
-  }
-
-  get cursoNombreField() {
-    return this.form.get('cursoNombre');
-  }
-
-  get cursoIdField() {
-    return this.form.get('cursoId');
-  }
-  get observacionesField() {
-    return this.form.get('observaciones');
   }
 
   obtenerCurso(cursoId) {
@@ -228,6 +222,60 @@ export class InscripcionCursoComponent implements OnInit {
     }
   }
 
+
+  altaAlumno() {
+    let alumnos = JSON.parse(localStorage.getItem('Alumnos'));
+
+    let cantidad = localStorage.getItem('Cantidad');
+
+
+
+    // if (!alumnos) {
+
+    //   this.acuService.obtenerAlumnos(20, 1, '')
+    //     .subscribe((res: any) => {
+    //       console.log('res: ', res);
+    //       console.log('res.Cantidad: ', res.Cantidad);
+    //       console.log('res.Alumnos: ', res.Alumnos);
+    //       alumnos = res.Alumnos;
+    //       cantidad = res.Cantidad;
+    //       localStorage.setItem('Alumnos', JSON.stringify(alumnos));
+    //       localStorage.setItem('Cantidad', cantidad);
+
+    //       this.openDialogAltaAlumnos(alumnos, cantidad);
+    //     });
+
+    // } else {
+    this.openDialogAltaAlumnos(alumnos, cantidad);
+    // }
+  }
+
+  private openDialogAltaAlumnos(departamentoLocalidades, cantidad) {
+    const alumnosDialogRef = this.dialog.open(AltaAlumnoComponent, {
+      height: 'auto',
+      width: '700px',
+      data: {
+        departamentoLocalidades,
+        cantidad
+      }
+    });
+
+    alumnosDialogRef.afterClosed().subscribe(result => {
+      // this.alumno = result;
+      console.log('1.alumno: ' + result);
+      console.log('2.alumno: ' + JSON.stringify(result));
+
+      this.form.patchValue({
+        alumnoNumero: result.AluNro,
+        alumnoNombre: result.AluNomComp,
+        alumnoCI: this.formatCI(result.AluCI, result.AluDV),
+        alumnoTelefono: result.AluTel1,
+        alumnoCelular: result.AluTel2,
+      });
+    });
+
+  }
+
   private openDialogAlumnos(alumnos, cantidad) {
     const alumnosDialogRef = this.dialog.open(SeleccionarAlumnoComponent, {
       height: 'auto',
@@ -244,20 +292,80 @@ export class InscripcionCursoComponent implements OnInit {
       console.log('2.alumno: ' + JSON.stringify(result));
 
       this.form.patchValue({
+        alumnoNumero: result.AluNro,
         alumnoNombre: result.AluNomComp,
-        alumnoNumero: result.AluNro
+        alumnoCI: this.formatCI(result.AluCI, result.AluDV),
+        alumnoTelefono: result.AluTel1,
+        alumnoCelular: result.AluTel2,
       });
     });
 
-  }
-
-  get alumnoNombreField() {
-    return this.form.get('alumnoNombre');
   }
 
   get alumnoNumeroField() {
     return this.form.get('alumnoNumero');
   }
 
+  get alumnoNombreField() {
+    return this.form.get('alumnoNombre');
+  }
+
+  get alumnoCIField() {
+    return this.form.get('alumnoCI');
+  }
+
+  get alumnoTelefonoField() {
+    return this.form.get('alumnoTelefono');
+  }
+
+  get alumnoCelularField() {
+    return this.form.get('alumnoCelular');
+  }
+
+  get cursoNombreField() {
+    return this.form.get('cursoNombre');
+  }
+
+  get cursoIdField() {
+    return this.form.get('cursoId');
+  }
+  get observacionesField() {
+    return this.form.get('observaciones');
+  }
+
+  formatCI(value: string, digitoVerificador?: string): string {
+
+
+    const ci = value;
+    const cant: any = Math.ceil(ci.length / 3);
+
+    let cadena = new Array(cant);
+    let substring = ci;
+    let corte;
+    let result = '';
+
+    for (let i = 0; i < cant; i++) {
+
+
+      corte = (substring.length - 3);
+      cadena[i] = substring.substring(corte, substring.length);
+      substring = substring.substring(corte, 0);
+
+
+    }
+
+    cadena = cadena.reverse();
+
+    for (let i = 0; i < cadena.length; i++) {
+      if (i + 1 < cadena.length) {
+        result += cadena[i] + '.';
+      } else {
+        result += cadena[i] + '-';
+      }
+    }
+    console.log('result: ', result);
+
+    return result + digitoVerificador;
+  }
 
 }
