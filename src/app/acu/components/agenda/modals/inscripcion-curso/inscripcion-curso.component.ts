@@ -173,6 +173,7 @@ export class InscripcionCursoComponent implements OnInit {
       });
   }
 
+
   guardarClase(event: Event) {
     event.preventDefault();
     console.log('Submit, form valid: ', this.form.valid);
@@ -194,6 +195,7 @@ export class InscripcionCursoComponent implements OnInit {
 
     }
   }
+
 
   seleccionarAlumno() {
     let alumnos = JSON.parse(localStorage.getItem('Alumnos'));

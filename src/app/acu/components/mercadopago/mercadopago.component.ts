@@ -32,7 +32,9 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
   // @ViewChild(MatTable, { static: false }) table: MatTable<CuotaSocial>;
 
   // dataSource: MercadopagoDataSource;
-  displayedColumns: string[] = ['select', 'id', 'nombreSocio', 'precio', 'fecha'];
+  // displayedColumns: string[] = ['select', 'id', 'nombreSocio', 'precio', 'fecha'];
+  displayedColumns: string[] = ['select', 'correlativo', 'mesAnio', 'cuota',
+    'serie', 'numeroDoc', 'fecha'];
   dataSource: MatTableDataSource<FacturaData>;
 
   selection = new SelectionModel<FacturaData>(true, []);
@@ -95,7 +97,7 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
     if (!row) {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
-    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.FacCod + 1}`;
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.Correlativo + 1}`;
   }
 
   buildForm() {
@@ -197,10 +199,12 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
           socioNombre: result.Nombre
         });
 
-        this.acuService.getFacturasPendientes(200, 1, result.SocId)
+        this.acuService.getFacturasPendientes(result.SocId)
           .subscribe((res: any) => {
-            console.log('3) facturas: ', res.Facturas);
-            this.actualizarDatasource(res.Facturas, res.Facturas.length);
+            console.log('2) facturas: ', res);
+            console.log('3) facturas: ', res.Cantidad);
+            console.log('3) facturas: ', res.FacturasPendientes);
+            this.actualizarDatasource(res.FacturasPendientes, res.FacturasPendientes.length);
             // this.dataSource = new MatTableDataSource(res.Facturas);
           });
 
@@ -231,50 +235,67 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
     }
   }
 }
-
-
 export interface FacturaData {
-  FacCod: number;
-  FacNro: number;
-  SOCID: number;
-  FacNom: string;
-  FacApe: string;
-  FacDir: string;
-  FacDto: number;
-  FacDes: string;
-  FacFech: Date;
-  FacRuc: number;
-  FacConFin: string;
-  MonTipo: number;
-  FacAnu: string;
-  FacUsrAnu: string;
-  FacUsrIns: string;
-  FacNroSector: number;
-  FacPrdId: number;
-  FacFmaPgo: string;
-  FacNroMat: string;
-  FacSecId: string;
-  FacUsrPrn: string;
-  FacFchPgo: Date;
-  FacTotRed: number;
-  FacHora: Time;
-  FacRed: number;
-  FacCiCaNro: number;
-  FacUltLin: number;
-  FacPromEspId: number;
-  FacCntCuoEsp: number;
-  FACCLICOD: number;
-  FacSerie: string;
-  FacNroDocCli: number;
-  FacTpoDocCli: number;
-  FacTiDoId: number;
-  FacFHCorr: Date;
-  FacCAEEstatus: string;
-  FacPrcEstatus: string;
-  FacOrigen: string;
-  FacRucCh: string;
-  FacCodPaiDocCli: string;
-  FacTitTel: string;
-  TpTiId: string;
-  FacTitId: number;
+  Anio: number;
+  CCMovImp: string;
+  Correlativo: number;
+  EsCuoEsp: string;
+  EsCuotaActual: string;
+  FDDocCod: string;
+  FDDocFechCh: Date;
+  FDDocNroCh: string;
+  FDDocSerie: string;
+  Mes: number;
+  MesNom: string;
+  OrigenLinea: string;
+  PromEspId: number;
+  Seleccionado: boolean;
+  Situacion: string;
+  pendiente: string;
 }
+
+// export interface FacturaData {
+//   FacCod: number;
+//   FacNro: number;
+//   SOCID: number;
+//   FacNom: string;
+//   FacApe: string;
+//   FacDir: string;
+//   FacDto: number;
+//   FacDes: string;
+//   FacFech: Date;
+//   FacRuc: number;
+//   FacConFin: string;
+//   MonTipo: number;
+//   FacAnu: string;
+//   FacUsrAnu: string;
+//   FacUsrIns: string;
+//   FacNroSector: number;
+//   FacPrdId: number;
+//   FacFmaPgo: string;
+//   FacNroMat: string;
+//   FacSecId: string;
+//   FacUsrPrn: string;
+//   FacFchPgo: Date;
+//   FacTotRed: number;
+//   FacHora: Time;
+//   FacRed: number;
+//   FacCiCaNro: number;
+//   FacUltLin: number;
+//   FacPromEspId: number;
+//   FacCntCuoEsp: number;
+//   FACCLICOD: number;
+//   FacSerie: string;
+//   FacNroDocCli: number;
+//   FacTpoDocCli: number;
+//   FacTiDoId: number;
+//   FacFHCorr: Date;
+//   FacCAEEstatus: string;
+//   FacPrcEstatus: string;
+//   FacOrigen: string;
+//   FacRucCh: string;
+//   FacCodPaiDocCli: string;
+//   FacTitTel: string;
+//   TpTiId: string;
+//   FacTitId: number;
+// }

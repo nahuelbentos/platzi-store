@@ -71,28 +71,41 @@
         </td>
       </ng-container>
 
-      <!-- Id Column -->
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
-        <td mat-cell *matCellDef="let element"> {{element.FacCod}} </td>
+      <!-- Correlativo Column -->
+      <ng-container matColumnDef="correlativo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Correlativo </th>
+        <td mat-cell *matCellDef="let element"> {{element.Correlativo}} </td>
       </ng-container>
 
-      <!-- NombreSocio Column -->
-      <ng-container matColumnDef="nombreSocio">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
-        <td mat-cell *matCellDef="let element"> {{element.FacNom}} {{element.FacApe}} </td>
+      <!-- mesAnio Column -->
+      <ng-container matColumnDef="mesAnio">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Mes / Año </th>
+        <td mat-cell *matCellDef="let element"> {{element.MesNom}} / {{element.Anio}} </td>
       </ng-container>
 
-      <!-- Precio Column -->
-      <ng-container matColumnDef="precio">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Precio </th>
-        <td mat-cell *matCellDef="let element"> {{element.FacTotRed}} </td>
+      <!-- Cuota Column -->
+      <ng-container matColumnDef="cuota">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Cuota </th>
+        <td mat-cell *matCellDef="let element"> {{element.CCMovImp}} </td>
+      </ng-container>
+
+
+      <!-- Serie Column -->
+      <ng-container matColumnDef="serie">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Serie </th>
+        <td mat-cell *matCellDef="let element"> {{element.FDDocSerie}} </td>
+      </ng-container>
+
+      <!-- NumeroDoc Column -->
+      <ng-container matColumnDef="numeroDoc">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Nro. Doc. </th>
+        <td mat-cell *matCellDef="let element"> {{element.FDDDocNroCh}} </td>
       </ng-container>
 
       <!-- Fecha Column -->
       <ng-container matColumnDef="fecha">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha </th>
-        <td mat-cell *matCellDef="let element"> {{element.FacFech}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.FDDocFechCh}} </td>
       </ng-container>
 
 

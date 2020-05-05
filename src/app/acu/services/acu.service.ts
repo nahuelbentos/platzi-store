@@ -233,12 +233,19 @@ export class AcuService {
   }
 
   getCursos() {
-    return this.http.post(`${environment.url_ws}/wsObtenerCursos`, {});
+    return this.http.get(`${environment.url_ws}/wsGetCursos`);
+    // return this.http.post(`${environment.url_ws}/wsObtenerCursos`, {});
   }
 
   getCurso(TipCurId) {
-    return this.http.post(`${environment.url_ws}/wsObtenerCurso`, { TipCurId });
+    return this.http.get(`${environment.url_ws}/wsGetCurso?TipCurId=${TipCurId}`);
 
+    // return this.http.post(`${environment.url_ws}/wsObtenerCurso`, { TipCurId });
+
+  }
+
+  getDepartamentos() {
+    return this.http.get(`${environment.url_ws}/wsGetDepartamentos`);
   }
 
   guardarAgendaInstructor(agendaCurso: AgendaCurso) {
@@ -247,13 +254,25 @@ export class AcuService {
     });
   }
 
-  getSocios(cantidad: number, page: number, tipo: string, filtro: number) {
+  getSocio(SocId) {
+    return this.http.get(`${environment.url_ws}/wsGetSDTSocio?SocId=${SocId}`);
 
-    return this.http.get(`${environment.url_ws}/wsGetSDTSocios?PageSize=${cantidad}&PageNumber=${page}&Tipo=${tipo}&Filtro=${filtro}`);
   }
 
-  getFacturasPendientes(cantidad: number, page: number, socId: number) {
-    return this.http.get(`${environment.url_ws}/wsGetFacturasPendientes?PageSize=${cantidad}&PageNumber=${page}&SocId=${socId}`);
+  getSocios(cantidad: number, page: number, tipo: string, filtro: number) {
+    let url = `${environment.url_ws}/wsGetSDTSocios?PageSize=${cantidad}&PageNumber=${page}&Tipo=${tipo}`;
+    if (filtro) {
+      url += `&Filtro=${filtro}`;
+    }
+    console.log('url: ', url);
+
+    return this.http.get(url);
+  }
+
+  getFacturasPendientes(socId: number) {
+
+    return this.http.get(`${environment.url_ws}/wsGetCuotasSociales?SocId=${socId}`);
+    // return this.http.get(`${environment.url_ws}/wsGetFacturasPendientes?PageSize=${cantidad}&PageNumber=${page}&SocId=${socId}`);
   }
 
   getInstructores() {

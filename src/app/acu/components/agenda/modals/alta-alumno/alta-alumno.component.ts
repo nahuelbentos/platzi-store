@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { AcuService } from '@acu/services/acu.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AgendarClaseComponent } from '../agendar-clase/agendar-clase.component';
+import { SeleccionarSocioComponent } from '@acu/components/mercadopago/modals/seleccionar-socio/seleccionar-socio.component';
 
 @Component({
   selector: 'app-alta-alumno',
@@ -10,6 +11,13 @@ import { AgendarClaseComponent } from '../agendar-clase/agendar-clase.component'
   styleUrls: ['./alta-alumno.component.scss']
 })
 export class AltaAlumnoComponent {
+  socId: number;
+
+  socio: any;
+
+  depId: number;
+  locId: number;
+
   alumnoForm = this.fb.group({
     aluNro: null,
     aluNom: [null, Validators.required],
@@ -22,150 +30,167 @@ export class AltaAlumnoComponent {
     aluDepId: [null, Validators.required],
     aluLocId: [null, Validators.required],
     aluDir: [null],
-    aluMail: [null, Validators.required]
+    aluMail: [null, [
+      Validators.required,
+      Validators.email,
+    ]],
+    aluConNom: [null],
+    aluConTel: [null],
+    aluConPar: [null],
+    socId: [null],
+    socNom1: [null],
+    socApe1: [null],
+    socApe2: [null],
+    socUltimoPago: [null],
+    cantPres: [null],
+    aluPar: [null],
   });
+
+  parentescos = [
+    { value: 'HIJO', description: 'HIJO' },
+    { value: 'CÓNYUGE', description: 'CÓNYUGE' },
+  ];
 
   hasUnitNumber = false;
 
-  departamentos = [
-    { aluDepId: 'Alabama', aluDepNom: 'AL' },
-    { aluDepId: 'Alaska', aluDepNom: 'AK' },
-    { aluDepId: 'American Samoa', aluDepNom: 'AS' },
-    { aluDepId: 'Arizona', aluDepNom: 'AZ' },
-    { aluDepId: 'Arkansas', aluDepNom: 'AR' },
-    { aluDepId: 'California', aluDepNom: 'CA' },
-    { aluDepId: 'Colorado', aluDepNom: 'CO' },
-    { aluDepId: 'Connecticut', aluDepNom: 'CT' },
-    { aluDepId: 'Delaware', aluDepNom: 'DE' },
-    { aluDepId: 'District Of Columbia', aluDepNom: 'DC' },
-    { aluDepId: 'Federated States Of Micronesia', aluDepNom: 'FM' },
-    { aluDepId: 'Florida', aluDepNom: 'FL' },
-    { aluDepId: 'Georgia', aluDepNom: 'GA' },
-    { aluDepId: 'Guam', aluDepNom: 'GU' },
-    { aluDepId: 'Hawaii', aluDepNom: 'HI' },
-    { aluDepId: 'Idaho', aluDepNom: 'ID' },
-    { aluDepId: 'Illinois', aluDepNom: 'IL' },
-    { aluDepId: 'Indiana', aluDepNom: 'IN' },
-    { aluDepId: 'Iowa', aluDepNom: 'IA' },
-    { aluDepId: 'Kansas', aluDepNom: 'KS' },
-    { aluDepId: 'Kentucky', aluDepNom: 'KY' },
-    { aluDepId: 'Louisiana', aluDepNom: 'LA' },
-    { aluDepId: 'Maine', aluDepNom: 'ME' },
-    { aluDepId: 'Marshall Islands', aluDepNom: 'MH' },
-    { aluDepId: 'Maryland', aluDepNom: 'MD' },
-    { aluDepId: 'Massachusetts', aluDepNom: 'MA' },
-    { aluDepId: 'Michigan', aluDepNom: 'MI' },
-    { aluDepId: 'Minnesota', aluDepNom: 'MN' },
-    { aluDepId: 'Mississippi', aluDepNom: 'MS' },
-    { aluDepId: 'Missouri', aluDepNom: 'MO' },
-    { aluDepId: 'Montana', aluDepNom: 'MT' },
-    { aluDepId: 'Nebraska', aluDepNom: 'NE' },
-    { aluDepId: 'Nevada', aluDepNom: 'NV' },
-    { aluDepId: 'New Hampshire', aluDepNom: 'NH' },
-    { aluDepId: 'New Jersey', aluDepNom: 'NJ' },
-    { aluDepId: 'New Mexico', aluDepNom: 'NM' },
-    { aluDepId: 'New York', aluDepNom: 'NY' },
-    { aluDepId: 'North Carolina', aluDepNom: 'NC' },
-    { aluDepId: 'North Dakota', aluDepNom: 'ND' },
-    { aluDepId: 'Northern Mariana Islands', aluDepNom: 'MP' },
-    { aluDepId: 'Ohio', aluDepNom: 'OH' },
-    { aluDepId: 'Oklahoma', aluDepNom: 'OK' },
-    { aluDepId: 'Oregon', aluDepNom: 'OR' },
-    { aluDepId: 'Palau', aluDepNom: 'PW' },
-    { aluDepId: 'Pennsylvania', aluDepNom: 'PA' },
-    { aluDepId: 'Puerto Rico', aluDepNom: 'PR' },
-    { aluDepId: 'Rhode Island', aluDepNom: 'RI' },
-    { aluDepId: 'South Carolina', aluDepNom: 'SC' },
-    { aluDepId: 'South Dakota', aluDepNom: 'SD' },
-    { aluDepId: 'Tennessee', aluDepNom: 'TN' },
-    { aluDepId: 'Texas', aluDepNom: 'TX' },
-    { aluDepId: 'Utah', aluDepNom: 'UT' },
-    { aluDepId: 'Vermont', aluDepNom: 'VT' },
-    { aluDepId: 'Virgin Islands', aluDepNom: 'VI' },
-    { aluDepId: 'Virginia', aluDepNom: 'VA' },
-    { aluDepId: 'Washington', aluDepNom: 'WA' },
-    { aluDepId: 'West Virginia', aluDepNom: 'WV' },
-    { aluDepId: 'Wisconsin', aluDepNom: 'WI' },
-    { aluDepId: 'Wyoming', aluDepNom: 'WY' }
-  ];
+  departamentos: Departamento[] = [];
 
-  localidades = [
-    { locId: 'Alabama', locNom: 'AL' },
-    { locId: 'Alaska', locNom: 'AK' },
-    { locId: 'American Samoa', locNom: 'AS' },
-    { locId: 'Arizona', locNom: 'AZ' },
-    { locId: 'Arkansas', locNom: 'AR' },
-    { locId: 'California', locNom: 'CA' },
-    { locId: 'Colorado', locNom: 'CO' },
-    { locId: 'Connecticut', locNom: 'CT' },
-    { locId: 'Delaware', locNom: 'DE' },
-    { locId: 'District Of Columbia', locNom: 'DC' },
-    { locId: 'Federated States Of Micronesia', locNom: 'FM' },
-    { locId: 'Florida', locNom: 'FL' },
-    { locId: 'Georgia', locNom: 'GA' },
-    { locId: 'Guam', locNom: 'GU' },
-    { locId: 'Hawaii', locNom: 'HI' },
-    { locId: 'Idaho', locNom: 'ID' },
-    { locId: 'Illinois', locNom: 'IL' },
-    { locId: 'Indiana', locNom: 'IN' },
-    { locId: 'Iowa', locNom: 'IA' },
-    { locId: 'Kansas', locNom: 'KS' },
-    { locId: 'Kentucky', locNom: 'KY' },
-    { locId: 'Louisiana', locNom: 'LA' },
-    { locId: 'Maine', locNom: 'ME' },
-    { locId: 'Marshall Islands', locNom: 'MH' },
-    { locId: 'Maryland', locNom: 'MD' },
-    { locId: 'Massachusetts', locNom: 'MA' },
-    { locId: 'Michigan', locNom: 'MI' },
-    { locId: 'Minnesota', locNom: 'MN' },
-    { locId: 'Mississippi', locNom: 'MS' },
-    { locId: 'Missouri', locNom: 'MO' },
-    { locId: 'Montana', locNom: 'MT' },
-    { locId: 'Nebraska', locNom: 'NE' },
-    { locId: 'Nevada', locNom: 'NV' },
-    { locId: 'New Hampshire', locNom: 'NH' },
-    { locId: 'New Jersey', locNom: 'NJ' },
-    { locId: 'New Mexico', locNom: 'NM' },
-    { locId: 'New York', locNom: 'NY' },
-    { locId: 'North Carolina', locNom: 'NC' },
-    { locId: 'North Dakota', locNom: 'ND' },
-    { locId: 'Northern Mariana Islands', locNom: 'MP' },
-    { locId: 'Ohio', locNom: 'OH' },
-    { locId: 'Oklahoma', locNom: 'OK' },
-    { locId: 'Oregon', locNom: 'OR' },
-    { locId: 'Palau', locNom: 'PW' },
-    { locId: 'Pennsylvania', locNom: 'PA' },
-    { locId: 'Puerto Rico', locNom: 'PR' },
-    { locId: 'Rhode Island', locNom: 'RI' },
-    { locId: 'South Carolina', locNom: 'SC' },
-    { locId: 'South Dakota', locNom: 'SD' },
-    { locId: 'Tennessee', locNom: 'TN' },
-    { locId: 'Texas', locNom: 'TX' },
-    { locId: 'Utah', locNom: 'UT' },
-    { locId: 'Vermont', locNom: 'VT' },
-    { locId: 'Virgin Islands', locNom: 'VI' },
-    { locId: 'Virginia', locNom: 'VA' },
-    { locId: 'Washington', locNom: 'WA' },
-    { locId: 'West Virginia', locNom: 'WV' },
-    { locId: 'Wisconsin', locNom: 'WI' },
-    { locId: 'Wyoming', locNom: 'WY' }
-  ];
+  localidades: Localidad[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<AgendarClaseComponent>,
     public dialog: MatDialog,
-    private fb: FormBuilder) { }
+    private acuService: AcuService,
+    private fb: FormBuilder) {
 
-  onSubmit() {
-    alert('Thanks!');
+    acuService.getDepartamentos()
+      .subscribe((res: any) => {
+        console.log('SDTDepartamento: ', res);
+        this.departamentos = res.Departamentos;
+      });
   }
 
+
+  guardarAlumno(event: Event) {
+    event.preventDefault();
+    alert('Thanks!');
+
+    // console.log('Submit, form valid: ', this.form.valid);
+    // console.log('Submit, form value: ', this.form.value);
+    // console.log('Submit, form value.cursoId: ', this.form.value.cursoId);
+
+    // const existe: boolean = JSON.parse(localStorage.getItem('existe'));
+
+    // if (this.form.valid) {
+    //   console.log('form.value: ', this.form.value);
+    //   console.log('this.inscripcionCurso: ', this.inscripcionCurso);
+    //   this.acuService.guardarAgendaInstructor(this.inscripcionCurso)
+    //     .subscribe((res: any) => {
+    //       console.log('res: ', res);
+    //       console.log('mensaje: ', res.mensaje);
+    //       this.inscripcionCurso.mensaje = res.mensaje;
+    //     });
+
+
+    // }
+  }
 
   onNoClick(): void {
     this.dialogRef.close();
   }
 
+  seleccionarSocio(parametro) {
+    console.log('1)tipo: FREE');
+    console.log('2)parametro: ', parametro);
+
+
+    this.acuService.getSocios(100, 1, 'FREE', parametro)
+      .subscribe((res: any) => {
+        console.log('3) res.socios22: ', res);
+
+        //  socios = res.Socios;
+        this.openDialogSocios(res.Socios, res.Cantidad, 'FREE', parametro);
+        // localStorage.setItem('Socios', JSON.stringify(socios));
+      });
+
+  }
+
+  getLocalidades(depId) {
+    this.localidades = this.departamentos.find((depto: any) => depto.DepId === depId).Localidades;
+  }
+
+  obtenerSocio(socioId) {
+    this.acuService.getSocio(socioId)
+      .subscribe((result: any) => {
+        console.log('result: ', result);
+
+        if (result) {
+          this.socio = result;
+          // this.socId = result.SocId;
+          const socUltimoPago = `${result.SocMesPgo}/${result.SocAnoPgo}`;
+          this.alumnoForm.patchValue({
+            // socId: result.SocId,
+            socNom1: result.SocNom1,
+            socApe1: result.SocApe1,
+            socApe2: result.SocApe2,
+            socUltimoPago,
+            cantPres: result.CantPres
+          });
+
+        }
+      });
+  }
+
+  private openDialogSocios(socios, cantidad, tipo, filtro) {
+    const sociosDialogRef = this.dialog.open(SeleccionarSocioComponent, {
+      height: 'auto',
+      width: '700px',
+      data: {
+        filtro,
+        tipo,
+        cantidad,
+        socios,
+      }
+    });
+
+    sociosDialogRef.afterClosed().subscribe(result => {
+      console.log('result: ', result);
+
+      if (result) {
+        this.socio = result;
+        this.socId = result.SocId;
+        const socUltimoPago = `${result.SocMesPgo}/${result.SocAnoPgo}`;
+        this.alumnoForm.patchValue({
+          socId: result.SocId,
+          socNom1: result.SocNom1,
+          socApe1: result.SocApe1,
+          socApe2: result.SocApe2,
+          socUltimoPago,
+          cantPres: result.CantPres
+        });
+
+      }
+
+    });
+
+  }
+
   get aluDVField() {
     return this.alumnoForm.get('aluDV');
   }
+}
+
+
+export interface Departamento {
+  DepId: number;
+  DepNom: string;
+  Localidades: Localidad[];
+
+
+}
+
+export interface Localidad {
+  LocId: number;
+  LocNom: string;
+  LocOri: string;
 }
