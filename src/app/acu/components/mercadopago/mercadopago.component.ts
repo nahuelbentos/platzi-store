@@ -166,30 +166,31 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
     };
 
     for (const row of this.dataSource.data) {
-      // isValid = true;
       if (((element.Correlativo - 1) === row.Correlativo) && !row.Seleccionado) {
         console.log('  3)Row: ', row);
         resp.isValid = false;
         break;
       }
 
-      if (((element.Correlativo + 1) === row.Correlativo)) {
-        if (!row.Seleccionado) {
-          const aux = this.dataSource.data.find((e) => e.Correlativo === element.Correlativo);
-          aux.Seleccionado = resp.value = !aux.Seleccionado;
-          console.log('  3.0)aux: ', aux);
-        } else {
+      if (element.Correlativo === row.Correlativo) {
 
-          resp.isValid = false;
-
+        console.log('  4.1)row: ', row);
+        const aux = this.dataSource.data.find((e) => e.Correlativo === element.Correlativo + 1);
+        console.log('  4.2)aux: ', aux);
+        if (!aux || !aux.Seleccionado) {
+          row.Seleccionado = !row.Seleccionado;
+          console.log('  4.3)row: ', row);
+          break;
         }
-        console.log('  4)Row: ', row);
 
+        resp.isValid = false;
         break;
       }
 
     }
-
+    if (!resp.isValid) {
+      this.errorMensaje();
+    }
     console.log(' 5)resp: ', resp);
     return resp;
 
@@ -260,6 +261,24 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
       title: 'Pago realizado!',
       text: 'Se realizo el pago de la factura, correctamente!',
       icon: 'success',
+      timer: 5000,
+      showConfirmButton: false,
+      onClose: () => {
+        console.log('Cieerro antes de timer');
+      }
+    }).then((res2) => {
+      if (res2.dismiss === Swal.DismissReason.timer) {
+        console.log('Cierro  con el timer');
+      }
+    });
+
+  }
+
+  errorMensaje() {
+    Swal.fire({
+      title: 'Error!',
+      text: 'La selección/deselección de facturas debe ser secuencial.',
+      icon: 'error',
       timer: 5000,
       showConfirmButton: false,
       onClose: () => {
