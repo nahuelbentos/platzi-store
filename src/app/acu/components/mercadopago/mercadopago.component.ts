@@ -13,6 +13,7 @@ import { MyErrorStateMatcher } from '../agenda/modals/agendar-clase/agendar-clas
 import { SelectionModel } from '@angular/cdk/collections';
 import Swal from 'sweetalert2';
 import { Time } from '@angular/common';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 
 
 // export interface CuotaSocialData {
@@ -54,6 +55,8 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
   // para el dialog
   socio: any;
 
+  checked: boolean;
+  validCheck: boolean;
 
 
   constructor(
@@ -87,9 +90,12 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    this.isAllSelected() ?
-      this.selection.clear() :
-      this.dataSource.data.forEach(row => this.selection.select(row));
+    this.isAllSelected() ? this.limpiarSelect() :
+      this.dataSource.data.forEach(row => {
+        console.log('MasterToggle');
+        this.selection.select(row);
+        row.Seleccionado = true;
+      });
   }
 
   /** The label for the checkbox on the passed row */
@@ -98,6 +104,96 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.Correlativo + 1}`;
+
+  }
+
+  clickCheck(event: Event, element: any) {
+    console.log('1) clickCheck : ');
+    console.log('     event: ', event);
+    console.log('     element: ', element);
+    event.stopPropagation();
+
+  }
+
+  changeCheck(event: MatCheckboxChange, element: any) {
+    console.log('2) changeCheck : ');
+    console.log('     event: ', event);
+    console.log('     element: ', element);
+    if (event) {
+      const resp = this.validarSelect(element);
+      console.log('     resp: ', resp);
+      if (resp.isValid) {
+        console.log('       1: ');
+        // event.source.checked = resp.value;
+        console.log('       2: ');
+        // if (event.source.checked) {
+        console.log('     event.source.checked: ', event.source.checked);
+        this.selection.toggle(element);
+        // }
+        console.log('       3: ');
+
+      } else {
+        event.source.checked = !event.source.checked;
+      }
+    }
+    console.log('     event: ', event);
+
+  }
+
+
+  selectionToggle(element: any) {
+    console.log('4) selectionToggle : ');
+    console.log('     element: ', element);
+    const resp = this.validarSelect(element);
+    if (resp.isValid) {
+      this.selection.toggle(element);
+    }
+  }
+
+  limpiarSelect() {
+
+    this.selection.clear();
+    this.dataSource.data.forEach(row => {
+      console.log('MasterToggle');
+      row.Seleccionado = false;
+    });
+  }
+
+  validarSelect(element: any): any {
+    const resp = {
+      isValid: true,
+      value: false
+    };
+
+    for (const row of this.dataSource.data) {
+      // isValid = true;
+      if (((element.Correlativo - 1) === row.Correlativo) && !row.Seleccionado) {
+        console.log('  3)Row: ', row);
+        resp.isValid = false;
+        break;
+      }
+
+      if (((element.Correlativo + 1) === row.Correlativo)) {
+        if (!row.Seleccionado) {
+          const aux = this.dataSource.data.find((e) => e.Correlativo === element.Correlativo);
+          aux.Seleccionado = resp.value = !aux.Seleccionado;
+          console.log('  3.0)aux: ', aux);
+        } else {
+
+          resp.isValid = false;
+
+        }
+        console.log('  4)Row: ', row);
+
+        break;
+      }
+
+    }
+
+    console.log(' 5)resp: ', resp);
+    return resp;
+
+
   }
 
   buildForm() {
@@ -219,11 +315,12 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
   }
 
   actualizarDatasource(data, cantidad) {
-
+    this.validCheck = true;
     this.dataSource = new MatTableDataSource(data);
     this.dataSource.paginator = this.paginator;
     this.dataSource.paginator.length = cantidad;
     this.dataSource.sort = this.sort;
+    this.validCheck = false;
   }
 
   pagar(event: Event) {

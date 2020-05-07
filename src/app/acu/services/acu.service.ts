@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '@environments/environment';
 import { CopiarMoverParameters } from '@core/model/copiarMoverParameters.model';
 import { AgendaCurso } from '@acu/components/agenda/modals/agenda-curso/agenda-curso.component';
+import { Alumno } from '@acu/components/agenda/modals/alta-alumno/alta-alumno.component';
 
 export interface LiberarParameters {
   fechaClase: Date;
@@ -230,6 +231,14 @@ export class AcuService {
 
   obtenerAlumnos(pageSize: number, pageNumber: number, filtro: string) {
     return this.http.get(`${environment.url_ws}/wsGetAlumnos?PageSize=${pageSize}&PageNumber=${pageNumber}&Filtro=${filtro}`);
+  }
+  gestionAlumno(mode: string, alumno: Alumno) {
+    return this.http.post(`${environment.url_ws}/wsGestionAlumno`, {
+      Alumno: {
+        Mode: mode,
+        Alumno: alumno
+      }
+    });
   }
 
   getCursos() {

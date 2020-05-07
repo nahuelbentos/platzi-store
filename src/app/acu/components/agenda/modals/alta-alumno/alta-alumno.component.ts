@@ -4,6 +4,7 @@ import { AcuService } from '@acu/services/acu.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AgendarClaseComponent } from '../agendar-clase/agendar-clase.component';
 import { SeleccionarSocioComponent } from '@acu/components/mercadopago/modals/seleccionar-socio/seleccionar-socio.component';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-alta-alumno',
@@ -73,32 +74,79 @@ export class AltaAlumnoComponent {
 
   guardarAlumno(event: Event) {
     event.preventDefault();
-    alert('Thanks!');
 
-    // console.log('Submit, form valid: ', this.form.valid);
-    // console.log('Submit, form value: ', this.form.value);
-    // console.log('Submit, form value.cursoId: ', this.form.value.cursoId);
+    console.log('Submit, form valid: ', this.alumnoForm.valid);
+    console.log('Submit, form value: ', this.alumnoForm.value);
+    // console.log('Submit, form value.cursoId: ', this.alumnoForm.value.cursoId);
 
     // const existe: boolean = JSON.parse(localStorage.getItem('existe'));
 
-    // if (this.form.valid) {
-    //   console.log('form.value: ', this.form.value);
-    //   console.log('this.inscripcionCurso: ', this.inscripcionCurso);
-    //   this.acuService.guardarAgendaInstructor(this.inscripcionCurso)
-    //     .subscribe((res: any) => {
-    //       console.log('res: ', res);
-    //       console.log('mensaje: ', res.mensaje);
-    //       this.inscripcionCurso.mensaje = res.mensaje;
-    //     });
+    if (this.alumnoForm.valid) {
+      console.log('alumnoForm.value: ', this.alumnoForm.value);
+      const alumno: Alumno = {
+        AluId: 0,
+        AluNro: this.alumnoForm.value.aluNro,
+        AluNom: this.alumnoForm.value.aluNom,
+        AluApe1: this.alumnoForm.value.aluApe1,
+        AluFchNac: this.alumnoForm.value.aluFchNac,
+        AluCI: this.alumnoForm.value.aluCI,
+        AluDV: this.alumnoForm.value.aluDV,
+        AluDir: this.alumnoForm.value.aluDir,
+        AluTel1: this.alumnoForm.value.aluTel1,
+        AluTel2: this.alumnoForm.value.aluTel2,
+        AluMail: this.alumnoForm.value.aluMail,
+        AluPar: this.alumnoForm.value.aluPar,
+        SOCID: this.alumnoForm.value.socId,
+        AluConTel: this.alumnoForm.value.aluConTel,
+        AluConNom: this.alumnoForm.value.aluConNom,
+        AluConPar: this.alumnoForm.value.aluConPar,
+        AluDepId: this.alumnoForm.value.aluDepId,
+        AluLocId: this.alumnoForm.value.aluLocId,
+        AluEstMotBaj: this.alumnoForm.value.aluEstMotBaj,
+        AluEst: this.alumnoForm.value.aluEst
+      };
+      this.acuService.gestionAlumno('INS', alumno) // guardarAgendaInstructor(this.inscripcionCurso)
+        .subscribe((res: any) => {
+          console.log('res: ', res);
+
+          if (res.Alumno.ErrorCode === 0) {
+            this.mensajeConfirmacion('Confirmado!', res.Alumno.ErrorMessage).then((res2) => {
+              if (res2.dismiss === Swal.DismissReason.timer) {
+                console.log('Cierro  con el timer');
+              }
+            });
+            this.dialogRef.close();
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: res.Alumno.ErrorMessage
+            });
+          }
+          // console.log('mensaje: ', res.mensaje);
+          // this.inscripcionCurso.mensaje = res.mensaje;
+        });
 
 
-    // }
+    }
   }
 
   onNoClick(): void {
     this.dialogRef.close();
   }
 
+  mensajeConfirmacion(title, text) {
+    return Swal.fire({
+      title,
+      text,
+      icon: 'success',
+      timer: 5000,
+      showConfirmButton: false,
+      onClose: () => {
+        console.log('Cieerro antes de timer');
+      }
+    });
+  }
   seleccionarSocio(parametro) {
     console.log('1)tipo: FREE');
     console.log('2)parametro: ', parametro);
@@ -193,4 +241,30 @@ export interface Localidad {
   LocId: number;
   LocNom: string;
   LocOri: string;
+}
+
+
+export interface Alumno {
+  AluId: number;
+  AluNro: number;
+  AluNom: string;
+  AluApe1: string;
+  AluFchNac: Date;
+  AluCI: number;
+  AluDV: number;
+  AluDir: string;
+  AluTel1: string;
+  AluTel2: string;
+  AluMail: string;
+  AluPar: string;
+  SOCID: number;
+  AluConTel: string;
+  AluConNom: string;
+  AluConPar: string;
+  AluDepId: number;
+  AluLocId: number;
+  AluEstMotBaj: string;
+  AluEst: string;
+  AluFiltro?: string;
+
 }

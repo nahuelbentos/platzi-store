@@ -42,7 +42,6 @@ export interface AlumnoData {
 }
 
 
-
 @Component({
   selector: 'app-seleccionar-alumno',
   styleUrls: ['seleccionar-alumno.component.scss'],
@@ -92,19 +91,45 @@ export class SeleccionarAlumnoComponent implements OnInit, AfterViewInit, AfterV
   }
   ngAfterViewInit(): void {
 
-    this.dataSource.paginator.length = this.length;
-    this.paginator.length = this.length;
-    console.log(' 2) this.length: ', this.length);
+    setTimeout(() => {
+      this.dataSource.paginator.length = this.length;
+      this.paginator.length = this.length;
+      console.log(' 2) this.length: ', this.length);
+    });
   }
 
   ngAfterViewChecked() {
-    this.paginator.length = this.cantidad;
+    setTimeout(() => {
+      this.paginator.length = this.cantidad;
+    });
   }
 
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.paginator.length = this.cantidad;
     this.dataSource.sort = this.sort;
+
+
+    // Get the input box
+    const input = document.getElementById('search');
+
+    // Init a timeout variable to be used below
+    let timeout = null;
+
+    // Listen for keystroke events
+    input.addEventListener('keyup', (e) => {
+      // Clear the timeout if it has already been set.
+      // This will prevent the previous task from executing
+      // if it has been less than <MILLISECONDS>
+      clearTimeout(timeout);
+
+      // Make a new timeout set to go off in 1000ms (1 second)
+      timeout = setTimeout(() => {
+
+        console.log('Input Value:', this.filtro);
+        this.getAlumnos(1000, 1, this.filtro);
+      }, 500);
+    });
   }
 
 
@@ -112,9 +137,9 @@ export class SeleccionarAlumnoComponent implements OnInit, AfterViewInit, AfterV
   applyFilter(filterValue: string) {
 
 
-    const filter = (filterValue) ? filterValue : '';
+    // const filter = (filterValue) ? filterValue : '';
 
-    this.getAlumnos(1000, 1, filter);
+    // this.getAlumnos(1000, 1, filter);
 
   }
 

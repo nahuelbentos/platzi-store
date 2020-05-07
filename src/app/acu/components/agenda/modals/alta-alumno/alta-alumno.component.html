@@ -1,4 +1,5 @@
-<form [formGroup]="alumnoForm" novalidate (ngSubmit)="guardarAlumno($event)">
+<!-- novalidate -->
+<form [formGroup]="alumnoForm" (ngSubmit)="guardarAlumno($event)">
   <mat-toolbar color="primary">
     <h2 mat-dialog-title>Datos del Alumno</h2>
   </mat-toolbar>

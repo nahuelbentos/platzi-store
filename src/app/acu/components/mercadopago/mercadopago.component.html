@@ -65,9 +65,10 @@
           </mat-checkbox>
         </th>
         <td mat-cell *matCellDef="let element">
-          <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(element) : null"
+          <mat-checkbox (click)="$event.stopPropagation()" (change)="changeCheck($event, element)"
             [checked]="selection.isSelected(element)" [aria-label]="checkboxLabel(element)">
           </mat-checkbox>
+
         </td>
       </ng-container>
 
@@ -110,7 +111,7 @@
 
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let element; columns: displayedColumns;" (click)="selection.toggle(element)">
+      <tr mat-row *matRowDef="let element; columns: displayedColumns;" (click)="selectionToggle(element)">
       </tr>
     </table>
 

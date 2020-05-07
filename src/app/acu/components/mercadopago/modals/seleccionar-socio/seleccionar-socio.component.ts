@@ -56,16 +56,24 @@ export class SeleccionarSocioComponent implements AfterViewInit, OnInit, AfterVi
     // Assign the data to the data source for the table to render
     // this.dataSource = new MatTableDataSource(socios);
 
+
+
   }
   ngAfterViewInit(): void {
 
-    this.dataSource.paginator.length = this.length;
-    this.paginator.length = this.length;
-    console.log(' 2) this.length: ', this.length);
+    setTimeout(() => {
+      this.dataSource.paginator.length = this.length;
+      this.paginator.length = this.length;
+      console.log(' 2) this.length: ', this.length);
+    });
   }
 
   ngAfterViewChecked() {
-    this.paginator.length = this.length;
+
+    setTimeout(() => {
+
+      this.paginator.length = this.length;
+    });
   }
 
   ngOnInit() {
@@ -73,15 +81,36 @@ export class SeleccionarSocioComponent implements AfterViewInit, OnInit, AfterVi
     this.dataSource.paginator.length = this.cantidad;
     this.dataSource.sort = this.sort;
 
+
+    // Get the input box
+    const input = document.getElementById('search');
+
+    // Init a timeout variable to be used below
+    let timeout = null;
+
+    // Listen for keystroke events
+    input.addEventListener('keyup', (e) => {
+      // Clear the timeout if it has already been set.
+      // This will prevent the previous task from executing
+      // if it has been less than <MILLISECONDS>
+      clearTimeout(timeout);
+
+      // Make a new timeout set to go off in 1000ms (1 second)
+      timeout = setTimeout(() => {
+
+        console.log('Input Value:', this.filtro);
+        this.getSocios(1000, 1, this.filtro);
+      }, 500);
+    });
+
   }
 
-  applyFilter(filterValue: string) {
+  // applyFilter(filterValue: string) {
 
-    const filter = (filterValue) ? filterValue : '';
+  //   // const filter = (filterValue) ? filterValue : '';
+  //   // this.getSocios(1000, 1, filter);
 
-    this.getSocios(1000, 1, filter);
-
-  }
+  // }
 
   getSocios(pageSize, pageNumber, filtro) {
     console.log('pageSize: ', pageSize);

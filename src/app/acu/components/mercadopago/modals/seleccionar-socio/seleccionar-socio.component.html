@@ -8,7 +8,7 @@
 
 
     <mat-form-field class="full-width">
-        <input matInput (keyup)="applyFilter($event.target.value)" [(ngModel)]="filtro" placeholder="Buscar...">
+        <input matInput id="search" [(ngModel)]="filtro" placeholder="Buscar...">
     </mat-form-field>
 
     <div class="mat-elevation-z8">
@@ -62,7 +62,7 @@
 
         <!--  -->
 
-        <mat-paginator [length]="lenght" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+        <mat-paginator [length]="cantidad" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
             (page)="updateEvent($event)">
         </mat-paginator>
 
