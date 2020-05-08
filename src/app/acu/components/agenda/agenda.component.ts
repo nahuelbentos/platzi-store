@@ -306,7 +306,7 @@ export class AgendaComponent implements OnInit, AfterViewInit {
       data: {
         inscripcionCurso: {
           TrnMode: '',
-          FechaClase: '',
+          FechaClase: this.fechaClase,
           Hora: 0,
           EscInsId: '',
           EscInsNom: '',

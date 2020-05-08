@@ -258,7 +258,7 @@
     </div>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
-    <button mat-raised-button color="primary" type="submit">Guardar Alumno</button>
+    <button mat-raised-button color="primary" type="submit" [mat-dialog-close]="alumnoForm">Guardar Alumno</button>
     <button mat-button mat-dialog-close (click)="onNoClick()">Cancelar</button>
   </mat-dialog-actions>
 </form>

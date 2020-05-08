@@ -115,6 +115,7 @@ export class AltaAlumnoComponent {
                 console.log('Cierro  con el timer');
               }
             });
+
             this.dialogRef.close();
           } else {
             Swal.fire({

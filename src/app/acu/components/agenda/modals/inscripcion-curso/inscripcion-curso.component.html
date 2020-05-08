@@ -34,8 +34,8 @@
             <div class="row">
                 <div class="col-xs-4">
                     <mat-form-field class="full-width">
-                        <input matInput placeholder="Alumno" [(ngModel)]="inscripcionCurso.AluNro"
-                            formControlName="alumnoNumero" [errorStateMatcher]="matcher">
+                        <input matInput placeholder="Alumno" formControlName="alumnoNumero"
+                            [errorStateMatcher]="matcher">
                         <button mat-icon-button matSuffix [attr.aria-label]="'Hide password'"
                             (click)='seleccionarAlumno()'>
                             <mat-icon> search </mat-icon>
@@ -66,8 +66,7 @@
                 </div>
                 <div class="col">
                     <mat-form-field class="full-width">
-                        <input matInput placeholder="   " [(ngModel)]="inscripcionCurso.AluNomApe"
-                            formControlName="alumnoNombre" [errorStateMatcher]="matcher">
+                        <input matInput placeholder="   " formControlName="alumnoNombre" [errorStateMatcher]="matcher">
                         <mat-error *ngIf="alumnoNombreField.hasError('required')">
                             Alumno es <strong>requerido</strong>
                         </mat-error>
@@ -78,30 +77,28 @@
             <div class="row">
                 <div class="col">
                     <mat-form-field class="full-width">
-                        <input matInput placeholder="Cédula de Identidad" [(ngModel)]="inscripcionCurso.AluCI"
-                            formControlName="alumnoCI">
+                        <input matInput placeholder="Cédula de Identidad" formControlName="alumnoCI">
                     </mat-form-field>
                 </div>
                 <div class="col">
                     <mat-form-field class="full-width">
-                        <input matInput placeholder="Télefono" [(ngModel)]="inscripcionCurso.AluTel1"
-                            formControlName="alumnoTelefono">
+                        <input matInput placeholder="Télefono" formControlName="alumnoTelefono">
                     </mat-form-field>
                 </div>
                 <div class="col">
                     <mat-form-field class="full-width">
-                        <input matInput placeholder="Celular" [(ngModel)]="inscripcionCurso.AluTel2"
-                            formControlName="alumnoCelular">
+                        <input matInput placeholder="Celular" formControlName="alumnoCelular">
                     </mat-form-field>
                 </div>
             </div>
+
             <mat-divider></mat-divider>
             <div class="row">
                 <div class="col-xs-4">
                     <mat-form-field class="full-width">
                         <!-- [(ngModel)]="inscripcionCurso.TipCurId" -->
-                        <input matInput placeholder="Curso" formControlName="cursoId"
-                            (blur)='obtenerCurso(inscripcionCurso.TipCurId)' [errorStateMatcher]="matcher">
+                        <input matInput placeholder="Curso" formControlName="cursoId" (blur)='obtenerCurso()'
+                            [errorStateMatcher]="matcher">
                         <!-- (blur)='obtenerCurso(inscripcionCurso.TipCurId)'  -->
                         <button mat-icon-button matSuffix [attr.aria-label]="'Hide password'"
                             (click)='seleccionarCurso()'>
@@ -119,11 +116,58 @@
 
                     </mat-form-field>
                 </div>
-                <div class="col">
+
+                <div class="col-xs-4">
                     <mat-form-field class="full-width">
-                        <input matInput placeholder="Nombre del Curso" [value]="cursoNombre" disabled>
-                        <!--[(ngModel)] formControlName="cursoNombre" [errorStateMatcher]="matcher" disabled> -->
+                        <input matInput placeholder="Nombre del Curso" formControlName="cursoNombre" disabled>
                     </mat-form-field>
+                </div>
+
+                <div class="col-xs-4">
+                    <mat-form-field class="full-width">
+
+
+                        <input matInput [matDatepicker]="pickerCurso" placeholder="Inicio del Curso"
+                            formControlName="escCurIni">
+                        <mat-datepicker-toggle matSuffix [for]="pickerCurso"></mat-datepicker-toggle>
+                        <mat-datepicker #pickerCurso></mat-datepicker>
+
+
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <mat-form-field class="full-width">
+                                <input matInput placeholder="Prácticas" formControlName="cursoClasesPracticas">
+                            </mat-form-field>
+
+                        </div>
+                        <div class="col-xs-3">
+                            <mat-form-field class="full-width">
+                                <input matInput placeholder="Teóricas" formControlName="cursoClasesTeoricas">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-xs-3">
+                            <div id="cursoExamenPractico" style=" margin-top: 20px;">
+                                <mat-checkbox formControlName="cursoExamenPractico">Exámen
+                                    Prácticas</mat-checkbox>
+
+                            </div>
+
+                        </div>
+                        <div class="col-xs-3">
+                            <div id="cursoExamenTeorico" style=" margin-top: 20px;">
+                                <mat-checkbox formControlName="cursoExamenTeorico">Exámen Teorico
+                                </mat-checkbox>
+                            </div>
+
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -133,8 +177,8 @@
 
                         <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1"
                             cdkAutosizeMaxRows="5" placeholder="Observaciones"
-                            [(ngModel)]="inscripcionCurso.EscAgeInsObservaciones"
                             formControlName="observaciones"></textarea>
+                        <!-- [(ngModel)]="inscripcionCurso.EscAgeInsObservaciones" -->
                     </mat-form-field>
                 </div>
             </div>

@@ -36,7 +36,7 @@ export interface InscripcionCurso {
   templateUrl: './inscripcion-curso.component.html',
   styleUrls: ['./inscripcion-curso.component.scss']
 })
-export class InscripcionCursoComponent implements OnInit {
+export class InscripcionCursoComponent {
 
 
 
@@ -61,32 +61,18 @@ export class InscripcionCursoComponent implements OnInit {
     public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any) {
     console.log('Estoy en el constructor de agenda-curso, la res es: ', this.data);
-    console.log('Estoy en el constructor de agenda-curso, la res es: ', this.data);
     this.inscripcionCurso = this.data.inscripcionCurso;
-    // console.log('   this.agendaCurso es: ', this.agendaCurso);
-    // const day = Number(this.agendaCurso.FechaClase.substring(this.agendaCurso.FechaClase.length - 2, this.agendaCurso.FechaClase.length));
-    // const month = Number(this.agendaCurso.FechaClase.substring(5, 7));
-    // const year = Number(this.agendaCurso.FechaClase.substring(0, 4));
 
-    // this.fechaClase.setDate(day);
-    // this.fechaClase.setMonth(month - 1);
-    // this.fechaClase.setFullYear(year);
+    // tslint:disable-next-line: max-line-length
+    const day = Number(this.inscripcionCurso.FechaClase.substring(this.inscripcionCurso.FechaClase.length - 2, this.inscripcionCurso.FechaClase.length));
+    const month = Number(this.inscripcionCurso.FechaClase.substring(5, 7));
+    const year = Number(this.inscripcionCurso.FechaClase.substring(0, 4));
 
-    // this.cursoNombre = (this.agendaCurso) ? this.agendaCurso.TipCurNom : '';
+    this.fechaClase.setDate(day);
+    this.fechaClase.setMonth(month - 1);
+    this.fechaClase.setFullYear(year);
 
-    // this.hora.setHours(this.agendaCurso.Hora, 0);
-    // this.instructor = this.agendaCurso.EscInsId;
     this.buildForm();
-  }
-
-  ngOnInit() {
-
-    // // toISOString, es el formato que leyo bien la api.
-    // localStorage.setItem('fechaClase', this.fechaClase.toISOString());
-    // const horaStr = this.agendaCurso.Hora * 100;
-    // localStorage.setItem('horaClase', horaStr.toString());
-    // localStorage.setItem('instructorCod', this.instructor.toString());
-
   }
 
   onNoClick(): void {
@@ -96,8 +82,7 @@ export class InscripcionCursoComponent implements OnInit {
 
   private buildForm() {
     this.form = this.formBuilder.group({
-      fechaClase: ['', [Validators.required]],
-      instructor: ['', [Validators.required]],
+      fechaClase: [this.fechaClase, [Validators.required]],
       cursoId: [
         '',
         [Validators.required], // sync validators
@@ -107,15 +92,20 @@ export class InscripcionCursoComponent implements OnInit {
           // alumnoTieneExcepcionValidator(this.acuService)
         ] // async validators
       ],
-      cursoNombre: ['', [Validators.required]],
+      cursoNombre: [''],
+      cursoClasesPracticas: [''],
+      cursoClasesTeoricas: [''],
+      cursoExamenPractico: [''],
+      cursoExamenTeorico: [''],
+      escCurIni: [''],
       alumnoNumero: [
         '',
         [Validators.required], // sync validators
-        [
-          existeAlumnoValidator(this.acuService),
-          alumnoYaAsignadoValidator(this.acuService),
-          alumnoTieneExcepcionValidator(this.acuService)
-        ] // async validators
+        // [
+        //   existeAlumnoValidator(this.acuService),
+        //   alumnoYaAsignadoValidator(this.acuService),
+        //   alumnoTieneExcepcionValidator(this.acuService)
+        // ] // async validators
       ],
       alumnoNombre: ['', [Validators.required]],
       alumnoCI: [''],
@@ -134,7 +124,8 @@ export class InscripcionCursoComponent implements OnInit {
         .subscribe((res: any) => {
           console.log('Cursos: ', res);
 
-          cursos = res.Cursos;
+          cursos = res;
+          console.log('cursos: ', cursos);
           localStorage.setItem('cursos', JSON.stringify(cursos));
           this.openDialogCursos(cursos);
         });
@@ -153,24 +144,49 @@ export class InscripcionCursoComponent implements OnInit {
     });
 
     cursosDialogRef.afterClosed().subscribe(result => {
+      console.log('result: ', result);
       this.curso = result;
-      this.cursoNombre = this.inscripcionCurso.TipCurNom = result.TipCurNom;
+      this.inscripcionCurso.TipCurId = result.TipCurId;
+      this.inscripcionCurso.TipCurNom = result.TipCurNom;
+      this.addInfoCursoToForm(result);
 
-      this.form.patchValue({
-        cursoId: result.TipCurId,
-        cursoNombre: result.TipCurNom
-      });
     });
 
   }
 
-  obtenerCurso(cursoId) {
+  obtenerCurso() {
+    const cursoId = this.form.get('cursoId').value;
+    console.log('obtenerCurso - cursoId: ', cursoId);
+
     this.acuService.getCurso(cursoId)
       .subscribe((res: any) => {
-        console.log('res: ', res);
-        // this.inscripcionCurso.TipCurId = res.Curso.TipCurId;
-        this.cursoNombre = this.inscripcionCurso.TipCurNom = res.Curso.TipCurNom;
+        console.log('obtenerCurso - res: ', res);
+        if (res.TipCurId !== 0) {
+          this.inscripcionCurso.TipCurId = res.TipCurId;
+          this.inscripcionCurso.TipCurNom = res.TipCurNom;
+          this.addInfoCursoToForm(res);
+        }
       });
+  }
+
+  addInfoCursoToForm(result: any) {
+
+    // cursoClasesPracticas: [''],
+    // cursoClasesTeoricas: [''],
+    // cursoExamenPractico: [''],
+    // cursoExamenTeorico: [''],
+    const examenPractico = (result.TipCurExaPra === 'S');
+    const examenTeorico = (result.TipCurExaTeo === 'S');
+    const escCurIni = new Date();
+    this.form.patchValue({
+      cursoId: result.TipCurId,
+      cursoNombre: result.TipCurNom,
+      cursoClasesPracticas: result.TipCurClaPra,
+      cursoClasesTeoricas: result.TipCurClaTeo,
+      cursoExamenPractico: examenPractico,
+      cursoExamenTeorico: examenTeorico,
+      escCurIni,
+    });
   }
 
 
@@ -226,40 +242,13 @@ export class InscripcionCursoComponent implements OnInit {
 
 
   altaAlumno() {
-    let alumnos = JSON.parse(localStorage.getItem('Alumnos'));
-
-    let cantidad = localStorage.getItem('Cantidad');
-
-
-
-    // if (!alumnos) {
-
-    //   this.acuService.obtenerAlumnos(20, 1, '')
-    //     .subscribe((res: any) => {
-    //       console.log('res: ', res);
-    //       console.log('res.Cantidad: ', res.Cantidad);
-    //       console.log('res.Alumnos: ', res.Alumnos);
-    //       alumnos = res.Alumnos;
-    //       cantidad = res.Cantidad;
-    //       localStorage.setItem('Alumnos', JSON.stringify(alumnos));
-    //       localStorage.setItem('Cantidad', cantidad);
-
-    //       this.openDialogAltaAlumnos(alumnos, cantidad);
-    //     });
-
-    // } else {
-    this.openDialogAltaAlumnos(alumnos, cantidad);
-    // }
+    this.openDialogAltaAlumnos();
   }
 
-  private openDialogAltaAlumnos(departamentoLocalidades, cantidad) {
+  private openDialogAltaAlumnos() {
     const alumnosDialogRef = this.dialog.open(AltaAlumnoComponent, {
       height: 'auto',
       width: '700px',
-      data: {
-        departamentoLocalidades,
-        cantidad
-      }
     });
 
     alumnosDialogRef.afterClosed().subscribe(result => {
@@ -267,13 +256,7 @@ export class InscripcionCursoComponent implements OnInit {
       console.log('1.alumno: ' + result);
       console.log('2.alumno: ' + JSON.stringify(result));
 
-      this.form.patchValue({
-        alumnoNumero: result.AluNro,
-        alumnoNombre: result.AluNomComp,
-        alumnoCI: this.formatCI(result.AluCI, result.AluDV),
-        alumnoTelefono: result.AluTel1,
-        alumnoCelular: result.AluTel2,
-      });
+      this.addInfoAlumnoAlForm(result);
     });
 
   }
@@ -293,13 +276,18 @@ export class InscripcionCursoComponent implements OnInit {
       console.log('1.alumno: ' + result);
       console.log('2.alumno: ' + JSON.stringify(result));
 
-      this.form.patchValue({
-        alumnoNumero: result.AluNro,
-        alumnoNombre: result.AluNomComp,
-        alumnoCI: this.formatCI(result.AluCI, result.AluDV),
-        alumnoTelefono: result.AluTel1,
-        alumnoCelular: result.AluTel2,
-      });
+      this.addInfoAlumnoAlForm(result);
+    });
+
+  }
+
+  addInfoAlumnoAlForm(result) {
+    this.form.patchValue({
+      alumnoNumero: result.AluNro,
+      alumnoNombre: result.AluNomComp,
+      alumnoCI: this.formatCI(result.AluCI, result.AluDV),
+      alumnoTelefono: result.AluTel1,
+      alumnoCelular: result.AluTel2,
     });
 
   }
