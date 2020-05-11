@@ -12,6 +12,10 @@ import { existeAlumnoValidator } from '@utils/validators/existe-alumno-validator
 import { alumnoYaAsignadoValidator } from '@utils/validators/alumno-ya-asignado.directive';
 import { alumnoTieneExcepcionValidator } from '@utils/validators/alumno-tiene-excepecion.directive';
 import { AltaAlumnoComponent } from '../alta-alumno/alta-alumno.component';
+import { MyValidators, validateFechaAnterior } from '@utils/validators';
+import Swal from 'sweetalert2';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { ValidateFechaPosterior } from '@utils/custom-validator';
 
 
 export interface InscripcionCurso {
@@ -50,9 +54,17 @@ export class InscripcionCursoComponent {
   instructorAsignado = '';
   cursoNombre: string;
   hoy = new Date();
+  toppings = new FormControl();
+  toppingList: string[] = ['Extra cheese', 'Mushroom', 'Onion', 'Pepperoni', 'Sausage', 'Tomato'];
+  horasLibres = [];
 
   // para el dialog
   curso: any;
+
+  // validacionesFecha
+  fecha1 = new Date();
+  fecha2 = new Date();
+  fecha3 = new Date();
 
   constructor(
     private formBuilder: FormBuilder,
@@ -71,7 +83,7 @@ export class InscripcionCursoComponent {
     this.fechaClase.setDate(day);
     this.fechaClase.setMonth(month - 1);
     this.fechaClase.setFullYear(year);
-
+    this.generateHorasLibres();
     this.buildForm();
   }
 
@@ -82,7 +94,7 @@ export class InscripcionCursoComponent {
 
   private buildForm() {
     this.form = this.formBuilder.group({
-      fechaClase: [this.fechaClase, [Validators.required]],
+      fechaClase: [this.fechaClase, [Validators.required, MyValidators.fechaPosteriorAHoy]],
       cursoId: [
         '',
         [Validators.required], // sync validators
@@ -97,7 +109,10 @@ export class InscripcionCursoComponent {
       cursoClasesTeoricas: [''],
       cursoExamenPractico: [''],
       cursoExamenTeorico: [''],
-      escCurIni: [''],
+      escCurTe1: ['', Validators.required],
+      escCurTe2: ['', Validators.required],
+      escCurTe3: ['', Validators.required],
+      escCurIni: ['', [MyValidators.fechaAnteriorAHoy]],
       alumnoNumero: [
         '',
         [Validators.required], // sync validators
@@ -111,8 +126,20 @@ export class InscripcionCursoComponent {
       alumnoCI: [''],
       alumnoTelefono: [''],
       alumnoCelular: [''],
+      disponibilidadLunes: [''],
+      disponibilidadMartes: [''],
+      disponibilidadMiercoles: [''],
+      disponibilidadJueves: [''],
+      disponibilidadViernes: [''],
+      disponibilidadSabado: [''],
       observaciones: ['']
-    });
+    }, {
+      validator: [
+        ValidateFechaPosterior('escCurIni', 'escCurTe1'),
+        ValidateFechaPosterior('escCurTe1', 'escCurTe2'),
+        ValidateFechaPosterior('escCurTe2', 'escCurTe3')]
+    }
+    );
   }
 
 
@@ -157,16 +184,31 @@ export class InscripcionCursoComponent {
   obtenerCurso() {
     const cursoId = this.form.get('cursoId').value;
     console.log('obtenerCurso - cursoId: ', cursoId);
+    if (cursoId !== '') {
 
-    this.acuService.getCurso(cursoId)
-      .subscribe((res: any) => {
-        console.log('obtenerCurso - res: ', res);
-        if (res.TipCurId !== 0) {
+      this.acuService.getCurso(cursoId)
+        .subscribe((res: any) => {
+          console.log('obtenerCurso - res: ', res);
+          if (res.TipCurId === '0') {
+
+            Swal.fire({
+              icon: 'warning',
+              title: 'No encontrado!',
+              text: 'El código del curso no existe, seleccione un existente.'
+            }).then((res2) => {
+              if (res2.dismiss === Swal.DismissReason.timer) {
+                console.log('Cierro  con ela timer');
+              }
+            });
+          }
+
+          res.TipCurId = cursoId;
           this.inscripcionCurso.TipCurId = res.TipCurId;
           this.inscripcionCurso.TipCurNom = res.TipCurNom;
           this.addInfoCursoToForm(res);
-        }
-      });
+        });
+
+    }
   }
 
   addInfoCursoToForm(result: any) {
@@ -196,6 +238,11 @@ export class InscripcionCursoComponent {
     console.log('Submit, form value: ', this.form.value);
     console.log('Submit, form value.cursoId: ', this.form.value.cursoId);
 
+    if (this.form.invalid) {
+      console.log('Submit, form invalid: ', this.form.invalid);
+      return;
+    }
+
     const existe: boolean = JSON.parse(localStorage.getItem('existe'));
 
     if (this.form.valid) {
@@ -210,6 +257,54 @@ export class InscripcionCursoComponent {
 
 
     }
+  }
+
+  validarPrimerTeorica(type: string, event: MatDatepickerInputEvent<Date>) {
+
+    console.log('type: ', type);
+    console.log('event: ', event);
+    const escCurTe1 = this.form.get('escCurTe1').value;
+    const escCurTe2 = this.form.get('escCurTe2').value;
+    const escCurTe3 = this.form.get('escCurTe3').value;
+
+    console.log('escCurTe1: ', escCurTe1);
+    console.log('escCurTe2: ', escCurTe2);
+    console.log('escCurTe3: ', escCurTe3);
+
+
+  }
+
+  validarSegundaTeorica(type: string, event: MatDatepickerInputEvent<Date>) {
+
+    console.log('type: ', type);
+    console.log('event: ', event);
+    const escCurTe1 = this.form.get('escCurTe1').value;
+    const escCurTe2 = this.form.get('escCurTe2').value;
+    const escCurTe3 = this.form.get('escCurTe3').value;
+
+    console.log('escCurTe1: ', escCurTe1);
+    console.log('escCurTe2: ', escCurTe2);
+    console.log('escCurTe3: ', escCurTe3);
+
+
+  }
+  validarTercerTeorica(type: string, event: MatDatepickerInputEvent<Date>) {
+
+    console.log('type: ', type);
+    console.log('event: ', event);
+    const escCurTe1 = this.form.get('escCurTe1').value;
+    const escCurTe2 = this.form.get('escCurTe2').value;
+    const escCurTe3 = this.form.get('escCurTe3').value;
+
+    this.fecha2 = escCurTe2;
+
+    console.log('escCurTe1: ', escCurTe1);
+    console.log('escCurTe2: ', escCurTe2);
+    console.log('escCurTe3: ', escCurTe3);
+
+    console.log('fecha2: ', this.fecha2);
+
+
   }
 
 
@@ -319,6 +414,22 @@ export class InscripcionCursoComponent {
   get cursoIdField() {
     return this.form.get('cursoId');
   }
+
+  get escCurTe1Field() {
+    return this.form.get('escCurTe1');
+  }
+
+  get escCurTe2Field() {
+    return this.form.get('escCurTe2');
+  }
+  get escCurTe3Field() {
+    return this.form.get('escCurTe3');
+  }
+  get escCurIniField() {
+    return this.form.get('escCurIni');
+  }
+
+
   get observacionesField() {
     return this.form.get('observaciones');
   }
@@ -356,6 +467,20 @@ export class InscripcionCursoComponent {
     console.log('result: ', result);
 
     return result + digitoVerificador;
+  }
+
+  generateHorasLibres() {
+    for (let i = 6; i < 21; i++) {
+      const horaIni = i;
+      const horaFin = i + 1;
+      const o = {
+        value: `${horaIni * 100}-${horaFin * 100}`,
+        description: `${horaIni}:00 - ${horaFin}:00`,
+      };
+      this.horasLibres.push(o);
+    }
+
+    console.log('horas libres: ', this.horasLibres);
   }
 
 }

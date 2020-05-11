@@ -38,6 +38,7 @@ import { InstructorYaAsignadoValidatorDirective } from './utils/validators/instr
 import { AlumnoTieneExcepecionValidatorDirective } from './utils/validators/alumno-tiene-excepecion.directive';
 import { AlumnoYaAsignadoValidatorDirective } from './utils/validators/alumno-ya-asignado.directive';
 import { TestComponent } from './test/components/test.component';
+import { FechaAnteriorAParameterDirective } from './utils/validators/fecha-anterior-a-parameter.directive';
 
 
 // if (environment.production === true) {
@@ -56,7 +57,8 @@ Sentry.init({
     InstructorYaAsignadoValidatorDirective,
     AlumnoTieneExcepecionValidatorDirective,
     AlumnoYaAsignadoValidatorDirective,
-    TestComponent
+    TestComponent,
+    FechaAnteriorAParameterDirective
   ],
   imports: [
     BrowserModule,

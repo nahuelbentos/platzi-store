@@ -8,6 +8,7 @@
 
         <div class="contenedor">
 
+            <h3>Alumno</h3>
             <div class="row">
                 <div class="col">
                     <mat-form-field class="full-width">
@@ -93,11 +94,12 @@
             </div>
 
             <mat-divider></mat-divider>
+            <h3>Curso</h3>
             <div class="row">
                 <div class="col-xs-4">
                     <mat-form-field class="full-width">
                         <!-- [(ngModel)]="inscripcionCurso.TipCurId" -->
-                        <input matInput placeholder="Curso" formControlName="cursoId" (blur)='obtenerCurso()'
+                        <input matInput placeholder="Curso" formControlName="cursoId" (keyup)='obtenerCurso()'
                             [errorStateMatcher]="matcher">
                         <!-- (blur)='obtenerCurso(inscripcionCurso.TipCurId)'  -->
                         <button mat-icon-button matSuffix [attr.aria-label]="'Hide password'"
@@ -131,7 +133,14 @@
                             formControlName="escCurIni">
                         <mat-datepicker-toggle matSuffix [for]="pickerCurso"></mat-datepicker-toggle>
                         <mat-datepicker #pickerCurso></mat-datepicker>
-
+                        <mat-error
+                            *ngIf="escCurIniField.hasError('required') && escCurIniField.dirty && escCurIniField.errors">
+                            La fecha de inicio del curso <strong>es requerido.</strong>
+                        </mat-error>
+                        <mat-error
+                            *ngIf="escCurIniField.hasError('fecha_invalid')  && escCurIniField.dirty && escCurIniField.errors">
+                            ATENCIÓN: La fecha de inicio del curso <strong>es anterior</strong> a la fecha de hoy.
+                        </mat-error>
 
                     </mat-form-field>
                 </div>
@@ -170,7 +179,148 @@
 
                 </div>
             </div>
+            <mat-divider></mat-divider>
+            <h3>Clases Teóricas</h3>
+            <div class="row">
 
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput [matDatepicker]="pickerPrimerTeorica" placeholder="1er. Teórica"
+                            formControlName="escCurTe1" (dateInput)="validarPrimerTeorica('input', $event)"
+                            (dateChange)="validarPrimerTeorica('change', $event)">
+                        <mat-hint>Lunes</mat-hint>
+                        <mat-datepicker-toggle matSuffix [for]="pickerPrimerTeorica"></mat-datepicker-toggle>
+                        <mat-datepicker #pickerPrimerTeorica></mat-datepicker>
+                        <mat-error
+                            *ngIf="escCurTe1Field.hasError('required') && escCurTe1Field.dirty && escCurTe1Field.errors">
+                            La primer clase <strong>es requerida.</strong>
+                        </mat-error>
+                        <mat-error
+                            *ngIf="escCurTe1Field.hasError('fechaPosteriorInvalid')  && escCurTe1Field.dirty && escCurTe1Field.errors">
+                            La primer clase debe <strong>ser posterior</strong> a la de inicio de curso.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput [matDatepicker]="pickerSegundaTeorica" placeholder="2da. Teórica"
+                            formControlName="escCurTe2" (dateInput)="validarSegundaTeorica('input', $event)"
+                            (dateChange)="validarSegundaTeorica('change', $event)">
+                        <mat-hint>Miércoles</mat-hint>
+                        <mat-datepicker-toggle matSuffix [for]="pickerSegundaTeorica"></mat-datepicker-toggle>
+                        <mat-datepicker #pickerSegundaTeorica></mat-datepicker>
+                        <mat-error
+                            *ngIf="escCurTe2Field.hasError('required') && escCurTe2Field.dirty && escCurTe2Field.errors">
+                            La segunda clase <strong>es requerida.</strong>
+                        </mat-error>
+                        <mat-error
+                            *ngIf="escCurTe2Field.hasError('fechaPosteriorInvalid')  && escCurTe2Field.dirty && escCurTe2Field.errors">
+                            La segunda clase debe <strong>ser posterior</strong> a la primer clase.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput [matDatepicker]="pickerTercerTeorica" placeholder="3er. Teórica"
+                            formControlName="escCurTe3" (dateInput)="validarTercerTeorica('input', $event)"
+                            (dateChange)="validarTercerTeorica('change', $event)">
+                        <mat-hint>Viernes</mat-hint>
+                        <mat-datepicker-toggle matSuffix [for]="pickerTercerTeorica"></mat-datepicker-toggle>
+                        <mat-datepicker #pickerTercerTeorica></mat-datepicker>
+                        <mat-error
+                            *ngIf="escCurTe3Field.hasError('required') && escCurTe3Field.dirty && escCurTe3Field.errors">
+                            La tercer clase <strong>es requerida.</strong>
+                        </mat-error>
+                        <mat-error
+                            *ngIf="escCurTe3Field.hasError('fechaPosteriorInvalid')  && escCurTe3Field.dirty && escCurTe3Field.errors">
+                            La tercer clase debe <strong>ser posterior</strong> a la segunda clase.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <h3>Horarios Clases Prácticas</h3>
+            <div class="row">
+                <div class="col">
+                    <!-- <div class="row"> -->
+                    <h4>Lunes</h4>
+                    <mat-form-field>
+                        <mat-label>Turnos libres</mat-label>
+                        <mat-select multiple formControlName="disponibilidadLunes">
+                            <mat-option *ngFor="let hora of horasLibres" [value]="hora.value">{{hora.description}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <!-- </div> -->
+                </div>
+                <div class="col">
+                    <!-- <div class="row"> -->
+                    <h4>Martes</h4>
+                    <mat-form-field>
+                        <mat-label>Turnos libres</mat-label>
+                        <mat-select multiple formControlName="disponibilidadMartes">
+                            <mat-option *ngFor="let hora of horasLibres" [value]="hora.value">{{hora.description}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <!-- </div> -->
+                </div>
+                <div class="col">
+                    <!-- <div class="row"> -->
+                    <h4>Miercoles</h4>
+                    <mat-form-field>
+                        <mat-label>Turnos libres</mat-label>
+                        <mat-select multiple formControlName="disponibilidadMiercoles">
+                            <mat-option *ngFor="let hora of horasLibres" [value]="hora.value">{{hora.description}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <!-- </div> -->
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col">
+                    <!-- <div class="row"> -->
+                    <h4>Jueves</h4>
+                    <mat-form-field>
+                        <mat-label>Turnos libres</mat-label>
+                        <mat-select multiple formControlName="disponibilidadJueves">
+                            <mat-option *ngFor="let hora of horasLibres" [value]="hora.value">{{hora.description}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <!-- </div> -->
+                </div>
+                <div class="col">
+                    <!-- <div class="row"> -->
+                    <h4>Viernes</h4>
+                    <mat-form-field>
+                        <mat-label>Turnos libres</mat-label>
+                        <mat-select multiple formControlName="disponibilidadViernes">
+                            <mat-option *ngFor="let hora of horasLibres" [value]="hora.value">{{hora.description}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <!-- </div> -->
+                </div>
+                <div class="col">
+                    <!-- <div class="row"> -->
+                    <h4>Sabado</h4>
+                    <mat-form-field>
+                        <mat-label>Turnos libres</mat-label>
+                        <mat-select multiple formControlName="disponibilidadSabado">
+                            <mat-option *ngFor="let hora of horasLibres" [value]="hora.value">{{hora.description}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <!-- </div> -->
+                </div>
+
+            </div>
+            <mat-divider></mat-divider>
             <div class="row">
                 <div class="col">
                     <mat-form-field class="full-width">
@@ -187,8 +337,8 @@
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">
-        <button [disabled]="form.invalid" mat-raised-button type="submit" [mat-dialog-close]="inscripcionCurso"
-            cdkFocusInitial>Guardar Cambios</button>
+        <!-- [disabled]="form.invalid"  [mat-dialog-close]="inscripcionCurso" -->
+        <button mat-raised-button type="submit" cdkFocusInitial>Guardar Cambios</button>
         <button mat-button mat-dialog-close (click)="onNoClick()">Cancelar</button>
     </mat-dialog-actions>
 
