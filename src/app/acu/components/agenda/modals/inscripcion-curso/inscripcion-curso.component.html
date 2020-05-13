@@ -35,7 +35,7 @@
             <div class="row">
                 <div class="col-xs-4">
                     <mat-form-field class="full-width">
-                        <input matInput placeholder="Alumno" formControlName="alumnoNumero"
+                        <input matInput placeholder="Número del Alumno" formControlName="alumnoNumero"
                             [errorStateMatcher]="matcher">
                         <button mat-icon-button matSuffix [attr.aria-label]="'Hide password'"
                             (click)='seleccionarAlumno()'>
@@ -49,28 +49,12 @@
                             *ngIf="alumnoNumeroField.hasError('required') && alumnoNumeroField.dirty && alumnoNumeroField.errors">
                             El número del alumno <strong>es requerido.</strong>
                         </mat-error>
-                        <mat-error
-                            *ngIf="alumnoNumeroField.hasError('existeAlumno')  && alumnoNumeroField.dirty && alumnoNumeroField.errors">
-                            El número del alumno <strong>no existe.</strong>
-                        </mat-error>
-                        <mat-error
-                            *ngIf="alumnoNumeroField.hasError('alumnoYaAsignado')  && alumnoNumeroField.dirty && alumnoNumeroField.errors">
-                            El alumno ya se encuentra <strong> asignado </strong> en otro movil.
-                        </mat-error>
-                        <mat-error
-                            *ngIf="alumnoNumeroField.hasError('alumnoTieneExcepcion')  && (alumnoNumeroField.dirty || alumnoNumeroField.errors)">
-                            El alumno tiene cargada una <strong>excepción </strong> para este día y hora.
-                        </mat-error>
 
-                        <!-- </div> -->
                     </mat-form-field>
                 </div>
                 <div class="col">
                     <mat-form-field class="full-width">
-                        <input matInput placeholder="   " formControlName="alumnoNombre" [errorStateMatcher]="matcher">
-                        <mat-error *ngIf="alumnoNombreField.hasError('required')">
-                            Alumno es <strong>requerido</strong>
-                        </mat-error>
+                        <input matInput placeholder="Nombre del Alumno" formControlName="alumnoNombre">
                     </mat-form-field>
                 </div>
             </div>
@@ -98,23 +82,12 @@
             <div class="row">
                 <div class="col-xs-4">
                     <mat-form-field class="full-width">
-                        <!-- [(ngModel)]="inscripcionCurso.TipCurId" -->
-                        <input matInput placeholder="Curso" formControlName="cursoId" (keyup)='obtenerCurso()'
-                            [errorStateMatcher]="matcher">
-                        <!-- (blur)='obtenerCurso(inscripcionCurso.TipCurId)'  -->
+                        <input matInput placeholder="Curso" formControlName="cursoId" (keyup)='obtenerCurso()'>
                         <button mat-icon-button matSuffix [attr.aria-label]="'Hide password'"
                             (click)='seleccionarCurso()'>
                             <mat-icon> search </mat-icon>
                         </button>
 
-                        <!-- <mat-error
-                            *ngIf="alumnoNumeroField.hasError('required') && alumnoNumeroField.dirty && alumnoNumeroField.errors">
-                            El código del curso <strong>es requerido.</strong>
-                        </mat-error>
-                        <mat-error
-                            *ngIf="alumnoNumeroField.hasError('existeAlumno')  && alumnoNumeroField.dirty && alumnoNumeroField.errors">
-                            El código del curso <strong>no existe.</strong>
-                        </mat-error> -->
 
                     </mat-form-field>
                 </div>
@@ -186,9 +159,12 @@
                 <div class="col">
                     <mat-form-field class="full-width">
                         <input matInput [matDatepicker]="pickerPrimerTeorica" placeholder="1er. Teórica"
-                            formControlName="escCurTe1" (dateInput)="validarPrimerTeorica('input', $event)"
-                            (dateChange)="validarPrimerTeorica('change', $event)">
-                        <mat-hint>Lunes</mat-hint>
+                            formControlName="escCurTe1" (dateInput)="cambiarDiaFecha1('input', $event)"
+                            (dateChange)="cambiarDiaFecha1('change', $event)">
+
+
+
+                        <mat-hint> {{fecha1 | date:'EEEE' | daySpanish  }}</mat-hint>
                         <mat-datepicker-toggle matSuffix [for]="pickerPrimerTeorica"></mat-datepicker-toggle>
                         <mat-datepicker #pickerPrimerTeorica></mat-datepicker>
                         <mat-error
@@ -204,9 +180,9 @@
                 <div class="col">
                     <mat-form-field class="full-width">
                         <input matInput [matDatepicker]="pickerSegundaTeorica" placeholder="2da. Teórica"
-                            formControlName="escCurTe2" (dateInput)="validarSegundaTeorica('input', $event)"
-                            (dateChange)="validarSegundaTeorica('change', $event)">
-                        <mat-hint>Miércoles</mat-hint>
+                            formControlName="escCurTe2" (dateInput)="cambiarDiaFecha2('input', $event)"
+                            (dateChange)="cambiarDiaFecha2('change', $event)">
+                        <mat-hint> {{fecha2 | date:'EEEE' | daySpanish  }}</mat-hint>
                         <mat-datepicker-toggle matSuffix [for]="pickerSegundaTeorica"></mat-datepicker-toggle>
                         <mat-datepicker #pickerSegundaTeorica></mat-datepicker>
                         <mat-error
@@ -222,9 +198,9 @@
                 <div class="col">
                     <mat-form-field class="full-width">
                         <input matInput [matDatepicker]="pickerTercerTeorica" placeholder="3er. Teórica"
-                            formControlName="escCurTe3" (dateInput)="validarTercerTeorica('input', $event)"
-                            (dateChange)="validarTercerTeorica('change', $event)">
-                        <mat-hint>Viernes</mat-hint>
+                            formControlName="escCurTe3" (dateInput)="cambiarDiaFecha3('input', $event)"
+                            (dateChange)="cambiarDiaFecha3('change', $event)">
+                        <mat-hint> {{fecha3 | date:'EEEE' | daySpanish  }}</mat-hint>
                         <mat-datepicker-toggle matSuffix [for]="pickerTercerTeorica"></mat-datepicker-toggle>
                         <mat-datepicker #pickerTercerTeorica></mat-datepicker>
                         <mat-error
@@ -337,8 +313,9 @@
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">
-        <!-- [disabled]="form.invalid"  [mat-dialog-close]="inscripcionCurso" -->
-        <button mat-raised-button type="submit" cdkFocusInitial>Guardar Cambios</button>
+        <!--  -->
+        <button mat-raised-button type="submit" cdkFocusInitial [disabled]="form.invalid"
+            [mat-dialog-close]="form.value">Guardar Cambios</button>
         <button mat-button mat-dialog-close (click)="onNoClick()">Cancelar</button>
     </mat-dialog-actions>
 

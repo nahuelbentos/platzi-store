@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, Renderer2, Inject, ElementRef, DoCheck, AfterViewChecked } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { AcuService } from '@acu/services/acu.service';
@@ -12,9 +12,13 @@ import { MyErrorStateMatcher } from '../agenda/modals/agendar-clase/agendar-clas
 
 import { SelectionModel } from '@angular/cdk/collections';
 import Swal from 'sweetalert2';
-import { Time } from '@angular/common';
+import { Time, DOCUMENT } from '@angular/common';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { environment as T, environment } from '@environments/environment';
 
+
+
+import * as $ from 'jquery';
 
 // export interface CuotaSocialData {
 //   id: number;
@@ -28,7 +32,7 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
   templateUrl: './mercadopago.component.html',
   styleUrls: ['./mercadopago.component.scss']
 })
-export class MercadopagoComponent implements AfterViewInit, OnInit {
+export class MercadopagoComponent implements AfterViewInit, OnInit, DoCheck, AfterViewChecked {
 
   // @ViewChild(MatTable, { static: false }) table: MatTable<CuotaSocial>;
 
@@ -39,7 +43,6 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
   dataSource: MatTableDataSource<FacturaData>;
 
   selection = new SelectionModel<FacturaData>(true, []);
-
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -57,12 +60,16 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
 
   checked: boolean;
   validCheck: boolean;
+  publicKey = environment.mercadopago.publicKey;
+  amount = 0;
 
+  addEvent = false;
 
   constructor(
     private formBuilder: FormBuilder,
     private acuService: AcuService,
     public dialog: MatDialog,
+    private elementRef: ElementRef
   ) {
     this.dataSource = new MatTableDataSource();
     this.buildForm();
@@ -74,11 +81,75 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
     this.dataSource.paginator.length = this.cantidad;
     this.dataSource.sort = this.sort;
 
+
+
+
   }
 
   ngAfterViewInit() {
     // this.dataSource.paginator = this.paginator;
     // this.dataSource.sort = this.sort;
+
+
+    const script = document.createElement('script');
+    script.id = 'scriptMercadoPago';
+    script.type = 'text/javascript';
+    script.src = 'https://www.mercadopago.com.uy/integrations/v1/web-tokenize-checkout.js';
+    script.setAttribute('data-public-key', `${this.publicKey}`);
+    script.setAttribute('data-transaction-amount', '100');
+
+
+    const form = document.createElement('form');
+    form.id = 'formMercadoPago';
+    form.action = 'https://www.mi-sitio.com/procesar-pago';
+    form.method = 'POST';
+    form.appendChild(script);
+
+    // form.prepend
+    this.elementRef.nativeElement.prepend(form);
+
+
+  }
+  ngAfterViewChecked(): void {
+    //Called after every check of the component's view. Applies to components only.
+    //Add 'implements AfterViewChecked' to the class.
+
+
+  }
+
+  modificarAmount() {
+
+    const script = document.querySelector('#scriptMercadoPago');
+    script.setAttribute('data-transaction-amount', `${this.amount}`);
+  }
+
+  ngDoCheck(): void {
+    // Called every time that the input properties of a component or a directive are checked. 
+    // Use it to extend change detection by performing a custom check.
+    // Add 'implements DoCheck' to the class.
+    if (!this.addEvent) {
+
+      // const form_aux = document.querySelector('#formMercadoPago');
+      const button = document.querySelector('#formMercadoPago > button');
+
+      if (button) {
+        this.addEvent = true;
+
+        button.addEventListener('click', () => {
+          console.log('amount::: ', this.amount.toString());
+
+          const script = document.querySelector('#scriptMercadoPago');
+          console.log('2 script: ', script);
+          script.removeAttribute('data-transaction-amount');
+          script.setAttribute('data-transaction-amount', `${this.amount}`);
+          console.log('2 script: ', script);
+          // script.setAttribute('data-transaction-amount', `${this.amount}`);
+
+          console.log('click en form mercado pago.');
+        });
+      }
+
+    }
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -92,8 +163,10 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
   masterToggle() {
     this.isAllSelected() ? this.limpiarSelect() :
       this.dataSource.data.forEach(row => {
-        console.log('MasterToggle');
         this.selection.select(row);
+
+        this.amount += Number.parseFloat(row.CCMovImp);
+        this.modificarAmount();
         row.Seleccionado = true;
       });
   }
@@ -108,42 +181,26 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
   }
 
   clickCheck(event: Event, element: any) {
-    console.log('1) clickCheck : ');
-    console.log('     event: ', event);
-    console.log('     element: ', element);
     event.stopPropagation();
 
   }
 
   changeCheck(event: MatCheckboxChange, element: any) {
-    console.log('2) changeCheck : ');
-    console.log('     event: ', event);
-    console.log('     element: ', element);
     if (event) {
       const resp = this.validarSelect(element);
-      console.log('     resp: ', resp);
       if (resp.isValid) {
-        console.log('       1: ');
-        // event.source.checked = resp.value;
-        console.log('       2: ');
-        // if (event.source.checked) {
-        console.log('     event.source.checked: ', event.source.checked);
+
         this.selection.toggle(element);
-        // }
-        console.log('       3: ');
 
       } else {
         event.source.checked = !event.source.checked;
       }
     }
-    console.log('     event: ', event);
 
   }
 
 
   selectionToggle(element: any) {
-    console.log('4) selectionToggle : ');
-    console.log('     element: ', element);
     const resp = this.validarSelect(element);
     if (resp.isValid) {
       this.selection.toggle(element);
@@ -154,7 +211,6 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
 
     this.selection.clear();
     this.dataSource.data.forEach(row => {
-      console.log('MasterToggle');
       row.Seleccionado = false;
     });
   }
@@ -167,19 +223,19 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
 
     for (const row of this.dataSource.data) {
       if (((element.Correlativo - 1) === row.Correlativo) && !row.Seleccionado) {
-        console.log('  3)Row: ', row);
         resp.isValid = false;
         break;
       }
 
       if (element.Correlativo === row.Correlativo) {
 
-        console.log('  4.1)row: ', row);
         const aux = this.dataSource.data.find((e) => e.Correlativo === element.Correlativo + 1);
-        console.log('  4.2)aux: ', aux);
         if (!aux || !aux.Seleccionado) {
           row.Seleccionado = !row.Seleccionado;
-          console.log('  4.3)row: ', row);
+
+          const value = Number.parseFloat(row.CCMovImp);
+          this.amount = (row.Seleccionado) ? this.amount + value : this.amount - value;
+          this.modificarAmount();
           break;
         }
 
@@ -191,7 +247,6 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
     if (!resp.isValid) {
       this.errorMensaje();
     }
-    console.log(' 5)resp: ', resp);
     return resp;
 
 
@@ -239,14 +294,11 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
   }
 
   seleccionarSocio(tipo, parametro) {
-    console.log('1)tipo: ', tipo);
-    console.log('2)parametro: ', parametro);
     // let socios = JSON.parse(localStorage.getItem('Socios'));
 
 
     this.acuService.getSocios(100, 1, tipo, parametro)
       .subscribe((res: any) => {
-        console.log('3) res.socios22: ', res);
         const response = new Response(res);
 
         //  socios = res.Socios;
@@ -264,11 +316,9 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
       timer: 5000,
       showConfirmButton: false,
       onClose: () => {
-        console.log('Cieerro antes de timer');
       }
     }).then((res2) => {
       if (res2.dismiss === Swal.DismissReason.timer) {
-        console.log('Cierro  con el timer');
       }
     });
 
@@ -282,11 +332,9 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
       timer: 5000,
       showConfirmButton: false,
       onClose: () => {
-        console.log('Cieerro antes de timer');
       }
     }).then((res2) => {
       if (res2.dismiss === Swal.DismissReason.timer) {
-        console.log('Cierro  con el timer');
       }
     });
 
@@ -305,7 +353,6 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
     });
 
     sociosDialogRef.afterClosed().subscribe(result => {
-      console.log('result: ', result);
 
       if (result) {
         this.socio = result;
@@ -316,9 +363,6 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
 
         this.acuService.getFacturasPendientes(result.SocId)
           .subscribe((res: any) => {
-            console.log('2) facturas: ', res);
-            console.log('3) facturas: ', res.Cantidad);
-            console.log('3) facturas: ', res.FacturasPendientes);
             this.actualizarDatasource(res.FacturasPendientes, res.FacturasPendientes.length);
             // this.dataSource = new MatTableDataSource(res.Facturas);
           });
@@ -344,11 +388,6 @@ export class MercadopagoComponent implements AfterViewInit, OnInit {
 
   pagar(event: Event) {
     event.preventDefault();
-    if (this.form.valid) {
-      const agendaClase = this.form.value;
-
-
-    }
   }
 }
 export interface FacturaData {
@@ -369,49 +408,3 @@ export interface FacturaData {
   Situacion: string;
   pendiente: string;
 }
-
-// export interface FacturaData {
-//   FacCod: number;
-//   FacNro: number;
-//   SOCID: number;
-//   FacNom: string;
-//   FacApe: string;
-//   FacDir: string;
-//   FacDto: number;
-//   FacDes: string;
-//   FacFech: Date;
-//   FacRuc: number;
-//   FacConFin: string;
-//   MonTipo: number;
-//   FacAnu: string;
-//   FacUsrAnu: string;
-//   FacUsrIns: string;
-//   FacNroSector: number;
-//   FacPrdId: number;
-//   FacFmaPgo: string;
-//   FacNroMat: string;
-//   FacSecId: string;
-//   FacUsrPrn: string;
-//   FacFchPgo: Date;
-//   FacTotRed: number;
-//   FacHora: Time;
-//   FacRed: number;
-//   FacCiCaNro: number;
-//   FacUltLin: number;
-//   FacPromEspId: number;
-//   FacCntCuoEsp: number;
-//   FACCLICOD: number;
-//   FacSerie: string;
-//   FacNroDocCli: number;
-//   FacTpoDocCli: number;
-//   FacTiDoId: number;
-//   FacFHCorr: Date;
-//   FacCAEEstatus: string;
-//   FacPrcEstatus: string;
-//   FacOrigen: string;
-//   FacRucCh: string;
-//   FacCodPaiDocCli: string;
-//   FacTitTel: string;
-//   TpTiId: string;
-//   FacTitId: number;
-// }

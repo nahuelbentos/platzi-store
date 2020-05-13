@@ -2,17 +2,13 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl, FormGroupDirective, NgForm } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { AcuService } from '@acu/services/acu.service';
-import { ErrorStateMatcher } from '@angular/material/core';
 import { SeleccionarCursoComponent } from '../seleccionar-curso/seleccionar-curso.component';
 
 import { AgendaComponent } from '../../agenda.component';
 import { MyErrorStateMatcher } from '../agendar-clase/agendar-clase.component';
 import { SeleccionarAlumnoComponent } from '../seleccionar-alumno/seleccionar-alumno.component';
-import { existeAlumnoValidator } from '@utils/validators/existe-alumno-validator.directive';
-import { alumnoYaAsignadoValidator } from '@utils/validators/alumno-ya-asignado.directive';
-import { alumnoTieneExcepcionValidator } from '@utils/validators/alumno-tiene-excepecion.directive';
 import { AltaAlumnoComponent } from '../alta-alumno/alta-alumno.component';
-import { MyValidators, validateFechaAnterior } from '@utils/validators';
+import { MyValidators } from '@utils/validators';
 import Swal from 'sweetalert2';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { ValidateFechaPosterior } from '@utils/custom-validator';
@@ -62,9 +58,9 @@ export class InscripcionCursoComponent {
   curso: any;
 
   // validacionesFecha
-  fecha1 = new Date();
-  fecha2 = new Date();
-  fecha3 = new Date();
+  fecha1: Date;
+  fecha2: Date;
+  fecha3: Date;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -112,7 +108,7 @@ export class InscripcionCursoComponent {
       escCurTe1: ['', Validators.required],
       escCurTe2: ['', Validators.required],
       escCurTe3: ['', Validators.required],
-      escCurIni: ['', [MyValidators.fechaAnteriorAHoy]],
+      escCurIni: ['', [Validators.required, MyValidators.fechaAnteriorAHoy]],
       alumnoNumero: [
         '',
         [Validators.required], // sync validators
@@ -122,7 +118,7 @@ export class InscripcionCursoComponent {
         //   alumnoTieneExcepcionValidator(this.acuService)
         // ] // async validators
       ],
-      alumnoNombre: ['', [Validators.required]],
+      alumnoNombre: [''],
       alumnoCI: [''],
       alumnoTelefono: [''],
       alumnoCelular: [''],
@@ -159,6 +155,22 @@ export class InscripcionCursoComponent {
     } else {
       this.openDialogCursos(cursos);
     }
+  }
+
+  cambiarDiaFecha1(type: string, event: MatDatepickerInputEvent<Date>) {
+    console.log('cambiarDiaFecha1');
+    console.log(`${type}: ${event.value}`);
+    this.fecha1 = event.value;
+  }
+  cambiarDiaFecha2(type: string, event: MatDatepickerInputEvent<Date>) {
+    console.log('cambiarDiaFecha2');
+    console.log(`${type}: ${event.value}`);
+    this.fecha2 = event.value;
+  }
+  cambiarDiaFecha3(type: string, event: MatDatepickerInputEvent<Date>) {
+    console.log('cambiarDiaFecha3');
+    console.log(`${type}: ${event.value}`);
+    this.fecha3 = event.value;
   }
 
   private openDialogCursos(cursos) {
@@ -243,6 +255,7 @@ export class InscripcionCursoComponent {
       return;
     }
 
+
     const existe: boolean = JSON.parse(localStorage.getItem('existe'));
 
     if (this.form.valid) {
@@ -257,54 +270,6 @@ export class InscripcionCursoComponent {
 
 
     }
-  }
-
-  validarPrimerTeorica(type: string, event: MatDatepickerInputEvent<Date>) {
-
-    console.log('type: ', type);
-    console.log('event: ', event);
-    const escCurTe1 = this.form.get('escCurTe1').value;
-    const escCurTe2 = this.form.get('escCurTe2').value;
-    const escCurTe3 = this.form.get('escCurTe3').value;
-
-    console.log('escCurTe1: ', escCurTe1);
-    console.log('escCurTe2: ', escCurTe2);
-    console.log('escCurTe3: ', escCurTe3);
-
-
-  }
-
-  validarSegundaTeorica(type: string, event: MatDatepickerInputEvent<Date>) {
-
-    console.log('type: ', type);
-    console.log('event: ', event);
-    const escCurTe1 = this.form.get('escCurTe1').value;
-    const escCurTe2 = this.form.get('escCurTe2').value;
-    const escCurTe3 = this.form.get('escCurTe3').value;
-
-    console.log('escCurTe1: ', escCurTe1);
-    console.log('escCurTe2: ', escCurTe2);
-    console.log('escCurTe3: ', escCurTe3);
-
-
-  }
-  validarTercerTeorica(type: string, event: MatDatepickerInputEvent<Date>) {
-
-    console.log('type: ', type);
-    console.log('event: ', event);
-    const escCurTe1 = this.form.get('escCurTe1').value;
-    const escCurTe2 = this.form.get('escCurTe2').value;
-    const escCurTe3 = this.form.get('escCurTe3').value;
-
-    this.fecha2 = escCurTe2;
-
-    console.log('escCurTe1: ', escCurTe1);
-    console.log('escCurTe2: ', escCurTe2);
-    console.log('escCurTe3: ', escCurTe3);
-
-    console.log('fecha2: ', this.fecha2);
-
-
   }
 
 
@@ -476,6 +441,8 @@ export class InscripcionCursoComponent {
       const o = {
         value: `${horaIni * 100}-${horaFin * 100}`,
         description: `${horaIni}:00 - ${horaFin}:00`,
+        horaIni: `${horaIni * 100}`,
+        horaFin: `${horaFin * 100}`,
       };
       this.horasLibres.push(o);
     }

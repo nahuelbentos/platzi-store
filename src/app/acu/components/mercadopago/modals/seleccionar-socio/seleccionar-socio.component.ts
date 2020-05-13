@@ -45,12 +45,10 @@ export class SeleccionarSocioComponent implements AfterViewInit, OnInit, AfterVi
     private acuService: AcuService,
     @Inject(MAT_DIALOG_DATA) public data: any) {
 
-    console.log('this.data: ', this.data);
     const socios = this.data.socios;
 
     this.filtro = this.data.filtro;
     this.cantidad = this.data.cantidad;
-    console.log('socios: ', socios);
     this.actualizarDatasource(this.data.socios);
     this.length = this.cantidad;
     // Assign the data to the data source for the table to render
@@ -64,7 +62,6 @@ export class SeleccionarSocioComponent implements AfterViewInit, OnInit, AfterVi
     setTimeout(() => {
       this.dataSource.paginator.length = this.length;
       this.paginator.length = this.length;
-      console.log(' 2) this.length: ', this.length);
     });
   }
 
@@ -98,28 +95,17 @@ export class SeleccionarSocioComponent implements AfterViewInit, OnInit, AfterVi
       // Make a new timeout set to go off in 1000ms (1 second)
       timeout = setTimeout(() => {
 
-        console.log('Input Value:', this.filtro);
         this.getSocios(1000, 1, this.filtro);
       }, 500);
     });
 
   }
 
-  // applyFilter(filterValue: string) {
-
-  //   // const filter = (filterValue) ? filterValue : '';
-  //   // this.getSocios(1000, 1, filter);
-
-  // }
 
   getSocios(pageSize, pageNumber, filtro) {
-    console.log('pageSize: ', pageSize);
-    console.log('pageNumber: ', pageNumber);
-    console.log('filtro: ', filtro);
 
     this.acuService.getSocios(pageSize, pageNumber, 'FREE', filtro)
       .subscribe((res: any) => {
-        console.log('3) res.socios22: ', res);
 
         this.actualizarDatasource(res.Socios);
       });
@@ -127,16 +113,13 @@ export class SeleccionarSocioComponent implements AfterViewInit, OnInit, AfterVi
 
   updateEvent($event: PageEvent) {
 
-    console.log('entro en updateEvent ');
     this.pageEvent = $event;
 
     this.acuService.getSocios(100, this.pageEvent.pageIndex, ' ', 0) // (1000, this.pageEvent.pageIndex)
       .subscribe((res: any) => {
-        console.log('res.socios: ', res);
 
         this.actualizarDatasource(res.Socios);
       });
-    console.log('pageIndex: ', this.pageEvent.pageIndex);
   }
 
   onNoClick(): void {

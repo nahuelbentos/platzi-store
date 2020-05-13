@@ -1,13 +1,11 @@
-<!-- (ngSubmit)="pagar($event)" -->
 <div [formGroup]="form">
-  <mat-button-toggle-group name=" fontStyle" aria-label="Font Style" class="buttons-header">
-    <mat-button-toggle value="Pagar" (click)="verMensaje()"> Pagar</mat-button-toggle>
-  </mat-button-toggle-group>
 
 
+  <p> Amountttt:::::: {{amount}}
+    AcessToken :::: {{publicKey}}
+  </p>
 
   <div class="contenedor">
-
     <div class="row">
       <div class="flex-basis-0 col-xs-4">
         <mat-form-field>
@@ -22,7 +20,8 @@
       <div class="col">
 
         <mat-form-field>
-          <input matInput placeholder="Socio" [(ngModel)]="parametro" formControlName="parametro">
+          <!--  -->
+          <input matInput placeholder="Socio" formControlName="parametro" [(ngModel)]="parametro">
 
           <button mat-icon-button matSuffix [attr.aria-label]="'Hide password'"
             (click)='seleccionarSocio(tipo, parametro)'>
@@ -37,14 +36,15 @@
     <div class="row">
       <div class="flex-basis-0 col-xs-4">
         <mat-form-field>
+          <!--  -->
           <input matInput placeholder="Número de Socio" [(ngModel)]="socioId" formControlName="socioId">
 
         </mat-form-field>
       </div>
       <div class="col-xs-8">
         <mat-form-field style="width: 100%;">
-          <input matInput placeholder="Nombre " [(ngModel)]="socioNombre" formControlName="socioNombre"
-            [errorStateMatcher]="matcher">
+          <!--  -->
+          <input matInput placeholder="Nombre " [(ngModel)]="socioNombre" formControlName="socioNombre">
           <mat-error *ngIf="socioNombreField.hasError('required')">
             El socio es <strong>requerido</strong>
           </mat-error>
